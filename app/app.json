@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "pointpro7",
+    "slug": "pointpro7",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "PointPro7",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "buildNumber": "530",
+      "bundleIdentifier": "br.com.pointpro7",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Utiliza a câmera para ler QRCodes para validação e login dos clientes, além de ler código de barras para consulta de produtos."
+      }
+    },
+    "android": {
+      "versionCode": 530,
+      "package": "br.com.pointpro7",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

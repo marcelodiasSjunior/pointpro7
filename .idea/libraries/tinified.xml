@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="tinified">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/laravel/public/dist-assets/images/screenshots/tinified.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

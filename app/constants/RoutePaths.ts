@@ -1,0 +1,15 @@
+export default {
+  root: "/",
+  home: "/home",
+  notificacoes: "/notificacoes",
+  presenca: "/presenca",
+  atividades: "/atividades",
+  frequencia: "/frequencia",
+  observacoes: "/observacoes",
+  ajuda: "/ajuda",
+  login: "/login",
+  perfil: "/perfil",
+  faq: "/faq",
+  politicaDePrivacidade: "/politica-de-privacidade",
+  sair: "/sair",
+};

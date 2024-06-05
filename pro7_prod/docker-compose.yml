@@ -1,0 +1,95 @@
+version: "3.1"
+services:
+  nginx:
+    restart: unless-stopped
+    image: nginx:alpine
+    container_name: pro7_nginx
+    working_dir: /app
+    volumes:
+      - ../laravel:/app
+      - ../docker/nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
+      - ../docker/nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - "80:80"
+    links:
+      - database
+      - php
+      # - python
+    networks:
+      - app-network
+    # depends_on:
+      # - php
+      # - python
+      # - database
+
+  php:
+    restart: unless-stopped
+    build: ../docker/php
+    container_name: pro7_php
+    links:
+      - "redis"
+    # depends_on:
+    #   - database
+    working_dir: /app
+    volumes:
+      - ../laravel:/app
+      - ../docker/php/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini
+    networks:
+      - app-network
+      
+  redis:
+    restart: unless-stopped
+    container_name: pro7_redis
+    image: redis
+    networks:
+      - app-network
+
+  python:
+    restart: unless-stopped
+    container_name: pro7_python
+    build: ../docker/python
+    # depends_on:
+    #   - database
+    working_dir: /app
+    networks:
+      - app-network
+    volumes:
+      - ../flask:/app
+    links:
+      - database
+
+  database:
+    image: mysql:5.7
+    restart: unless-stopped
+    container_name: pro7_mysql
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - '../docker/mysql/data:/var/lib/mysql'
+    networks:
+      - app-network
+  
+  phpmyadmin:
+    container_name: pro7_phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    links:
+      - database
+    ports:
+      - 8082:80
+    environment:
+      PMA_HOST: database
+      UPLOAD_LIMIT: 300M
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 0
+    restart: always
+    depends_on:
+      - database
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

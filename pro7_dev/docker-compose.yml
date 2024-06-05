@@ -1,0 +1,96 @@
+version: "3.1"
+services:
+  nginx:
+    restart: unless-stopped
+    image: nginx:alpine
+    container_name: pro7_nginx
+    working_dir: /app
+    volumes:
+      - ../laravel:/app
+      - ../docker/nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
+      - ../docker/nginx/conf.d_dev:/etc/nginx/conf.d:ro
+      - ../docker/nginx/key.pem:/root/ssl/key.pem
+      - ../docker/nginx/cert.pem:/root/ssl/cert.pem
+      - ../docker/nginx/key_python.pem:/root/ssl/key_python.pem
+      - ../docker/nginx/cert_python.pem:/root/ssl/cert._pythonpem
+    ports:
+      - "1215:1215"
+      - "5000:5000"
+    networks:
+      - app-network
+    depends_on:
+      - php
+      - python
+      - database
+  php:
+    restart: unless-stopped
+    build: ../docker/php
+    container_name: pro7_php
+    working_dir: /app
+    links:
+      - redis
+    depends_on:
+      - redis
+      - database
+    volumes:
+      - ../laravel:/app
+      - ../docker/php/php-ini-overrides.ini:/etc/php/8.0/fpm/conf.d/99-overrides.ini
+    networks:
+      - app-network
+      
+  redis:
+    restart: unless-stopped
+    container_name: pro7_redis
+    image: redis
+    networks:
+      - app-network
+  
+  database:
+    image: mysql:8
+    restart: unless-stopped
+    container_name: pro7_mysql
+    environment:
+      MYSQL_DATABASE: 'database'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_TCP_PORT: 3663
+    networks:
+      - app-network
+      
+  phpmyadmin:
+    container_name: pro7_phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    links:
+      - database
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: password
+      UPLOAD_LIMIT: 300M
+      PMA_PORT: 3663
+      PMA_ARBITRARY: 0
+      APACHE_PORT: 3445
+    restart: always
+    ports:
+      - 8282:3445
+    depends_on:
+      - database
+    networks:
+      - app-network
+
+  python:
+    restart: unless-stopped
+    container_name: pro7_python
+    build: ../docker/python
+    working_dir: /app
+    networks:
+      - app-network
+    volumes:
+      - ../flask:/app
+    links:
+      - database
+
+networks:
+  app-network:
+    driver: bridge

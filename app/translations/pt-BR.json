@@ -1,0 +1,77 @@
+{
+    "home": "Home",
+    "presenca": "Presença",
+    "notificacoes": "Notificações",
+    "ativiadades": "Atividades",
+    "observacoes": "Observações",
+    "atividades": "Atividades",
+    "ajuda": "Ajuda",
+    "sair": "Sair",
+    "faq": "F.A.Q",
+    "politicaDePrivacidade": "Privacidade",
+    "perfil": "Perfil",
+    "frequencia": "Frequência",
+    "horasSemanais": "horas semanais",
+    "onboarding": "Onboarding",
+    "nao_iniciada": "Não iniciada",
+    "iniciada": "Em progresso",
+    "completa": "Finalizada",
+    "faq_conteudo": [
+        {
+            "pergunta": "123123",
+            "resposta": "Blah blah blah blah"
+        },
+        {
+            "pergunta": "123123",
+            "resposta": "Blah blah blah blah"
+        },
+        {
+            "pergunta": "123123",
+            "resposta": "Blah blah blah blah"
+        },
+        {
+            "pergunta": "123123",
+            "resposta": "Blah blah blah blah"
+        },
+        {
+            "pergunta": "123123",
+            "resposta": "Blah blah blah blah"
+        }
+    ],
+    "ajuda_conteudo": [
+        {
+            "titulo": "123123",
+            "descricao": "Blah blah blah blah"
+        },
+        {
+            "titulo": "123123",
+            "descricao": "Blah blah blah blah"
+        }
+    ],
+    "privacidade_conteudo": [
+        {
+            "titulo": "123123",
+            "descricao": "Blah blah blah blah"
+        },
+        {
+            "titulo": "123123",
+            "descricao": "Blah blah blah blah"
+        },
+        {
+            "titulo": "123123",
+            "descricao": "Blah blah blah blah"
+        },
+        {
+            "titulo": "123123",
+            "descricao": "Blah blah blah blah"
+        },
+        {
+            "titulo": "123123",
+            "descricao": "Blah blah blah blah"
+        },
+        {
+            "titulo": "123123",
+            "descricao": "Blah blah blah blah"
+        }
+    ]
+}

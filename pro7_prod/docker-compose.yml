@@ -11,13 +11,13 @@ services:
       - ../docker/nginx/conf.d:/etc/nginx/conf.d:ro
     ports:
       - "80:80"
-    links:
+    depends_on:
       - database
       - php
       # - python
     networks:
       - app-network
-    # depends_on:
+      # depends_on:
       # - php
       # - python
       # - database

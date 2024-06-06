@@ -8,7 +8,7 @@ services:
     volumes:
       - ../laravel:/app
       - ../docker/nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
-      - ../docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ../docker/nginx/conf.d:/etc/nginx/conf.d:rw
       - ../docker/nginx/key.pem:/root/ssl/key.pem
       - ../docker/nginx/cert.pem:/root/ssl/cert.pem
       - ../docker/nginx/key_python.pem:/root/ssl/key_python.pem

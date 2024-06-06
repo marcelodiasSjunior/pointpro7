@@ -64,7 +64,7 @@ services:
     volumes:
       - '../docker/mysql/data:/var/lib/mysql'
     ports:
-      - "3663:3663"
+      - "3306:3306"
     networks:
       - app-network
 

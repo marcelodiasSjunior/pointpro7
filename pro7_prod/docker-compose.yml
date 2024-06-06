@@ -9,7 +9,7 @@ services:
       - ../laravel:/app
       - ../docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
       - ../docker/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ../laravel/ssl:/root/ssl:ro
+      - ../docker/nginx:/root/ssl:ro
     ports:
       - "80:80"
       - "443:443"

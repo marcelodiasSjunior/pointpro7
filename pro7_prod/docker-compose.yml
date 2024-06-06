@@ -28,8 +28,8 @@ services:
     container_name: pro7_php
     links:
       - "redis"
-    # depends_on:
-    #   - database
+    depends_on:
+      - database
     working_dir: /app
     volumes:
       - ../laravel:/app

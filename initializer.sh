@@ -10,8 +10,11 @@ cp ./laravel/.env.production ./laravel/.env
 cp ./flask/.env.production ./flask/.env
 cd laravel && npm i && cd ../
 docker-compose -f ./pro7_prod/docker-compose.yml up -d --build
-docker exec pro7_php composer update
-docker exec pro7_php php artisan migrate:refresh --seed --force
+docker exec pro7_php composer install --no-dev
+docker exec pro7_php php artisan migrate --force
+docker exec pro7_php php artisan config:cache
+docker exec pro7_php php artisan route:cache
+docker exec pro7_php php artisan view:cache
 docker restart pro7_php
 
 # This below can be ignored

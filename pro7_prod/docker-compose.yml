@@ -9,18 +9,20 @@ services:
       - ../laravel:/app
       - ../docker/nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
       - ../docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ../docker/nginx/key.pem:/root/ssl/key.pem
+      - ../docker/nginx/cert.pem:/root/ssl/cert.pem
+      - ../docker/nginx/key_python.pem:/root/ssl/key_python.pem
+      - ../docker/nginx/cert_python.pem:/root/ssl/cert_python.pem
     ports:
       - "80:80"
-    depends_on:
-      - database
-      - php
-      # - python
+      - "443:443"
+      - "5000:5000"
     networks:
       - app-network
-      # depends_on:
-      # - php
-      # - python
-      # - database
+    depends_on:
+      - php
+      - python
+      - database
 
   php:
     restart: unless-stopped
@@ -48,8 +50,6 @@ services:
     restart: unless-stopped
     container_name: pro7_python
     build: ../docker/python
-    # depends_on:
-    #   - database
     working_dir: /app
     networks:
       - app-network

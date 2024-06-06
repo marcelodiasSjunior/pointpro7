@@ -30,6 +30,8 @@ services:
     volumes:
       - ../laravel:/app
       - ../docker/php/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini
+    ports:
+      - "1215:1215"
     networks:
       - app-network
 

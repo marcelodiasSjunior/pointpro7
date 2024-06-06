@@ -69,6 +69,8 @@ services:
       MYSQL_ROOT_PASSWORD: "@pQ6tN73z10C"
     volumes:
       - '../docker/mysql/data:/var/lib/mysql'
+    ports:
+      - "3663:3306"
     networks:
       - app-network
 

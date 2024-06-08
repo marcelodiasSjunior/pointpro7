@@ -47,6 +47,8 @@ services:
     container_name: pro7_python
     build: ../docker/python
     working_dir: /app
+    ports:
+      - "5000:5000"  # Adicione esta linha para mapear a porta 5000
     networks:
       - app-network
     volumes:

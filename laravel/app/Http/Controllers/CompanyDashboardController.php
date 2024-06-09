@@ -115,7 +115,7 @@ class CompanyDashboardController extends Controller
 
     $funcionarios = Funcionario::where('company_id', $company_id)->limit(10)->orderBy('id', 'DESC')->get();
 
-    foreach ($funcionarios como $funcionario) {
+    foreach ($funcionarios as $funcionario) {
         $atividadesCadastradas = AtividadeFuncionario::where('company_id', $company_id)
             ->where('funcionario_id', $funcionario->id)
             ->where('status', 1)
@@ -140,7 +140,7 @@ class CompanyDashboardController extends Controller
         ->orderBy('id', 'desc')
         ->get();
 
-    foreach ($atividades como $row_atividade) {
+    foreach ($atividades as $row_atividade) {
         $atividade_funcionario = AtividadeFuncionario::where('atividade_id', $row_atividade->id)
             ->where('company_id', $company_id)
             ->value('id');

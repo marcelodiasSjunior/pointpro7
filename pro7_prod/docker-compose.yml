@@ -53,6 +53,8 @@ services:
       - app-network
     volumes:
       - ../flask:/app
+      - /root/pointpro7/docker/nginx/cert.pem:/root/pointpro7/docker/nginx/cert.pem
+      - /root/pointpro7/docker/nginx/key.pem:/root/pointpro7/docker/nginx/key.pem
 
   database:
     image: mysql:5.7

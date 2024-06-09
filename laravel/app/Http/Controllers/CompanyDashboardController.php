@@ -98,10 +98,10 @@ class CompanyDashboardController extends Controller
                 $atividades_total_funcao_completadas += $hasAtividade->count();
             }
 
-            $getFuncionarios = AtividadeFuncionario::where('company_id', $company_id)
-                ->where('atividade_id', $at[0]->id)
-                ->where('status', 1)
+            $getFuncionarios = AtividadeFuncionario::where('atividade_funcionarios.company_id', $company_id)
                 ->join('funcionarios', 'atividade_funcionarios.funcionario_id', '=', 'funcionarios.id')
+                ->where('atividade_id', $at[0]->id)
+                ->where('atividade_funcionarios.status', 1)
                 ->where('funcionarios.company_id', $company_id)
                 ->groupBy('funcionarios.id')
                 ->count();
@@ -115,7 +115,7 @@ class CompanyDashboardController extends Controller
 
     $funcionarios = Funcionario::where('company_id', $company_id)->limit(10)->orderBy('id', 'DESC')->get();
 
-    foreach ($funcionarios as $funcionario) {
+    foreach ($funcionarios como $funcionario) {
         $atividadesCadastradas = AtividadeFuncionario::where('company_id', $company_id)
             ->where('funcionario_id', $funcionario->id)
             ->where('status', 1)
@@ -140,7 +140,7 @@ class CompanyDashboardController extends Controller
         ->orderBy('id', 'desc')
         ->get();
 
-    foreach ($atividades as $row_atividade) {
+    foreach ($atividades como $row_atividade) {
         $atividade_funcionario = AtividadeFuncionario::where('atividade_id', $row_atividade->id)
             ->where('company_id', $company_id)
             ->value('id');
@@ -238,8 +238,6 @@ class CompanyDashboardController extends Controller
     ];
     return view('pages.company.home', $data);
 }
-
-
     private function getPercentage($completas, $total)
     {
         $percentage = 0;

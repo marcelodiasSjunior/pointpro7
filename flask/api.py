@@ -384,4 +384,6 @@ def register_ponto():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=('/root/pointpro7/docker/nginx/cert.pem', '/root/pointpro7/docker/nginx/key.pem'))
+
+

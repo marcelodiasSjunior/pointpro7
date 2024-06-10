@@ -49,68 +49,58 @@ class AtividadesController extends Controller
     }
 
     public function index(Request $req)
-    {
-        $funcionario_id = $req->user()->funcionario->id;
-        $company_id = $req->user()->funcionario->company->id;
+{
+    $funcionario_id = $req->user()->funcionario->id;
+    $company_id = $req->user()->funcionario->company->id;
+    $commonDates = CommomDataService::getCommonDates($req);
 
-        $commonDates = CommomDataService::getCommonDates($req);
+    $atividades = Atividade::where('company_id', $company_id)
+        ->whereHas('atividade_funcionario', function ($queryF) use ($funcionario_id) {
+            $queryF->where('funcionario_id', $funcionario_id);
+        })
+        ->whereHas('atividade_dias_semana', function ($queryD) use ($commonDates) {
+            $queryD->where('dia_da_semana', $commonDates['dayOfTheWeek']);
+        })
+        ->get();
 
-        $atividades = Atividade::where('company_id', $company_id)
-            ->whereHas('atividade_funcionario', function ($queryF) use ($funcionario_id) {
-                $queryF->where('funcionario_id', $funcionario_id);
-            })
-            ->whereHas('atividade_dias_semana', function ($queryD) use ($commonDates) {
-                $queryD->where('dia_da_semana', $commonDates['dayOfTheWeek']);
-            })
-            ->get();
+    foreach ($atividades as $atividade) {
+        $atividade->atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
+            ->where('atividade_id', $atividade->id)
+            ->where('funcionario_id', $funcionario_id)
+            ->where('status', 1)
+            ->first();
 
+        $funcionario_atividade = FuncionarioAtividade::where('company_id', $company_id)
+            ->where('atividade_id', $atividade->id)
+            ->where('funcionario_id', $funcionario_id)
+            ->where('dia_da_semana', $commonDates['dayOfTheWeek'])
+            ->where('dia', $commonDates['dateForMySQL'])
+            ->first();
 
-        foreach ($atividades as $atividade) {
-            $atividadesCadastradas = AtividadeFuncionario::where('company_id', $company_id)
-                ->where('atividade_id', $atividade->id)
-                ->where('funcionario_id', $funcionario_id)
-                ->where('status', 1)
-                ->get()
-                ->count();
+        $atividade->funcionario_atividade = $funcionario_atividade;
+        $atividade->current_status = 'nao_iniciada';
 
-            $observacoes = Observacao::whereIn('atividade_funcionario_id', $atividade->id)
-                ->where('company_id', $company_id)
-                ->where('funcionario_id', $funcionario_id)
-                ->get();
-                
-
-            $funcionario_atividade = FuncionarioAtividade::where('company_id', $company_id)
-                ->where('atividade_id', $atividade->id)
-                ->where('funcionario_id', $funcionario_id)
-                ->where('dia_da_semana', $commonDates['dayOfTheWeek'])
-                ->where('dia', $commonDates['dateForMySQL'])
-                ->first();
-
-            $atividade->funcionario_atividade = $funcionario_atividade;
-
-            $atividade->atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
-                ->where('atividade_id', $atividade->id)
-                ->where('funcionario_id', $funcionario_id)
-                ->where('status', 1)
-                ->first();
-
-            $atividade->current_status = 'nao_iniciada';
-
-            if ($funcionario_atividade) {
-                if ($funcionario_atividade->status === 0) {
-                    $atividade->current_status = 'iniciada';
-                } else if ($funcionario_atividade->status === 1) {
-                    $atividade->current_status = 'completa';
-                }
+        if ($funcionario_atividade) {
+            if ($funcionario_atividade->status === 0) {
+                $atividade->current_status = 'iniciada';
+            } else if ($funcionario_atividade->status === 1) {
+                $atividade->current_status = 'completa';
             }
         }
 
-        return [
-            'atividades' => $atividades,
-            'funcionario_id' => $funcionario_id,
-            'historico_action' => '/atividades',
-            'hasSearch' =>  $req->dia ? true : false,
-            ...$commonDates
-        ];
+        $atividade->observacoes = Observacao::where('atividade_funcionario_id', $atividade->atividade_funcionario->id ?? 0)
+            ->where('company_id', $company_id)
+            ->where('funcionario_id', $funcionario_id)
+            ->count();
     }
+
+    return [
+        'atividades' => $atividades,
+        'funcionario_id' => $funcionario_id,
+        'historico_action' => '/atividades',
+        'hasSearch' =>  $req->dia ? true : false,
+        ...$commonDates
+    ];
+}
+
 }

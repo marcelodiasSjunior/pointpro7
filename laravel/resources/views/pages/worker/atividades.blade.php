@@ -71,7 +71,7 @@
                                                             <div class="radio-centralizado">
                                                                 <label class="radio radio-warning">
                                                                     @if($atividade->current_status === 'nao_iniciada')
-                                                                    <form method="POST" action="/atividades/{{ $atividade->atividade_funcionario->id }}/criar">
+                                                                    <form method="POST" action="/atividades/{{ $atividade->atividade_funcionario->id ?? '' }}/criar">
                                                                         @csrf
                                                                         <input type="hidden" name="dia_da_semana" value="{{ $dayOfTheWeek }}" />
                                                                         <input type="hidden" name="dateForMySQL" value="{{ $dateForMySQL }}" />
@@ -91,7 +91,7 @@
                                                             <div class="radio-centralizado">
                                                                 <label class="radio radio-success">
                                                                     @if($atividade->current_status === 'iniciada')
-                                                                    <form method="POST" action="/atividades/{{ $atividade->funcionario_atividade->id }}/atualizar">
+                                                                    <form method="POST" action="/atividades/{{ $atividade->funcionario_atividade->id ?? '' }}/atualizar">
                                                                         @csrf
                                                                         <input type="hidden" name="dia_da_semana" value="{{ $dayOfTheWeek }}" />
                                                                         <input type="hidden" name="dateForMySQL" value="{{ $dateForMySQL }}" />
@@ -113,7 +113,7 @@
                                                                 <i class="i-Speach-Bubbles fw-bold text-primary header-icon" style="font-size: 33px;"></i>
                                                             </a>
                                                             <div class="dropdown-menu menu-opcoes" x-placement="bottom-start">
-                                                            @if(isset($atividade->atividade_funcionario[0]->observacoes[0]))
+                                                            @if(isset($atividade->atividade_funcionario->observacoes[0]))
                                                              <a class="dropdown-item ul-widget__link--font" href="/observacoes/{{$atividade->atividade_funcionario->observacoes[0]->id}}">Observações da Atividade</a>
                                                             @else 
                                                              <a class="dropdown-item ul-widget__link--font" href="#">Nenhuma observação cadastrada</a>

@@ -53,7 +53,7 @@ def validate_face():
 
     exif = image._getexif()
 
-    if exif:
+    if exif and orientation in exif:
         if exif[orientation] == 3:
             image = image.rotate(180, expand=True)
         elif exif[orientation] == 6:
@@ -212,13 +212,15 @@ def upload_image():
 
             exif = image._getexif()
 
-            if exif:
+            if exif is not None and orientation in exif:
                 if exif[orientation] == 3:
                     image = image.rotate(180, expand=True)
                 elif exif[orientation] == 6:
                     image = image.rotate(270, expand=True)
                 elif exif[orientation] == 8:
                     image = image.rotate(90, expand=True)
+            else:
+                app.logger.debug('Chave EXIF de orientação não encontrada ou EXIF está vazio.')
 
             image.thumbnail((700, 700))
 
@@ -323,7 +325,6 @@ def detect_faces_in_image(file_stream):
 
     return jsonify({"msg": "face_not_found_on_database"}), 422
 
- 
 
 @app.route('/recognizerDefault', methods=['POST'])
 def register_ponto():
@@ -380,10 +381,7 @@ def register_ponto():
             facesql.savePresencaData(payloadPresenca)
 
         return jsonify(payloadPresenca)
-            
 
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=('/root/pointpro7/docker/nginx/cert.pem', '/root/pointpro7/docker/nginx/key.pem'))
-
-

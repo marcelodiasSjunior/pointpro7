@@ -12,7 +12,7 @@ services:
       - ../docker/nginx/key.pem:/root/ssl/key.pem
       - ../docker/nginx/cert.pem:/root/ssl/cert.pem
       - ../docker/nginx/key_python.pem:/root/ssl/key_python.pem
-      - ../docker/nginx/cert_python.pem:/root/ssl/cert._pythonpem
+      - ../docker/nginx/cert_python.pem:/root/ssl/cert_python.pem
     ports:
       - "80:80"
       - "443:443"

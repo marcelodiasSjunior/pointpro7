@@ -14,8 +14,8 @@ services:
       - ../docker/nginx/key_python.pem:/root/ssl/key_python.pem
       - ../docker/nginx/cert_python.pem:/root/ssl/cert._pythonpem
     ports:
-      - "1215:1215"
-      - "5000:5000"
+      - "1414:1414"
+      - "5001:5001"
     networks:
       - app-network
     depends_on:

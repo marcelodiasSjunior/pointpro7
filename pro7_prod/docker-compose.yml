@@ -12,7 +12,7 @@ services:
       - ../docker/nginx/key.pem:/root/ssl/key.pem
       - ../docker/nginx/cert.pem:/root/ssl/cert.pem
       - ../docker/nginx/key_python.pem:/root/ssl/key_python.pem
-      - ../docker/nginx/cert_python.pem:/root/ssl/cert._pythonpem
+      - ../docker/nginx/cert_python.pem:/root/ssl/cert_python.pem
     ports:
       - "80:80"
       - "443:443"
@@ -52,9 +52,9 @@ services:
     networks:
       - app-network
     volumes:
-    - ../flask:/app
-    - /root/pointpro7/docker/nginx/cert.pem:/root/ssl/cert.pem
-    - /root/pointpro7/docker/nginx/key.pem:/root/ssl/key.pem
+      - ../flask:/app
+      - /root/pointpro7/docker/nginx/cert.pem:/root/pointpro7/docker/nginx/cert.pem
+      - /root/pointpro7/docker/nginx/key.pem:/root/pointpro7/docker/nginx/key.pem
 
   database:
     image: mysql:5.7

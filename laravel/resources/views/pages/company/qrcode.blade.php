@@ -27,7 +27,7 @@
                     <p>
                         Imprima o QRCode para redirecionar os funcionarios <code><b>para o painel</b></code>:
                     </p>
-                    {!! QrCode::size(400)->generate($url); !!}
+                    {!! QrCode::size(400)->generate($url) !!}
 
                 </div>
             </div>

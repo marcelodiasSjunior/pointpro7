@@ -3,7 +3,7 @@ services:
   nginx:
     restart: unless-stopped
     image: nginx:alpine
-    container_name: pro7_nginx
+    container_name: pro7_nginx_dev
     working_dir: /app
     volumes:
       - ../laravel:/app
@@ -25,7 +25,7 @@ services:
   php:
     restart: unless-stopped
     build: ../docker/php
-    container_name: pro7_php
+    container_name: pro7_php_dev
     working_dir: /app
     links:
       - redis
@@ -40,7 +40,7 @@ services:
       
   redis:
     restart: unless-stopped
-    container_name: pro7_redis
+    container_name: pro7_redis_dev
     image: redis
     networks:
       - app-network
@@ -48,7 +48,7 @@ services:
   database:
     image: mysql:8
     restart: unless-stopped
-    container_name: pro7_mysql
+    container_name: pro7_mysql_dev
     environment:
       MYSQL_DATABASE: 'database'
       MYSQL_USER: 'user'
@@ -59,7 +59,7 @@ services:
       - app-network
       
   phpmyadmin:
-    container_name: pro7_phpmyadmin
+    container_name: pro7_phpmyadmin_dev
     image: phpmyadmin/phpmyadmin
     links:
       - database
@@ -81,7 +81,7 @@ services:
 
   python:
     restart: unless-stopped
-    container_name: pro7_python
+    container_name: pro7_python_dev
     build: ../docker/python
     working_dir: /app
     networks:

@@ -310,24 +310,40 @@ class AtividadesController extends Controller
     {
         $company_id = $req->user()->company->id;
 
-
-        $atividade_funcionario =  AtividadeFuncionario::where('company_id', $company_id)
-            ->where('atividade_id', $atividade_id)
-            ->where('funcionario_id', $funcionario_id)
-            ->where('status', 1)
+        // Verifica se a atividade existe
+        $atividade = Atividade::where('company_id', $company_id)
+            ->where('id', $atividade_id)
             ->first();
 
-        FuncionarioAtividade::where('atividade_id', $atividade_id)
+        if (!$atividade) {
+            Session::flash('error', "Atividade não encontrada!");
+            return Redirect::back();
+        }
+
+        // Atualiza a descrição da atividade
+        $atividade->description = $req->description;
+        $atividade->save();
+
+        // Atualiza o status do FuncionarioAtividade apenas se necessário
+        $atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
+            ->where('atividade_id', $atividade_id)
             ->where('funcionario_id', $funcionario_id)
-            ->where('atividade_funcionario_id', $atividade_funcionario->id)
-            ->where('company_id', $company_id)
-            ->where('dia_da_semana', $req->dia_da_semana)
-            ->where('dia', $req->dateForMySQL)
-            ->update(['status' => 1]);
+            ->first();
+
+        if ($atividade_funcionario && $atividade_funcionario->status == 1) {
+            FuncionarioAtividade::where('atividade_id', $atividade_id)
+                ->where('funcionario_id', $funcionario_id)
+                ->where('atividade_funcionario_id', $atividade_funcionario->id)
+                ->where('company_id', $company_id)
+                ->where('dia_da_semana', $req->dia_da_semana)
+                ->where('dia', $req->dateForMySQL)
+                ->update(['status' => 1]);
+        }
 
         Session::flash('success', "Atividade atualizada com sucesso!");
         return Redirect::back();
     }
+
 
     public function create(Request $req)
     {
@@ -384,20 +400,50 @@ class AtividadesController extends Controller
 
     public function update(AtividadeUpdateRequest $req, $atividade_id)
     {
-        $atividade = Atividade::where('company_id', $req->user()->company->id)->where('id', $atividade_id)->first();
-        AtividadeDiasSemana::where('company_id', $req->user()->company->id)->where('atividade_id', $atividade_id)->delete();
-        AtividadeFuncionario::where('company_id', $req->user()->company->id)->where('atividade_id', $atividade_id)->delete();
+        $company_id = $req->user()->company->id;
 
+        // Verifica se a atividade existe
+        $atividade = Atividade::where('company_id', $company_id)
+            ->where('id', $atividade_id)
+            ->first();
+
+        if (!$atividade) {
+            Session::flash('error', "Atividade não encontrada!");
+            return Redirect::back();
+        }
+
+        // Atualiza os dias da semana da atividade
+        AtividadeDiasSemana::where('company_id', $company_id)
+            ->where('atividade_id', $atividade_id)
+            ->delete();
+
+        // Atualiza a atividade
+        Atividade::where('company_id', $company_id)
+            ->where('id', $atividade_id)
+            ->update([
+                'description' => $req->description,
+                'funcao_id' => $req->funcao
+            ]);
+
+        // Atualiza a tabela AtividadeFuncionario apenas se necessário, sem deletar
+        $atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
+            ->where('atividade_id', $atividade_id)
+            ->get();
+
+        foreach ($atividade_funcionario as $af) {
+            $af->update([
+                'status' => $af->status, // ou outros campos que precisam ser atualizados
+                // outros campos a serem atualizados conforme necessário
+            ]);
+        }
+
+        // Chama a configuração da atividade
         $this->setupAtividade($req, $atividade);
-
-        Atividade::where('company_id', $req->user()->company->id)->where('id', $atividade_id)->update([
-            'description' => $req->description,
-            'funcao_id' => $req->funcao
-        ]);
 
         Session::flash('success', "Atividade atualizada com sucesso!");
         return Redirect::back();
     }
+
 
     public function save(AtividadeSaveRequest $req)
     {

@@ -1,4 +1,3 @@
-
 # compose_flask/app.py
 import pytz
 from flask_cors import CORS, cross_origin
@@ -380,7 +379,7 @@ def register_ponto():
 
             facesql.savePresencaData(payloadPresenca)
 
-        return jsonify(payloadPresenca)   
+        return jsonify(payloadPresenca)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=('/root/pointpro7/docker/nginx/cert.pem', '/root/pointpro7/docker/nginx/key.pem'))

@@ -1,5 +1,5 @@
 import pytz
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 import pymysql
 import random
 import string
@@ -24,11 +24,16 @@ app = Flask(__name__, static_folder='pictures')
 cors = CORS(app)
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+def convert_image_to_rgb(image_path):
+    image = Image.open(image_path)
+    if image.mode != 'RGB':
+        image = image.convert('RGB')
+    image.save(image_path)
 
 @app.route('/validate-face-preregister', methods=['POST'])
 def validate_face():
@@ -58,6 +63,7 @@ def validate_face():
     newFile = "./pictures/" + file_stream.filename
     image.save(fp=newFile)
 
+    convert_image_to_rgb(newFile)
     image = face_recognition.load_image_file(newFile)
 
     image_face_encoding = face_recognition.face_encodings(image)
@@ -71,9 +77,7 @@ def validate_face():
 
 @app.route('/health', methods=['GET'])
 def health():
-    return jsonify({
-        "foor": "bar",
-    })
+    return jsonify({"foor": "bar"})
 
 @app.route('/register', methods=['POST'])
 def upload_image_register():
@@ -110,8 +114,9 @@ def upload_image_register():
                 image = image.rotate(90, expand=True)
 
         newFile = "./pictures/" + file.filename
-        image = image.convert('RGB')
         image.save(fp=newFile)
+
+        convert_image_to_rgb(newFile)
         return register_face(newFile, api_token_for_web, upload_id)
     else:
         return jsonify({'msg': 'file not allowed'}), 422
@@ -141,6 +146,7 @@ def register_face(file_stream, api_token_for_web, upload_id):
     company_id = funcionario['company_id']
     user_id = funcionario['user_id']
 
+    convert_image_to_rgb(file_stream)
     image = face_recognition.load_image_file(file_stream)
 
     image_face_encoding = face_recognition.face_encodings(image)
@@ -169,10 +175,7 @@ def register_face(file_stream, api_token_for_web, upload_id):
 
         return jsonify(payload)
     else:
-        return jsonify({
-            "error": True,
-            "msg": "image_without_face"
-        }), 422
+        return jsonify({"error": True, "msg": "image_without_face"}), 422
 
 @app.route('/recognizer', methods=['POST'])
 def upload_image():
@@ -204,8 +207,9 @@ def upload_image():
             image.thumbnail((700, 700))
 
             newFile = "./pictures/" + file.filename
-            image = image.convert('RGB')
             image.save(newFile)
+
+            convert_image_to_rgb(newFile)
             return detect_faces_in_image(newFile)
 
         return {'error': 'file_not_allowed', 'file': file.filename}
@@ -243,6 +247,7 @@ def detect_faces_in_image(file_stream):
     all_face_encodings = responseAll[1]
     user_ids = responseAll[0]
 
+    convert_image_to_rgb(file_stream)
     img = face_recognition.load_image_file(file_stream)
     unknown_face_encodings = face_recognition.face_encodings(img)
 
@@ -257,14 +262,14 @@ def detect_faces_in_image(file_stream):
     os.remove(file_stream)
 
     for i, face_distance in enumerate(match_results):
-        if (face_distance <= 0.42):
+        if face_distance <= 0.42:
             user_id = user_ids[i]
             facial_exists = facesql.getFaceByUserId(user_id)
             users_exists = facesql.getUserById(user_id)
             upload_exists = facesql.getUploadById(facial_exists["upload_id"])
             funcionario = facesql.getFuncionarioByUserId(user_id)
 
-            if (facial_exists and users_exists and funcionario):
+            if facial_exists and users_exists and funcionario:
                 payload = {
                     "user_id": facial_exists["user_id"],
                     "face_distance": face_distance,

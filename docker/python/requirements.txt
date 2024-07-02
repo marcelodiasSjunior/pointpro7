@@ -1,7 +1,7 @@
 PyMySQL
 peewee
 Flask
-numpy
+numpy==1.21.6 
 Redis
 face_recognition
 python-dotenv

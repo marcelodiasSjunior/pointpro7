@@ -110,6 +110,7 @@ def upload_image_register():
                 image = image.rotate(90, expand=True)
 
         newFile = "./pictures/" + file.filename
+        image = image.convert('RGB')
         image.save(fp=newFile)
         return register_face(newFile, api_token_for_web, upload_id)
     else:
@@ -140,8 +141,6 @@ def register_face(file_stream, api_token_for_web, upload_id):
     company_id = funcionario['company_id']
     user_id = funcionario['user_id']
 
-    image = Image.open(file_stream).convert('RGB')
-    image.save(file_stream)
     image = face_recognition.load_image_file(file_stream)
 
     image_face_encoding = face_recognition.face_encodings(image)
@@ -205,6 +204,7 @@ def upload_image():
             image.thumbnail((700, 700))
 
             newFile = "./pictures/" + file.filename
+            image = image.convert('RGB')
             image.save(newFile)
             return detect_faces_in_image(newFile)
 

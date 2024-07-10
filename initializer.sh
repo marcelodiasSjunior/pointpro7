@@ -2,9 +2,9 @@
  cp ./flask/.env.example ./flask/.env
  cd laravel && npm i && cd ../
  docker-compose -f ./pro7_dev/docker-compose.yml up -d --build
- docker exec pro7_php_dev composer update
- docker exec pro7_php_dev php artisan migrate:refresh --seed --force
- docker restart pro7_php_dev
+ docker exec pro7_php composer update
+ docker exec pro7_php php artisan migrate:refresh --seed --force
+ docker restart pro7_php
 
 #cp ./laravel/.env.production ./laravel/.env
 #cp ./flask/.env.production ./flask/.env

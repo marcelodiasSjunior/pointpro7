@@ -76,7 +76,7 @@
                                                                 <i class="i-Speach-Bubbles fw-bold text-primary header-icon" style="font-size: 33px;"></i>
                                                             </a>
                                                             <div class="dropdown-menu menu-opcoes" x-placement="bottom-start">
-                                                                <a class="dropdown-item ul-widget__link--font" href="/observacoes/{{ $atividade->id}}">Observações da Atividade</a>
+                                                                <a class="dropdown-item ul-widget__link--font" href="/observacoes/{{ $atividade->atividade_id}}">Observações da Atividade</a>
                                                             </div>
                                                         </td>
                                                     </tr>

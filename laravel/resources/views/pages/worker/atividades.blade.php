@@ -113,11 +113,7 @@
                                                                 <i class="i-Speach-Bubbles fw-bold text-primary header-icon" style="font-size: 33px;"></i>
                                                             </a>
                                                             <div class="dropdown-menu menu-opcoes" x-placement="bottom-start">
-                                                            @if(isset($atividade->atividade_funcionario->observacoes[0]))
                                                              <a class="dropdown-item ul-widget__link--font" href="/observacoes/{{$atividade->atividade_funcionario->id}}">Observações da Atividade</a>
-                                                            @else
-                                                             <a class="dropdown-item ul-widget__link--font" href="#">Nenhuma observação cadastrada</a>
-                                                            @endif
                                                             </div>
                                                         </td>
                                                     </tr>

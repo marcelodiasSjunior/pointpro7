@@ -51,7 +51,7 @@ class ObservacoesController extends Controller
         $company_id = $req->user()->company->id;
 
         $atividade_id = AtividadeFuncionario::where('id', $atividade_funcionario_id)->where('funcionario_id', $funcionario_id)->where('status', 1)->value('atividade_id');
-        $atividade_description = Atividade::where('company_id', $company_id)->where('id', $atividade_id)->value('description');  
+        $atividade_description = Atividade::where('company_id', $company_id)->where('id', $atividade_id)->value('description');
 
         $observacoes = Observacao::where('atividade_funcionario_id', $atividade_funcionario_id)
         ->where('funcionario_id', $funcionario_id)

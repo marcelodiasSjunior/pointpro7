@@ -212,14 +212,13 @@ def upload_image():
 
             exif = image._getexif()
 
-            if exif:
+            if exif and orientation in exif:
                 if exif[orientation] == 3:
                     image = image.rotate(180, expand=True)
                 elif exif[orientation] == 6:
                     image = image.rotate(270, expand=True)
                 elif exif[orientation] == 8:
                     image = image.rotate(90, expand=True)
-
             image.thumbnail((700, 700))
 
             newFile = "./pictures/"+file.filename

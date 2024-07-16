@@ -128,9 +128,9 @@ function novaBiometria() {
                 window.location.href = "/nova-biometria";
             }
         });
-    
+
 }
 
 </script>
-
+@include('components.scripts')
 </html>

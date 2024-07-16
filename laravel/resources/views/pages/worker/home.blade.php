@@ -187,7 +187,7 @@
                                             <td>
                                                 @if($atividade->observacao)
                                                 {{ $atividade->observacao }}
-                                                @else 
+                                                @else
                                                 Nenhuma mensagem enviada ou recebida
                                                 @endif
                                             </td>
@@ -208,7 +208,7 @@
                                                 <div class="dropdown-menu menu-opcoes" x-placement="bottom-start">
                                                 @if(isset($atividade->observacao))
                                                 <a class="dropdown-item ul-widget__link--font" href="/observacoes/{{$atividade->id}}">Observações da Atividade</a>
-                                                @else 
+                                                @else
                                                 <a class="dropdown-item ul-widget__link--font" href="#">Nenhuma observação cadastrada</a>
                                                 @endif
                                                 </div>
@@ -298,7 +298,7 @@
                                                         @if($totalBatidasPontoHoje < 4) <div id="webcamFacial" class="alert alert-dismissible fade show alert-card alert-danger" style="display:none" role="alert"><strong class="text-capitalize">Erro:</strong> :Foto invalida </div>
                                                     <div id="webcamWrapper">
 
-                                                        <video id="webcam"></video>
+                                                        <video id="webcam" autoplay muted playsinline></video>
 
                                                         <canvas id="canvasWebcam"></canvas>
                                                     </div>

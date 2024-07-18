@@ -278,8 +278,8 @@ def detect_faces_in_image(file_stream):
 
     match_results = face_recognition.face_distance(
         all_face_encodings, unknown_face_encodings[0])
-
-    os.remove(file_stream)
+    if os.path.exists(file_stream):
+        os.remove(file_stream)
 
 
     for i, face_distance in enumerate(match_results):

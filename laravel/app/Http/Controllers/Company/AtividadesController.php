@@ -398,6 +398,7 @@ class AtividadesController extends Controller
         }
 
         // Atualiza os dias da semana da atividade
+        // Primeiro, remove os dias da semana existentes para evitar duplicatas
         AtividadeDiasSemana::where('company_id', $company_id)
             ->where('atividade_id', $atividade_id)
             ->delete();
@@ -411,6 +412,7 @@ class AtividadesController extends Controller
             ]);
 
         // Atualiza a tabela AtividadeFuncionario apenas se necessário, sem deletar
+        // Verifica se existem funcionários associados à atividade e atualiza conforme necessário
         $atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
             ->where('atividade_id', $atividade_id)
             ->get();
@@ -466,7 +468,6 @@ class AtividadesController extends Controller
             ]);
         }
 
-
         // Cadastra funcionarios para atividade
         $funcionarios_todos = null;
 
@@ -484,12 +485,21 @@ class AtividadesController extends Controller
         }
 
         foreach ($funcionarios as $f2) {
-            AtividadeFuncionario::create([
+            // Verifica se já existe um registro para evitar duplicação
+            $existingRecord = AtividadeFuncionario::where([
                 'company_id' => $req->user()->company->id,
                 'funcionario_id' => isset($f2->id) ? $f2->id : $f2,
                 'atividade_id' => $atividade->id,
-                'status' => 1
-            ]);
+            ])->first();
+
+            if (!$existingRecord) {
+                AtividadeFuncionario::create([
+                    'company_id' => $req->user()->company->id,
+                    'funcionario_id' => isset($f2->id) ? $f2->id : $f2,
+                    'atividade_id' => $atividade->id,
+                    'status' => 1
+                ]);
+            }
         }
     }
 }

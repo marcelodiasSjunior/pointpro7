@@ -132,5 +132,4 @@ function novaBiometria() {
 }
 
 </script>
-@include('components.scripts')
 </html>

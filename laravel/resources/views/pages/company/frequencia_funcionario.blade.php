@@ -102,10 +102,12 @@
                              <td>
                                  @if($batida[0]->ferias)
                                  <span class="badge bg-warning">Férias</span>
-                                 @elseif($batida->todas->count() < 4)
+                                 @elseif($batida->todas->count() < 1)
                                  <span class="badge bg-danger">Não compareceu</span>
                                  @elseif(isset($batida->todas[0]->hora) && isset($batida->todas[1]->hora) && isset($batida->todas[2]->hora) && isset($batida->todas[3]->hora))
                                  <span class="badge bg-success">Compareceu</span>
+                                 @elseif($batida->todas->count() > 1 && $batida->todas->count() < 4)
+                                    <span class="badge bg-warning">Em Jornada</span>
                                  @endif
                              </td>
                              <td>

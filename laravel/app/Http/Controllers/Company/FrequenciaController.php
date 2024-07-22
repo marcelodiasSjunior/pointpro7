@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Exports\FrequenciasExport;
 use App\Http\Controllers\Controller;
 use App\Http\Services\CommomDataService;
 use App\Models\Company;
@@ -10,6 +11,7 @@ use App\Models\Funcao;
 use App\Models\Funcionario;
 use App\Models\Jornada;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;

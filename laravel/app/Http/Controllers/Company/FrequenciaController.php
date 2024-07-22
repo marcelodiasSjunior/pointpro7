@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Exports\FrequenciasExport;
 use App\Http\Controllers\Controller;
 use App\Http\Services\CommomDataService;
 use App\Models\Company;
@@ -9,6 +10,7 @@ use App\Models\Frequencia;
 use App\Models\Funcao;
 use App\Models\Funcionario;
 use App\Models\Jornada;
+use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use DateInterval;
@@ -234,11 +236,18 @@ class FrequenciaController extends Controller
         }
 
         // Combine current date with the time
-        $ponto = date('Y-m-d') . ' ' . $hora;
+        $dataOriginal = date('Y-m-d', strtotime($frequencia->ponto));
+        $ponto = $dataOriginal . ' ' . $hora . ':00';
 
         $frequencia->ponto = $ponto;
         $frequencia->save();
 
         return back()->with('success', 'Atualização realizada com sucesso!');
+    }
+
+    public function exportXLS(Request $req, $funcionario_id, $ano, $mes)
+    {
+        $company_id = $req->user()->company->id;
+        return Excel::download(new FrequenciasExport($company_id, $funcionario_id, $ano, $mes), 'Frequencia.xlsx');
     }
 }

@@ -233,8 +233,8 @@ class FrequenciaController extends Controller
             return response()->json(['error' => 'Hora inválida. Deve estar no formato HH:MM.'], 400);
         }
 
-        // Combine current date with the time
-        $ponto = date('Y-m-d') . ' ' . $hora;
+        $dataOriginal = date('Y-m-d', strtotime($frequencia->ponto));
+        $ponto = $dataOriginal . ' ' . $hora . ':00';
 
         $frequencia->ponto = $ponto;
         $frequencia->save();

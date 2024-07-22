@@ -128,9 +128,8 @@ function novaBiometria() {
                 window.location.href = "/nova-biometria";
             }
         });
-    
+
 }
 
 </script>
-
 </html>

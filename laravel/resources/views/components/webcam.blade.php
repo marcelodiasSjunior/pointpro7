@@ -8,7 +8,7 @@
     </div>
 
 
-    <video id="webcam"></video>
+    <video id="webcam" autoplay muted playsinline></video>
 
     <button id="sendPicture" class="btn btn-success btn-icon text-white" style="display:none" type="button" aria-haspopup="true" aria-expanded="false">
         <span class="ul-btn__icon"><i class="i-Camera"></i></span>

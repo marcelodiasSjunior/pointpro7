@@ -10,8 +10,8 @@ use App\Models\Frequencia;
 use App\Models\Funcao;
 use App\Models\Funcionario;
 use App\Models\Jornada;
-use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
@@ -235,7 +235,6 @@ class FrequenciaController extends Controller
             return response()->json(['error' => 'Hora inválida. Deve estar no formato HH:MM.'], 400);
         }
 
-        // Combine current date with the time
         $dataOriginal = date('Y-m-d', strtotime($frequencia->ponto));
         $ponto = $dataOriginal . ' ' . $hora . ':00';
 
@@ -245,9 +244,9 @@ class FrequenciaController extends Controller
         return back()->with('success', 'Atualização realizada com sucesso!');
     }
 
-    public function exportXLS(Request $req, $funcionario_id, $ano, $mes)
-    {
+    public function exportXLS(Request $req, $funcionario_id, $ano, $mes) {
         $company_id = $req->user()->company->id;
         return Excel::download(new FrequenciasExport($company_id, $funcionario_id, $ano, $mes), 'Frequencia.xlsx');
     }
+
 }

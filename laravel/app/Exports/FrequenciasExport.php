@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Frequencia;
 use App\Models\Funcionario;
+use App\Models\Jornada;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Carbon\Carbon;
@@ -45,14 +46,18 @@ class FrequenciasExport implements FromCollection, WithHeadings
             ->where('company_id', $this->company_id)
             ->first();
 
+        $jornada = $funcionario->jornada;
         $funcionarioUser = $funcionario->user;
 
-        $data = $allDays->map(function ($date) use ($frequencias, $funcionarioUser) {
+        $data = $allDays->map(function ($date) use ($frequencias, $funcionarioUser, $jornada) {
             $day = $date->format('d/m/Y');
             $month = $date->translatedFormat('F'); // Nome do mês em português
             $year = $date->format('Y');
             $week = $date->translatedFormat('l'); // Nome do dia da semana em português
             $dayData = $frequencias->get($date->format('Y-m-d'));
+
+            $diaDaSemana = strtolower($date->isoFormat('dddd')); // traduzido para português
+            $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
 
             if ($dayData) {
                 $sortedBatidas = $dayData->sortBy('ponto')->values();
@@ -60,6 +65,22 @@ class FrequenciasExport implements FromCollection, WithHeadings
                 $inicioIntervalo = isset($sortedBatidas[1]) ? Carbon::parse($sortedBatidas[1]->ponto)->format('H:i') : '-';
                 $fimIntervalo = isset($sortedBatidas[2]) ? Carbon::parse($sortedBatidas[2]->ponto)->format('H:i') : '-';
                 $fimJornada = isset($sortedBatidas[3]) ? Carbon::parse($sortedBatidas[3]->ponto)->format('H:i') : '-';
+
+                $horasTrabalhadas = 0;
+                if (isset($sortedBatidas[0]) && isset($sortedBatidas[3])) {
+                    $inicioJornadaTime = Carbon::parse($sortedBatidas[0]->ponto);
+                    $fimJornadaTime = Carbon::parse($sortedBatidas[3]->ponto);
+                    $horasTrabalhadas = $fimJornadaTime->diffInHours($inicioJornadaTime);
+
+                    if (isset($sortedBatidas[1]) && isset($sortedBatidas[2])) {
+                        $inicioIntervaloTime = Carbon::parse($sortedBatidas[1]->ponto);
+                        $fimIntervaloTime = Carbon::parse($sortedBatidas[2]->ponto);
+                        $intervalo = $fimIntervaloTime->diffInHours($inicioIntervaloTime);
+                        $horasTrabalhadas -= $intervalo;
+                    }
+                }
+
+                $horasExtras = max(0, $horasTrabalhadas - $horasPrevistas);
 
                 $status = "Compareceu";
                 if (!$inicioJornada && !$inicioIntervalo && !$fimIntervalo && !$fimJornada) {
@@ -77,7 +98,8 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Início do intervalo' => $inicioIntervalo,
                     'Fim do intervalo' => $fimIntervalo,
                     'Fim da jornada' => $fimJornada,
-                    'Status' => $status
+                    'Status' => $status,
+                    'Horas Extras' => $horasExtras
                 ];
             } else {
                 return [
@@ -89,7 +111,8 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Início do intervalo' => '-',
                     'Fim do intervalo' => '-',
                     'Fim da jornada' => '-',
-                    'Status' => 'Não compareceu'
+                    'Status' => 'Não compareceu',
+                    'Horas Extras' => 0
                 ];
             }
         });
@@ -107,7 +130,8 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Início do intervalo',
             'Fim do intervalo',
             'Fim da jornada',
-            'Status'
+            'Status',
+            'Horas Extras'
         ];
     }
 }

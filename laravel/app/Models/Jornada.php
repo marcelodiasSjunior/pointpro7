@@ -32,4 +32,19 @@ class Jornada extends Model
             get: fn () => $this->segunda + $this->terca + $this->quarta + $this->quinta + $this->sexta + $this->sabado + $this->domingo,
         );
     }
+
+    public function getHorasDia($dia)
+    {
+        $map = [
+            'segunda-feira' => 'segunda',
+            'terça-feira' => 'terca',
+            'quarta-feira' => 'quarta',
+            'quinta-feira' => 'quinta',
+            'sexta-feira' => 'sexta',
+            'sábado' => 'sabado',
+            'domingo' => 'domingo'
+        ];
+
+        return $this->{$map[$dia] ?? 'segunda'}; // Default to 'segunda' if the day is not found
+    }
 }

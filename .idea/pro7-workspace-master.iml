@@ -171,6 +171,10 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/webmozart/assert" />
       <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/aws/aws-sdk-php" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/league/commonmark" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/phar-io/version" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/sabberworm/php-css-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/symfony/polyfill-intl-normalizer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

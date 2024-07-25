@@ -246,7 +246,62 @@ class FrequenciaController extends Controller
 
     public function exportXLS(Request $req, $funcionario_id, $ano, $mes) {
         $company_id = $req->user()->company->id;
-        return Excel::download(new FrequenciasExport($company_id, $funcionario_id, $ano, $mes), 'Frequencia.xlsx');
+        $func = Funcionario::where('id', $funcionario_id)->first();
+        $nomeFuncionario = $func->user->name;
+        return Excel::download(new FrequenciasExport($company_id, $funcionario_id, $ano, $mes), $nomeFuncionario.'.xlsx');
     }
+
+    public function add(Request $request)
+    {
+        $request->validate([
+            'funcionario_id' => 'required|exists:funcionarios,id',
+            'data' => 'required|date_format:Y-m-d',
+            'hora' => 'required|date_format:H:i',
+        ]);
+
+        $funcionario_id = $request->input('funcionario_id');
+        $data = $request->input('data');
+        $hora = $request->input('hora');
+        $ponto = $data . ' ' . $hora . ':00';
+        $company_id = $request->user()->company->id;
+
+        // Verificar as frequências existentes no dia
+        $existingFrequencias = Frequencia::where('funcionario_id', $funcionario_id)
+            ->where('company_id', $company_id)
+            ->whereDate('ponto', $data)
+            ->get();
+
+        // Determinar a direction
+        $direction = $this->determineDirection($existingFrequencias);
+
+        // Criar o novo registro de frequência
+        Frequencia::create([
+            'company_id' => $company_id,
+            'funcionario_id' => $funcionario_id,
+            'direction' => $direction,
+            'ponto' => $ponto,
+        ]);
+
+        return back()->with('success', 'Registro de ponto adicionado com sucesso!');
+    }
+
+    private function determineDirection($existingFrequencias)
+    {
+        $countDirection1 = $existingFrequencias->where('direction', 1)->count();
+        $countDirection2 = $existingFrequencias->where('direction', 2)->count();
+
+        if ($countDirection1 == 0) {
+            return 1; // Início da jornada
+        } elseif ($countDirection1 == 1 && $countDirection2 == 0) {
+            return 2; // Início do intervalo
+        } elseif ($countDirection1 == 1 && $countDirection2 == 1) {
+            return 1; // Fim do intervalo
+        } elseif ($countDirection1 == 2 && $countDirection2 == 1) {
+            return 2; // Fim da jornada
+        }
+
+        return 1; // Padrão caso todas as direções estejam presentes (caso raro)
+    }
+
 
 }

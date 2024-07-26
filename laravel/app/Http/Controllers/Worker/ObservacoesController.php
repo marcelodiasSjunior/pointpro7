@@ -19,7 +19,7 @@ class ObservacoesController extends Controller
     public function listar(Request $req)
     {
         $user = $req->user();
-        $funcionario = $user->funcionario;        
+        $funcionario = $user->funcionario;
         $company_id = $funcionario->company_id;
         $funcao_id = $funcionario->funcao_id;
         $funcao_title = Funcao::where('id', $funcao_id)->value('title');
@@ -89,7 +89,6 @@ class ObservacoesController extends Controller
     {
         $company_id = $req->user()->funcionario->company->id;
         $funcionario_id = $req->user()->funcionario->id;
-
         Observacao::create([
             'company_id' => $company_id,
             'funcionario_id' => $funcionario_id,

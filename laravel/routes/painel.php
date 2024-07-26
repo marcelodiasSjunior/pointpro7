@@ -84,6 +84,7 @@ Route::post('/observacoes/{id}/{id2}', [ObservacoesController::class, 'send_mess
 
 // Frequencia Routes
 Route::get('/frequencia', [FrequenciaController::class, 'listar']);
+Route::post('/frequencia/add', [FrequenciaController::class, 'add'])->name('frequencias.add');
 Route::get('/frequencia/{id}', [FrequenciaController::class, 'funcionario']);
 Route::get('/frequencia/{id}/export-pdf/{ano}/{mes}', [FrequenciaController::class, 'exportPdf']);
 Route::get('/frequencia/{id}/export-xls/{ano}/{mes}', [FrequenciaController::class, 'exportXLS']);

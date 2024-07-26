@@ -81,9 +81,7 @@ class Frequencia extends Model
             Auditoria::create([
                 'company_id' => $frequencia->company_id,
                 'funcionario_id' => $frequencia->funcionario_id,
-                'frequencia_id' => $frequencia->id,
-                'dataAlteracao' => Carbon::now(),
-                'acaoRealizada' => 'Adicionada nova frequência: ' . $frequencia->ponto,
+                'acao' => 'Adicionada nova frequência: ' . $frequencia->ponto,
             ]);
         });
 
@@ -91,9 +89,7 @@ class Frequencia extends Model
             Auditoria::create([
                 'company_id' => $frequencia->company_id,
                 'funcionario_id' => $frequencia->funcionario_id,
-                'frequencia_id' => $frequencia->id,
-                'dataAlteracao' => Carbon::now(),
-                'acaoRealizada' => 'Atualizada frequência: ' . $frequencia->ponto,
+                'acao' => 'Atualizada frequência: ' . $frequencia->ponto,
             ]);
         });
     }

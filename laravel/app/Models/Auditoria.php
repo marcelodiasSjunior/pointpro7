@@ -12,8 +12,6 @@ class Auditoria extends Model
     protected $fillable = [
         'company_id',
         'funcionario_id',
-        'frequencia_id',
-        'dataAlteracao',
-        'acaoRealizada'
+        'acao'
     ];
 }

@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('auditoria', function (Blueprint $table) {
+        Schema::create('auditorias', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('company_id');
             $table->foreign('company_id')->references('id')->on('companies');
-            $table->unsignedBigInteger('funionario_id');
-            $table->foreign('funionario_id')->references('id')->on('funcionarios');
-            $table->unsignedBigInteger('frequencia_id');
-            $table->foreign('frequencia_id')->references('id')->on('frequencias');
+            $table->unsignedBigInteger('funcionario_id');
+            $table->foreign('funcionario_id')->references('id')->on('funcionarios');
             $table->mediumText('acao');
             $table->softDeletes();
             $table->timestamps();

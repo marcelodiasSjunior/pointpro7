@@ -32,6 +32,12 @@
                             </span>
                             <span class="ul-btn__text"> Exportar Excel</span>
                         </a>
+                        <a class="btn btn-primary btn-icon m-1" role="button" href="/auditoria/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}" target="_blank">
+                            <span class="ul-btn__icon">
+                                <i class="i-Calendar" style="font-size: 18px;"></i>
+                            </span>
+                            <span class="ul-btn__text">Auditoria</span>
+                        </a>
                     </div>
                     <p class="w-50">
                         Acompanhe o andamento da <code><b>frequência do funcionário</b></code>:

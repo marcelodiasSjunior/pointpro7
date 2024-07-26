@@ -74,4 +74,27 @@ class Frequencia extends Model
     {
         return $this->hasMany(Frequencia::class);
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($frequencia) {
+            Auditoria::create([
+                'company_id' => $frequencia->company_id,
+                'funcionario_id' => $frequencia->funcionario_id,
+                'frequencia_id' => $frequencia->id,
+                'dataAlteracao' => Carbon::now(),
+                'acaoRealizada' => 'Adicionada nova frequência: ' . $frequencia->ponto,
+            ]);
+        });
+
+        static::updating(function ($frequencia) {
+            Auditoria::create([
+                'company_id' => $frequencia->company_id,
+                'funcionario_id' => $frequencia->funcionario_id,
+                'frequencia_id' => $frequencia->id,
+                'dataAlteracao' => Carbon::now(),
+                'acaoRealizada' => 'Atualizada frequência: ' . $frequencia->ponto,
+            ]);
+        });
+    }
 }

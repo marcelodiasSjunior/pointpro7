@@ -99,7 +99,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Fim do intervalo' => $fimIntervalo,
                     'Fim da jornada' => $fimJornada,
                     'Status' => $status,
-                    'Saldo' => $horasExtras
+                    'Horas Extras' => $horasExtras
                 ];
             } else {
                 return [
@@ -112,7 +112,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Fim do intervalo' => '-',
                     'Fim da jornada' => '-',
                     'Status' => 'Não compareceu',
-                    'Saldo' => 0
+                    'Horas Extras' => 0
                 ];
             }
         });
@@ -131,7 +131,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Fim do intervalo',
             'Fim da jornada',
             'Status',
-            'Saldo'
+            'Horas Extras'
         ];
     }
 }

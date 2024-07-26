@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Company\AtividadesController;
-use App\Http\Controllers\Company\AuditoriasController;
 use App\Http\Controllers\Company\AvaliacaoController;
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\Company\FeedbackController;
@@ -115,4 +114,3 @@ Route::post('/feedback/funcionario/{id}', [FeedbackController::class, 'send_mess
 // Avaliações Routes
 Route::get('/avaliacoes/funcionario/{id}', [AvaliacaoController::class, 'funcionario']);
 Route::post('/avaliacoes/funcionario/{id}', [AvaliacaoController::class, 'send_avaliacao']);
-Route::get('/auditoria/{id}/export-xls/{ano}/{mes}', [AuditoriasController::class, 'exportXLS']);

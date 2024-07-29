@@ -20,24 +20,40 @@
                         </span> Controle de frequência<br><br>{{$funcao_title}} | {{$jornada_title}} | {{ $funcionario_name}}
                     </h4>
                     <div class="text-end w-50 float-end">
-                        <a class="btn btn-primary btn-icon m-1" role="button" href="/frequencia/{{ $funcionario_id }}/export-pdf/{{ $ano }}/{{ $mes }}" target="_blank">
+                        <a class="btn btn-primary btn-icon m-1" role="button"
+                            href="/frequencia/{{ $funcionario_id }}/export-pdf/{{ $ano }}/{{ $mes }}"
+                            target="_blank">
                             <span class="ul-btn__icon">
                                 <i class="i-File-Word" style="font-size: 18px;"></i>
                             </span>
                             <span class="ul-btn__text"> Exportar PDF</span>
                         </a>
-                        <a class="btn btn-primary btn-icon m-1" role="button" href="/frequencia/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}" target="_blank">
+                        <a class="btn btn-primary btn-icon m-1" role="button"
+                            href="/frequencia/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}"
+                            target="_blank">
                             <span class="ul-btn__icon">
                                 <i class="i-File-Word" style="font-size: 18px;"></i>
                             </span>
                             <span class="ul-btn__text"> Exportar Excel</span>
                         </a>
-                        <a class="btn btn-primary btn-icon m-1" role="button" href="/auditoria/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}" target="_blank">
-                            <span class="ul-btn__icon">
-                                <i class="i-Calendar" style="font-size: 18px;"></i>
-                            </span>
-                            <span class="ul-btn__text">Auditoria</span>
-                        </a>
+                        <div class="btn-group m-1">
+                            <button type="button" class="btn btn-primary btn-icon dropdown-toggle"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="ul-btn__icon">
+                                    <i class="i-Calendar" style="font-size: 18px;"></i>
+                                </span>
+                                <span class="ul-btn__text">Auditoria</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item"
+                                        href="/auditoria/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}"
+                                        target="_blank">Exportar para Excel</a></li>
+                                <li><a class="dropdown-item"
+                                        href="{{ route('auditoria.historico', ['funcionario_id' => $funcionario_id, 'ano' => $ano, 'mes' => $mes]) }}">Visualizar
+                                        Histórico</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <p class="w-50">
                         Acompanhe o andamento da <code><b>frequência do funcionário</b></code>:

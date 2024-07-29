@@ -116,3 +116,4 @@ Route::post('/feedback/funcionario/{id}', [FeedbackController::class, 'send_mess
 Route::get('/avaliacoes/funcionario/{id}', [AvaliacaoController::class, 'funcionario']);
 Route::post('/avaliacoes/funcionario/{id}', [AvaliacaoController::class, 'send_avaliacao']);
 Route::get('/auditoria/{id}/export-xls/{ano}/{mes}', [AuditoriasController::class, 'exportXLS']);
+Route::get('/auditoria/historico/{funcionario_id}/{ano}/{mes}', [AuditoriasController::class, 'historico'])->name('auditoria.historico');

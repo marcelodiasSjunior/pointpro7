@@ -57,30 +57,26 @@ class FrequenciasExport implements FromCollection, WithHeadings
             $dayData = $frequencias->get($date->format('Y-m-d'));
 
             $diaDaSemana = strtolower($date->isoFormat('dddd')); // traduzido para português
-            $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
+            $horasPrevistas = Carbon::parse($jornada->getHorasDia($diaDaSemana));
 
             if ($dayData) {
                 $sortedBatidas = $dayData->sortBy('ponto')->values();
-                $inicioJornada = isset($sortedBatidas[0]) ? Carbon::parse($sortedBatidas[0]->ponto)->format('H:i') : '-';
-                $inicioIntervalo = isset($sortedBatidas[1]) ? Carbon::parse($sortedBatidas[1]->ponto)->format('H:i') : '-';
-                $fimIntervalo = isset($sortedBatidas[2]) ? Carbon::parse($sortedBatidas[2]->ponto)->format('H:i') : '-';
-                $fimJornada = isset($sortedBatidas[3]) ? Carbon::parse($sortedBatidas[3]->ponto)->format('H:i') : '-';
+                $inicioJornada = isset($sortedBatidas[0]) ? Carbon::parse($sortedBatidas[0]->ponto) : null;
+                $inicioIntervalo = isset($sortedBatidas[1]) ? Carbon::parse($sortedBatidas[1]->ponto) : null;
+                $fimIntervalo = isset($sortedBatidas[2]) ? Carbon::parse($sortedBatidas[2]->ponto) : null;
+                $fimJornada = isset($sortedBatidas[3]) ? Carbon::parse($sortedBatidas[3]->ponto) : null;
 
                 $horasTrabalhadas = 0;
-                if (isset($sortedBatidas[0]) && isset($sortedBatidas[3])) {
-                    $inicioJornadaTime = Carbon::parse($sortedBatidas[0]->ponto);
-                    $fimJornadaTime = Carbon::parse($sortedBatidas[3]->ponto);
-                    $horasTrabalhadas = $fimJornadaTime->diffInHours($inicioJornadaTime);
+                if ($inicioJornada && $fimJornada) {
+                    $horasTrabalhadas = $fimJornada->diffInMinutes($inicioJornada);
 
-                    if (isset($sortedBatidas[1]) && isset($sortedBatidas[2])) {
-                        $inicioIntervaloTime = Carbon::parse($sortedBatidas[1]->ponto);
-                        $fimIntervaloTime = Carbon::parse($sortedBatidas[2]->ponto);
-                        $intervalo = $fimIntervaloTime->diffInHours($inicioIntervaloTime);
+                    if ($inicioIntervalo && $fimIntervalo) {
+                        $intervalo = $fimIntervalo->diffInMinutes($inicioIntervalo);
                         $horasTrabalhadas -= $intervalo;
                     }
                 }
 
-                $horasExtras = max(0, $horasTrabalhadas - $horasPrevistas);
+                $horasExtras = max(0, $horasTrabalhadas - $horasPrevistas->diffInMinutes(Carbon::createFromTime(0, 0, 0)));
 
                 $status = "Compareceu";
                 if (!$inicioJornada && !$inicioIntervalo && !$fimIntervalo && !$fimJornada) {
@@ -94,12 +90,12 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Mês' => $month,
                     'Ano' => $year,
                     'Semana' => $week,
-                    'Início da jornada' => $inicioJornada,
-                    'Início do intervalo' => $inicioIntervalo,
-                    'Fim do intervalo' => $fimIntervalo,
-                    'Fim da jornada' => $fimJornada,
+                    'Início da jornada' => $inicioJornada ? $inicioJornada->format('H:i') : '-',
+                    'Início do intervalo' => $inicioIntervalo ? $inicioIntervalo->format('H:i') : '-',
+                    'Fim do intervalo' => $fimIntervalo ? $fimIntervalo->format('H:i') : '-',
+                    'Fim da jornada' => $fimJornada ? $fimJornada->format('H:i') : '-',
                     'Status' => $status,
-                    'Horas Extras' => $horasExtras
+                    'Horas Extras' => gmdate('H:i', $horasExtras * 60)
                 ];
             } else {
                 return [
@@ -112,7 +108,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Fim do intervalo' => '-',
                     'Fim da jornada' => '-',
                     'Status' => 'Não compareceu',
-                    'Horas Extras' => 0
+                    'Horas Extras' => '00:00'
                 ];
             }
         });

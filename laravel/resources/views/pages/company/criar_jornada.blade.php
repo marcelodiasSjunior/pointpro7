@@ -42,38 +42,37 @@
                                     <div class="col-md-2 form-group mb-3"></div>
                                 </div>
 
-
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"></div>
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="basic-url">Carga horaria semanal</label>
+                                        <label for="basic-url">Carga horária semanal</label>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Segunda-feira</span>
-                                            <input class="form-control" name="segunda" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="segunda" value="08:00" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text" id="funcao-add">Terca-feira</span>
-                                            <input class="form-control" name="terca" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <span class="input-group-text" id="funcao-add">Terça-feira</span>
+                                            <input class="form-control" name="terca" value="08:00" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Quarta-feira</span>
-                                            <input class="form-control" name="quarta" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="quarta" value="08:00" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Quinta-feira</span>
-                                            <input class="form-control" name="quinta" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="quinta" value="08:00" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Sexta-feira</span>
-                                            <input class="form-control" name="sexta" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="sexta" value="08:00" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text" id="funcao-add">Sabado</span>
-                                            <input class="form-control" name="sabado" value="0" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <span class="input-group-text" id="funcao-add">Sábado</span>
+                                            <input class="form-control" name="sabado" value="00:00" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Domingo</span>
-                                            <input class="form-control" name="domingo" value="0" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="domingo" value="00:00" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                     </div>
                                     <div class="col-md-2 form-group mb-3"></div>
@@ -86,14 +85,11 @@
                                 </div>
                             </form>
                         </div>
-
                     </div>
 
                 </div>
             </div>
         </div>
-
-
     </div>
     <!-- end of row -->
 </div>

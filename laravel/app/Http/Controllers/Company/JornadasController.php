@@ -25,13 +25,13 @@ class JornadasController extends Controller
         $userWithJornada = Funcionario::where(['jornada_id' => $id, 'company_id' => $req->user()->company->id])->get();
         $jornadasCompany = Jornada::where(['company_id' => $req->user()->company->id])->where('status', 1)->get();
 
-        if($jornadasCompany->count() <= 1) {
+        if ($jornadasCompany->count() <= 1) {
             return Redirect::back()->withErrors(['msg' => 'A empresa possui apenas uma jornada cadastrada. Crie uma nova e mova os funcionários antes de deletar essa jornada!']);
-        } else if ($userWithJornada->count() > 0) {
+        } elseif ($userWithJornada->count() > 0) {
             return Redirect::back()->withErrors(['msg' => 'Essa jornada possui funcionários cadastrados, mova os funcionários ativos para outra jornada.']);
         }
 
-        Jornada::where(['id' => $id, 'company_id' => $req->user()->company->id])->update('status', 0);
+        Jornada::where(['id' => $id, 'company_id' => $req->user()->company->id])->update(['status' => 0]);
 
         Session::flash('success', "Jornada inativada com sucesso!");
         return Redirect::back();
@@ -55,13 +55,22 @@ class JornadasController extends Controller
             'domingo',
         ]);
 
-        $data['description'] = "Segunda  " . $req->segunda . " hora(s), Terca  " . $req->terca . " hora(s), Quarta  " . $req->quarta . " hora(s), Quinta  " . $req->quinta . " hora(s), Sexta  " . $req->sexta . " hora(s), Sabado  " . $req->sabado . ", Domingo  " . $req->domingo . " hora(s)";
+        $data['description'] = sprintf(
+            "Segunda %s hora(s), Terca %s hora(s), Quarta %s hora(s), Quinta %s hora(s), Sexta %s hora(s), Sabado %s, Domingo %s hora(s)",
+            $req->segunda,
+            $req->terca,
+            $req->quarta,
+            $req->quinta,
+            $req->sexta,
+            $req->sabado,
+            $req->domingo
+        );
 
         $data['company_id'] = $req->user()->company->id;
 
         Jornada::create($data);
 
-        Session::flash('success', "jornada criada com sucesso");
+        Session::flash('success', "Jornada criada com sucesso");
         return redirect('/jornadas');
     }
 
@@ -85,7 +94,16 @@ class JornadasController extends Controller
             'domingo'
         ]);
 
-        $data['description'] = "Segunda  " . $req->segunda . " hora(s), Terca  " . $req->terca . " hora(s), Quarta  " . $req->quarta . " hora(s), Quinta  " . $req->quinta . " hora(s), Sexta  " . $req->sexta . " hora(s), Sabado  " . $req->sabado . ", Domingo  " . $req->domingo . " hora(s)";
+        $data['description'] = sprintf(
+            "Segunda %s hora(s), Terca %s hora(s), Quarta %s hora(s), Quinta %s hora(s), Sexta %s hora(s), Sabado %s, Domingo %s hora(s)",
+            $req->segunda,
+            $req->terca,
+            $req->quarta,
+            $req->quinta,
+            $req->sexta,
+            $req->sabado,
+            $req->domingo
+        );
 
         $data['company_id'] = $req->user()->company->id;
 

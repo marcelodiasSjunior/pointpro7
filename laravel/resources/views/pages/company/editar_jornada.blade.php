@@ -46,34 +46,34 @@
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"></div>
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="basic-url">Carga horaria semanal</label>
+                                        <label for="basic-url">Carga horária semanal</label>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Segunda-feira</span>
-                                            <input class="form-control" value="{{ $jornada->segunda }}" name="segunda" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="segunda" value="{{ $jornada->segunda }}" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text" id="funcao-add">Terca-feira</span>
-                                            <input class="form-control" value="{{ $jornada->terca }}" name="terca" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <span class="input-group-text" id="funcao-add">Terça-feira</span>
+                                            <input class="form-control" name="terca" value="{{ $jornada->terca }}" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Quarta-feira</span>
-                                            <input class="form-control" value="{{ $jornada->quarta }}" name="quarta" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="quarta" value="{{ $jornada->quarta }}" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Quinta-feira</span>
-                                            <input class="form-control" value="{{ $jornada->quinta }}" name="quinta" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="quinta" value="{{ $jornada->quinta }}" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Sexta-feira</span>
-                                            <input class="form-control" value="{{ $jornada->sexta }}" name="sexta" value="8" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="sexta" value="{{ $jornada->sexta }}" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text" id="funcao-add">Sabado</span>
-                                            <input class="form-control" value="{{ $jornada->sabado }}" name="sabado" value="0" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <span class="input-group-text" id="funcao-add">Sábado</span>
+                                            <input class="form-control" name="sabado" value="{{ $jornada->sabado }}" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="funcao-add">Domingo</span>
-                                            <input class="form-control" value="{{ $jornada->domingo }}" name="domingo" value="0" required type="number" min="0" max="24" placeholder="" aria-describedby="funcao-add" />
+                                            <input class="form-control" name="domingo" value="{{ $jornada->domingo }}" required type="time" aria-describedby="funcao-add" />
                                         </div>
                                     </div>
                                     <div class="col-md-2 form-group mb-3"></div>
@@ -81,7 +81,7 @@
 
                                 <div class="row">
                                     <div class="col-md-12" style="text-align: center;">
-                                        <button class="btn btn-primary" style="margin-top: 15px;min-width: 290px;"><b>ATUALIZR JORNADA</b></button>
+                                        <button class="btn btn-primary" style="margin-top: 15px;min-width: 290px;"><b>ATUALIZAR JORNADA</b></button>
                                     </div>
                                 </div>
                             </form>

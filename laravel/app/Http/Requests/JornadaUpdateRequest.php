@@ -22,14 +22,14 @@ class JornadaUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required',
-            'segunda' => 'required|numeric',
-            'terca' => 'required|numeric',
-            'quarta' => 'required|numeric',
-            'quinta' => 'required|numeric',
-            'sexta' => 'required|numeric',
-            'sabado' => 'required|numeric',
-            'domingo' => 'required|numeric',
+            'title' => 'required|string|max:255',
+            'segunda' => 'required|date_format:H:i',
+            'terca' => 'required|date_format:H:i',
+            'quarta' => 'required|date_format:H:i',
+            'quinta' => 'required|date_format:H:i',
+            'sexta' => 'required|date_format:H:i',
+            'sabado' => 'required|date_format:H:i',
+            'domingo' => 'required|date_format:H:i',
         ];
     }
 }

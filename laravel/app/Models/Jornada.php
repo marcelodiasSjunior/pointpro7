@@ -56,20 +56,17 @@ class Jornada extends Model
     }
 
     public function getHorasDia($dia)
-{
-    $map = [
-        'segunda-feira' => 'segunda',
-        'terça-feira' => 'terca',
-        'quarta-feira' => 'quarta',
-        'quinta-feira' => 'quinta',
-        'sexta-feira' => 'sexta',
-        'sábado' => 'sabado',
-        'domingo' => 'domingo'
-    ];
+    {
+        $map = [
+            'segunda-feira' => 'segunda',
+            'terça-feira' => 'terca',
+            'quarta-feira' => 'quarta',
+            'quinta-feira' => 'quinta',
+            'sexta-feira' => 'sexta',
+            'sábado' => 'sabado',
+            'domingo' => 'domingo'
+        ];
 
-    $horaString = $this->{$map[$dia] ?? 'segunda'}; // Default to 'segunda' if the day is not found
-    $horaCarbon = \Carbon\Carbon::parse($horaString);
-    return $horaCarbon->hour + ($horaCarbon->minute / 60) + ($horaCarbon->second / 3600);
-}
-
+        return $this->{$map[$dia] ?? 'segunda'}; // Default to 'segunda' if the day is not found
+    }
 }

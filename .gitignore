@@ -1,0 +1,5 @@
+docker/mysql/data/*
+laravel/.env
+flask/.env
+
+

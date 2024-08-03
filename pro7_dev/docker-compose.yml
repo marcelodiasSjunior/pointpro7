@@ -14,8 +14,8 @@ services:
       - ../docker/nginx/key_python.pem:/root/ssl/key_python.pem
       - ../docker/nginx/cert_python.pem:/root/ssl/cert._pythonpem
     ports:
-      - "1414:1414"
-      - "5001:5001"
+      - "1215:1215"
+      - "5000:5000"
     networks:
       - app-network
     depends_on:
@@ -55,6 +55,8 @@ services:
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
       MYSQL_TCP_PORT: 3663
+    ports:
+      - "3306:3663"
     networks:
       - app-network
       

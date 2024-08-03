@@ -1,0 +1,58 @@
+Index: laravel/app/Exports/FrequenciasExport.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\n\nnamespace App\\Exports;\n\nuse App\\Models\\Frequencia;\nuse App\\Models\\Funcionario;\nuse App\\Models\\Jornada;\nuse Maatwebsite\\Excel\\Concerns\\FromCollection;\nuse Maatwebsite\\Excel\\Concerns\\WithHeadings;\nuse Carbon\\Carbon;\n\nclass FrequenciasExport implements FromCollection, WithHeadings\n{\n    protected $company_id;\n    protected $funcionario_id;\n    protected $ano;\n    protected $mes;\n\n    public function __construct($company_id, $funcionario_id, $ano, $mes) {\n        $this->company_id = $company_id;\n        $this->funcionario_id = $funcionario_id;\n        $this->ano = $ano;\n        $this->mes = $mes;\n    }\n\n    public function collection() {\n        $startDate = Carbon::parse(\"{$this->ano}-{$this->mes}-01\");\n        $endDate = Carbon::parse(\"{$this->ano}-{$this->mes}-01\")->endOfMonth();\n        $allDays = collect();\n\n        while ($startDate->lte($endDate)) {\n            $allDays->push($startDate->copy());\n            $startDate->addDay();\n        }\n\n        $frequencias = Frequencia::where('company_id', $this->company_id)\n            ->where('funcionario_id', $this->funcionario_id)\n            ->whereBetween('ponto', [\"{$this->ano}-{$this->mes}-01 00:00:00\", \"{$this->ano}-{$this->mes}-{$endDate->day} 23:59:59\"])\n            ->orderBy('ponto')\n            ->get()\n            ->groupBy(function($date) {\n                return Carbon::parse($date->ponto)->format('Y-m-d');\n            });\n\n        $funcionario = Funcionario::where('id', $this->funcionario_id)\n            ->where('company_id', $this->company_id)\n            ->first();\n\n        $jornada = $funcionario->jornada;\n        $funcionarioUser = $funcionario->user;\n\n        $data = $allDays->map(function ($date) use ($frequencias, $funcionarioUser, $jornada) {\n            $day = $date->format('d/m/Y');\n            $month = $date->translatedFormat('F'); // Nome do mês em português\n            $year = $date->format('Y');\n            $week = $date->translatedFormat('l'); // Nome do dia da semana em português\n            $dayData = $frequencias->get($date->format('Y-m-d'));\n\n            $diaDaSemana = strtolower($date->isoFormat('dddd')); // traduzido para português\n            $horasPrevistas = $jornada->getHorasDia($diaDaSemana);\n\n            if ($dayData) {\n                $sortedBatidas = $dayData->sortBy('ponto')->values();\n                $inicioJornada = isset($sortedBatidas[0]) ? Carbon::parse($sortedBatidas[0]->ponto)->format('H:i') : '-';\n                $inicioIntervalo = isset($sortedBatidas[1]) ? Carbon::parse($sortedBatidas[1]->ponto)->format('H:i') : '-';\n                $fimIntervalo = isset($sortedBatidas[2]) ? Carbon::parse($sortedBatidas[2]->ponto)->format('H:i') : '-';\n                $fimJornada = isset($sortedBatidas[3]) ? Carbon::parse($sortedBatidas[3]->ponto)->format('H:i') : '-';\n\n                $horasTrabalhadas = 0;\n                if (isset($sortedBatidas[0]) && isset($sortedBatidas[3])) {\n                    $inicioJornadaTime = Carbon::parse($sortedBatidas[0]->ponto);\n                    $fimJornadaTime = Carbon::parse($sortedBatidas[3]->ponto);\n                    $horasTrabalhadas = $fimJornadaTime->diffInHours($inicioJornadaTime);\n\n                    if (isset($sortedBatidas[1]) && isset($sortedBatidas[2])) {\n                        $inicioIntervaloTime = Carbon::parse($sortedBatidas[1]->ponto);\n                        $fimIntervaloTime = Carbon::parse($sortedBatidas[2]->ponto);\n                        $intervalo = $fimIntervaloTime->diffInHours($inicioIntervaloTime);\n                        $horasTrabalhadas -= $intervalo;\n                    }\n                }\n\n                $horasExtras = max(0, $horasTrabalhadas - $horasPrevistas);\n\n                $status = \"Compareceu\";\n                if (!$inicioJornada && !$inicioIntervalo && !$fimIntervalo && !$fimJornada) {\n                    $status = \"Não compareceu\";\n                } elseif (!$fimJornada || !$fimIntervalo || !$inicioIntervalo || !$inicioJornada) {\n                    $status = \"Incompleto\";\n                }\n\n                return [\n                    'Dia' => $day,\n                    'Mês' => $month,\n                    'Ano' => $year,\n                    'Semana' => $week,\n                    'Início da jornada' => $inicioJornada,\n                    'Início do intervalo' => $inicioIntervalo,\n                    'Fim do intervalo' => $fimIntervalo,\n                    'Fim da jornada' => $fimJornada,\n                    'Status' => $status,\n                    'Horas Extras' => $horasExtras\n                ];\n            } else {\n                return [\n                    'Dia' => $day,\n                    'Mês' => $month,\n                    'Ano' => $year,\n                    'Semana' => $week,\n                    'Início da jornada' => '-',\n                    'Início do intervalo' => '-',\n                    'Fim do intervalo' => '-',\n                    'Fim da jornada' => '-',\n                    'Status' => 'Não compareceu',\n                    'Horas Extras' => 0\n                ];\n            }\n        });\n\n        return collect($data);\n    }\n\n    public function headings(): array {\n        return [\n            'Dia',\n            'Mês',\n            'Ano',\n            'Semana',\n            'Início da jornada',\n            'Início do intervalo',\n            'Fim do intervalo',\n            'Fim da jornada',\n            'Status',\n            'Horas Extras'\n        ];\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/laravel/app/Exports/FrequenciasExport.php b/laravel/app/Exports/FrequenciasExport.php
+--- a/laravel/app/Exports/FrequenciasExport.php	
++++ b/laravel/app/Exports/FrequenciasExport.php	
+@@ -70,17 +70,17 @@
+                 if (isset($sortedBatidas[0]) && isset($sortedBatidas[3])) {
+                     $inicioJornadaTime = Carbon::parse($sortedBatidas[0]->ponto);
+                     $fimJornadaTime = Carbon::parse($sortedBatidas[3]->ponto);
+-                    $horasTrabalhadas = $fimJornadaTime->diffInHours($inicioJornadaTime);
++                    $horasTrabalhadas = $fimJornadaTime->diffInMinutes($inicioJornadaTime) / 60;
+ 
+                     if (isset($sortedBatidas[1]) && isset($sortedBatidas[2])) {
+                         $inicioIntervaloTime = Carbon::parse($sortedBatidas[1]->ponto);
+                         $fimIntervaloTime = Carbon::parse($sortedBatidas[2]->ponto);
+-                        $intervalo = $fimIntervaloTime->diffInHours($inicioIntervaloTime);
++                        $intervalo = $fimIntervaloTime->diffInMinutes($inicioIntervaloTime) / 60;
+                         $horasTrabalhadas -= $intervalo;
+                     }
+                 }
+ 
+-                $horasExtras = max(0, $horasTrabalhadas - $horasPrevistas);
++                $horasExtras = $horasTrabalhadas - $horasPrevistas;
+ 
+                 $status = "Compareceu";
+                 if (!$inicioJornada && !$inicioIntervalo && !$fimIntervalo && !$fimJornada) {
+@@ -99,7 +99,7 @@
+                     'Fim do intervalo' => $fimIntervalo,
+                     'Fim da jornada' => $fimJornada,
+                     'Status' => $status,
+-                    'Horas Extras' => $horasExtras
++                    'Saldo' => $horasExtras
+                 ];
+             } else {
+                 return [
+@@ -112,7 +112,7 @@
+                     'Fim do intervalo' => '-',
+                     'Fim da jornada' => '-',
+                     'Status' => 'Não compareceu',
+-                    'Horas Extras' => 0
++                    'Saldo' => 0
+                 ];
+             }
+         });
+@@ -131,7 +131,7 @@
+             'Fim do intervalo',
+             'Fim da jornada',
+             'Status',
+-            'Horas Extras'
++            'Saldo'
+         ];
+     }
+ }

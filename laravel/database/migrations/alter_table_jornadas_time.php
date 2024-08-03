@@ -12,6 +12,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Converting integer values to time format
+        DB::table('jornadas')->get()->each(function ($jornada) {
+            DB::table('jornadas')
+                ->where('id', $jornada->id)
+                ->update([
+                    'segunda' => DB::raw("SEC_TO_TIME(segunda * 3600)"),
+                    'terca' => DB::raw("SEC_TO_TIME(terca * 3600)"),
+                    'quarta' => DB::raw("SEC_TO_TIME(quarta * 3600)"),
+                    'quinta' => DB::raw("SEC_TO_TIME(quinta * 3600)"),
+                    'sexta' => DB::raw("SEC_TO_TIME(sexta * 3600)"),
+                    'sabado' => DB::raw("SEC_TO_TIME(sabado * 3600)"),
+                    'domingo' => DB::raw("SEC_TO_TIME(domingo * 3600)")
+                ]);
+        });
+
+        // Alterando as colunas de INTEGER para TIME
         Schema::table('jornadas', function (Blueprint $table) {
             $table->time('segunda')->nullable()->change();
             $table->time('terca')->nullable()->change();
@@ -21,31 +37,6 @@ return new class extends Migration
             $table->time('sabado')->nullable()->change();
             $table->time('domingo')->nullable()->change();
         });
-
-        // Converting integer values to time format
-        DB::table('jornadas')->get()->each(function ($jornada) {
-            DB::table('jornadas')
-                ->where('id', $jornada->id)
-                ->update([
-                    'segunda' => DB::raw("SEC_TO_TIME({$jornada->segunda} * 3600)"),
-                    'terca' => DB::raw("SEC_TO_TIME({$jornada->terca} * 3600)"),
-                    'quarta' => DB::raw("SEC_TO_TIME({$jornada->quarta} * 3600)"),
-                    'quinta' => DB::raw("SEC_TO_TIME({$jornada->quinta} * 3600)"),
-                    'sexta' => DB::raw("SEC_TO_TIME({$jornada->sexta} * 3600)"),
-                    'sabado' => DB::raw("SEC_TO_TIME({$jornada->sabado} * 3600)"),
-                    'domingo' => DB::raw("SEC_TO_TIME({$jornada->domingo} * 3600)")
-                ]);
-        });
-
-        Schema::table('jornadas', function (Blueprint $table) {
-            $table->time('segunda')->nullable(false)->change();
-            $table->time('terca')->nullable(false)->change();
-            $table->time('quarta')->nullable(false)->change();
-            $table->time('quinta')->nullable(false)->change();
-            $table->time('sexta')->nullable(false)->change();
-            $table->time('sabado')->nullable(false)->change();
-            $table->time('domingo')->nullable(false)->change();
-        });
     }
 
     /**
@@ -53,6 +44,22 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Convertendo os valores de volta para INTEGER antes de alterar o tipo de coluna
+        DB::table('jornadas')->get()->each(function ($jornada) {
+            DB::table('jornadas')
+                ->where('id', $jornada->id)
+                ->update([
+                    'segunda' => DB::raw("TIME_TO_SEC(segunda) / 3600"),
+                    'terca' => DB::raw("TIME_TO_SEC(terca) / 3600"),
+                    'quarta' => DB::raw("TIME_TO_SEC(quarta) / 3600"),
+                    'quinta' => DB::raw("TIME_TO_SEC(quinta) / 3600"),
+                    'sexta' => DB::raw("TIME_TO_SEC(sexta) / 3600"),
+                    'sabado' => DB::raw("TIME_TO_SEC(sabado) / 3600"),
+                    'domingo' => DB::raw("TIME_TO_SEC(domingo) / 3600")
+                ]);
+        });
+
+        // Alterando as colunas de TIME para INTEGER
         Schema::table('jornadas', function (Blueprint $table) {
             $table->integer('segunda')->change();
             $table->integer('terca')->change();

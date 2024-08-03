@@ -13,11 +13,11 @@
         "guzzlehttp/guzzle": "^7.7",
         "intervention/image": "^2.7",
         "kreait/laravel-firebase": "^5.3",
-        "laravel/framework": "*",
+        "laravel/framework": "^10.10",
         "laravel/octane": "^2.0",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "league/flysystem-aws-s3-v3": "*",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "maatwebsite/excel": "^3.1",
         "predis/predis": "^2.2",
         "simplesoftwareio/simple-qrcode": "~4",
@@ -72,8 +72,7 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
-        },
-        "process-timeout": 600
+        }
     },
     "minimum-stability": "stable",
     "prefer-stable": true

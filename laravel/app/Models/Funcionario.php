@@ -71,17 +71,28 @@ class Funcionario extends Model
 
     protected function cargaSemanal(): Attribute
     {
-        $carga_semanal = 0;
-        $carga_semanal += $this->jornada->segunda;
-        $carga_semanal += $this->jornada->terca;
-        $carga_semanal += $this->jornada->quarta;
-        $carga_semanal += $this->jornada->quinta;
-        $carga_semanal += $this->jornada->sexta;
-        $carga_semanal += $this->jornada->sabado;
-        $carga_semanal += $this->jornada->domingo;
         return Attribute::make(
-            get: fn () => $carga_semanal,
+            get: fn () => $this->calcularCargaSemanal(),
         );
+    }
+
+    private function calcularCargaSemanal()
+    {
+        $carga_semanal = 0;
+        $dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+
+        foreach ($dias as $dia) {
+            if (isset($this->jornada->$dia)) {
+                $horasParts = explode(':', $this->jornada->$dia);
+                $horasEmNumeros = (int)$horasParts[0] + (int)$horasParts[1] / 60;
+                if (isset($horasParts[2])) {
+                    $horasEmNumeros += (int)$horasParts[2] / 3600;
+                }
+                $carga_semanal += $horasEmNumeros;
+            }
+        }
+
+        return $carga_semanal;
     }
 
     public function atividades_count()

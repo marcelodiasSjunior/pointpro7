@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 \URL::forceScheme('https');
 
 Route::get('/', [WorkerDashboardController::class, 'home']);
+Route::get('/', [WorkerDashboardController::class, 'home'])->name('worker.home');
 Route::get('/perfil', [WorkerDashboardController::class, 'perfil']);
 Route::post('/perfil', [WorkerDashboardController::class, 'perfil_atualizar']);
 

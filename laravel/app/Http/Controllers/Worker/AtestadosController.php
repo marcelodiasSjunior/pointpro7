@@ -8,6 +8,7 @@ use App\Models\Atestado;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Redirect;
 use Intervention\Image\ImageManagerStatic as Image;
 
 class AtestadosController extends Controller
@@ -48,6 +49,7 @@ class AtestadosController extends Controller
             'endDate' => $endDate,
         ]);
 
-        return $atestado;
+        session()->flash('success', 'Atestado enviado com sucesso!');
+        return redirect()->route('worker.home');
     }
 }

@@ -27,12 +27,12 @@ class AtestadosController extends Controller
                 $constraint->aspectRatio();
             })->encode('jpg', 75);
 
-            Storage::disk('s3')->put($fileName, $image);
+            Storage::disk('s3')->put($fileName, $image, 'public'); // Definindo permissão pública
 
             $mediaType = 'picture';
             $path = $fileName; // Define o path para imagens
         } else {
-            $path = $file->storePubliclyAs($folder, $fileName); // Define o path para PDFs
+            $path = $file->storePubliclyAs($folder, $fileName, 'public'); // Definindo permissão pública
             $mediaType = 'pdf';
         }
 

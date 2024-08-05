@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Company;
 
 use App\Exports\FrequenciasExport;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Worker\AtestadosController;
 use App\Http\Services\CommomDataService;
 use App\Models\Company;
 use App\Models\Frequencia;
-use App\Models\Atestado;
 use App\Models\Funcao;
 use App\Models\Funcionario;
 use App\Models\Jornada;
@@ -55,35 +53,22 @@ class FrequenciaController extends Controller
         $company_id = $req->user()->company->id;
         $commonDates = CommomDataService::getCommonDates($req);
 
-        // Obter o user_id a partir do funcionario_id
-        $user_id = Funcionario::where('id', $funcionario_id)->value('user_id');
-
-        $inicio = Carbon::create($commonDates['yearNumber'], $commonDates['monthNumber'], 1);
-        $fim = Carbon::create($commonDates['yearNumber'], $commonDates['monthNumber'])->endOfMonth();
-
-        $dias = [];
-
-        for ($date = $inicio; $date->lte($fim); $date->addDay()) {
-            $dias[$date->format('Y-m-d')] = [
-                'ponto' => $date->format('Y-m-d'),
-                'frequencias' => [],
-                'atestado' => Atestado::where('user_id', $user_id)
-                    ->whereDate('startDate', '<=', $date)
-                    ->whereDate('endDate', '>=', $date)
-                    ->first()
-            ];
-        }
-
         $frequencias = Frequencia::where('funcionario_id', $funcionario_id)
             ->where('company_id', $company_id)
             ->whereMonth('ponto', $commonDates['monthNumber'])
             ->whereYear('ponto', $commonDates['yearNumber'])
-            ->get();
+            ->get()
+            ->groupBy(function ($val) {
+                return Carbon::parse($val->ponto)->format('d');
+            });
 
-        foreach ($frequencias as $frequencia) {
-            $date = Carbon::parse($frequencia->ponto)->format('Y-m-d');
-            $dias[$date]['frequencias'][] = $frequencia;
-        }
+            foreach ($frequencias as $batida) {
+                $pontoDate = date("Y-m-d", strtotime($batida[0]['ponto']));
+                $batida->todas = Frequencia::where('funcionario_id', $funcionario_id)
+                    ->where('company_id', $company_id)
+                    ->whereDate('ponto', $pontoDate)
+                    ->get();
+            }
 
         $funcao_id = Funcionario::where('id', $funcionario_id)->value('funcao_id');
         $funcao_title = Funcao::where('id', $funcao_id)->value('title');
@@ -94,7 +79,7 @@ class FrequenciaController extends Controller
         $funcionario_name = Funcionario::where('funcionarios.id', $funcionario_id)->join('users', 'users.id', 'funcionarios.user_id')->value('users.name');
 
         $data = [
-            'dias' => $dias,
+            'frequencias' => $frequencias,
             ...$commonDates,
             'funcao_title' => $funcao_title,
             'jornada_title' => $jornada_title,
@@ -156,21 +141,21 @@ class FrequenciaController extends Controller
         $html .= "</thead>";
         $html .= "<tbody style='text-align: center;font-size: 12px;'>";
 
-        foreach($periodo as $data){
+       foreach($periodo as $data){
 
-            $frequencias = Frequencia::where('funcionario_id', $funcionario_id)
-                ->where('company_id', $company_id)
-                ->whereDate('ponto', $data->format("Y-m-d"))
-                ->with('frequencias')
-                ->first();
+        $frequencias = Frequencia::where('funcionario_id', $funcionario_id)
+        ->where('company_id', $company_id)
+        ->whereDate('ponto', $data->format("Y-m-d"))
+        ->with('frequencias')
+        ->first();
 
-            if($frequencias) {
+        if($frequencias) {
                 $data_ponto_format = strtotime($frequencias->ponto);
 
                 $batidas = Frequencia::where('funcionario_id', $funcionario_id)
-                    ->where('company_id', $company_id)
-                    ->whereDate('ponto', $data->format("Y-m-d"))
-                    ->get();
+                ->where('company_id', $company_id)
+                ->whereDate('ponto', $data->format("Y-m-d"))
+                ->get();
 
                 $ponto0 = isset($batidas[0]) ? $batidas[0]->hora : "Não computado";
                 $ponto1 = isset($batidas[1]) ? $batidas[1]->hora : "Não computado";
@@ -180,11 +165,11 @@ class FrequenciaController extends Controller
                 $compareceu = "Faltou";
 
                 if ($ponto0 !== "Não computado" || $ponto1 !== "Não computado" || $ponto2 !== "Não computado" || $ponto3 !== "Não computado") {
-                    $compareceu = "Incompleto";
+                  $compareceu = "Incompleto";
                 }
 
                 if ($ponto0 !== "Não computado" && $ponto1 !== "Não computado" && $ponto2 !== "Não computado" && $ponto3 !== "Não computado") {
-                    $compareceu = "Compareceu";
+                  $compareceu = "Compareceu";
                 }
 
                 if(date("Y-m-d", $data_ponto_format) == $data->format("Y-m-d")) {
@@ -201,8 +186,8 @@ class FrequenciaController extends Controller
                     <th scope='row'>" . $compareceu . "</th>
                     </tr>";
                 }
-            } else {
-                $html .= "
+        } else {
+            $html .= "
             <tr>
             <th scope='row'>" . $data->format("d/m/Y"). "</th>
             <th scope='row'>" . $monthName . "</th>
@@ -214,11 +199,11 @@ class FrequenciaController extends Controller
             <th scope='row'>-</th>
             <th scope='row'>Não compareceu</th>
             </tr>";
-            }
-
-
-
         }
+
+
+
+       }
 
 
 

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Worker\AtestadosController;
 use App\Http\Controllers\Worker\FeedbackController;
 use App\Http\Controllers\Worker\FrequenciaController;
 use App\Http\Controllers\Worker\AtividadesController;
@@ -17,7 +16,7 @@ Route::post('/perfil', [WorkerDashboardController::class, 'perfil_atualizar']);
 
 Route::get('/nova-biometria', [WorkerDashboardController::class, 'novaBiometria']);
 
-//Politica de Privacidade
+//Politica de Privacidade 
 Route::get('/politicaprivacidade', [WorkerDashboardController::class, 'politicaprivacidade']);
 //Termos de uso
 Route::get('/termosdeuso', [WorkerDashboardController::class, 'termosdeuso']);
@@ -50,8 +49,6 @@ Route::get('/frequencia/{id}/export-pdf/{ano}/{mes}', [FrequenciaController::cla
 Route::get('/politicaprivacidade', function () {
     return view('pages.worker.politicaprivacidade');
 });
-
-Route::post('/worker/anexar-atestado', [AtestadosController::class, 'anexarAtestado'])->name('worker.anexarAtestado');
 
 Route::get('/termosdeuso', function () {
     return view('pages.worker.termosdeuso');

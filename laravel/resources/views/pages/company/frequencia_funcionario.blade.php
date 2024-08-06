@@ -21,16 +21,16 @@
                     </h4>
                     <div class="text-end w-50 float-end">
                         <a class="btn btn-primary btn-icon m-1" role="button"
-                            href="/frequencia/{{ $funcionario_id }}/export-pdf/{{ $ano }}/{{ $mes }}"
-                            target="_blank">
+                           href="/frequencia/{{ $funcionario_id }}/export-pdf/{{ $ano }}/{{ $mes }}"
+                           target="_blank">
                             <span class="ul-btn__icon">
                                 <i class="i-File-Word" style="font-size: 18px;"></i>
                             </span>
                             <span class="ul-btn__text"> Exportar PDF</span>
                         </a>
                         <a class="btn btn-primary btn-icon m-1" role="button"
-                            href="/frequencia/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}"
-                            target="_blank">
+                           href="/frequencia/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}"
+                           target="_blank">
                             <span class="ul-btn__icon">
                                 <i class="i-File-Word" style="font-size: 18px;"></i>
                             </span>
@@ -38,7 +38,7 @@
                         </a>
                         <div class="btn-group m-1">
                             <button type="button" class="btn btn-primary btn-icon dropdown-toggle"
-                                data-bs-toggle="dropdown" aria-expanded="false">
+                                    data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="ul-btn__icon">
                                     <i class="i-Calendar" style="font-size: 18px;"></i>
                                 </span>
@@ -46,10 +46,10 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item"
-                                        href="/auditoria/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}"
-                                        target="_blank">Exportar para Excel</a></li>
+                                       href="/auditoria/{{ $funcionario_id }}/export-xls/{{ $ano }}/{{ $mes }}"
+                                       target="_blank">Exportar para Excel</a></li>
                                 <li><a class="dropdown-item"
-                                        href="{{ route('auditoria.historico', ['funcionario_id' => $funcionario_id, 'ano' => $ano, 'mes' => $mes]) }}">Visualizar
+                                       href="{{ route('auditoria.historico', ['funcionario_id' => $funcionario_id, 'ano' => $ano, 'mes' => $mes]) }}">Visualizar
                                         Histórico</a>
                                 </li>
                             </ul>
@@ -99,36 +99,34 @@
                                     <th scope="col">Fim do intervalo</th>
                                     <th scope="col">Fim da jornada</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Anexo</th>
+                                    <th scope="col">Atestado</th>
                                 </tr>
                                 </thead>
                                 <tbody style="text-align: center;">
-                                @foreach($frequencias as $batida)
+                                @foreach($dias as $dia => $dados)
                                 @php
-                                $date = date('Y-m-d', strtotime($batida[0]['ponto']));
-                                $directions = $batida->todas->pluck('direction')->toArray();
-                                $nextAvailableColumn = count($directions);
+                                $carbonDate = \Carbon\Carbon::parse($dados['ponto'])->locale('pt_BR');
                                 @endphp
                                 <tr>
-                                    <th scope="row">{{ date("d", strtotime($batida[0]['ponto'])) }}</th>
-                                    <td>{{ mb_convert_case($batida[0]['pontoMes'], MB_CASE_TITLE, 'UTF-8') }}</td>
-                                    <td>{{ $batida[0]['anoNumber'] }}</td>
-                                    <td>{{ $batida[0]['diaString'] }}</td>
+                                    <th scope="row">{{ $carbonDate->day }}</th>
+                                    <td>{{ $carbonDate->translatedFormat('F') }}</td>
+                                    <td>{{ $carbonDate->year }}</td>
+                                    <td>{{ $carbonDate->translatedFormat('l') }}</td>
                                     @for($i = 0; $i < 4; $i++)
                                     <td>
-                                        @if(isset($batida->todas[$i]))
-                                        <form method="post" action="{{ route('frequencias.update', $batida->todas[$i]->id) }}">
+                                        @if(isset($dados['frequencias'][$i]))
+                                        <form method="post" action="{{ route('frequencias.update', $dados['frequencias'][$i]->id) }}">
                                             @csrf
                                             @method('PUT')
-                                            <input style="width: 47px;" type="text" name="hora" value="{{ $batida->todas[$i]->hora }}">
+                                            <input style="width: 47px;" type="text" name="hora" value="{{ $dados['frequencias'][$i]->hora }}">
                                             <button style="width: 63px;" id="saveButton" type="submit" class="btn btn-success">Salvar</button>
                                         </form>
                                         @else
-                                        @if ($i == $nextAvailableColumn)
+                                        @if (count($dados['frequencias']) == $i)
                                         <form method="post" action="{{ route('frequencias.add') }}">
                                             @csrf
                                             <input type="hidden" name="funcionario_id" value="{{ $funcionario_id }}">
-                                            <input type="hidden" name="data" value="{{ $date }}">
+                                            <input type="hidden" name="data" value="{{ $dados['ponto'] }}">
                                             <input style="width: 53px;" type="text" name="hora" placeholder="HH:MM">
                                             <button type="submit" class="btn btn-primary">+ Add</button>
                                         </form>
@@ -137,25 +135,40 @@
                                     </td>
                                     @endfor
                                     <td>
-                                        @if($batida[0]->ferias)
+                                        @if(!empty($dados['frequencias']))
+                                        @if($dados['frequencias'][0]->ferias)
                                         <span class="badge bg-warning">Férias</span>
-                                        @elseif($batida->todas->count() < 1)
+                                        @elseif(count($dados['frequencias']) < 1)
                                         <span class="badge bg-danger">Não compareceu</span>
-                                        @elseif(isset($batida->todas[0]->hora) && isset($batida->todas[1]->hora) && isset($batida->todas[2]->hora) && isset($batida->todas[3]->hora))
+                                        @elseif(isset($dados['frequencias'][0]->hora) && isset($dados['frequencias'][1]->hora) && isset($dados['frequencias'][2]->hora) && isset($dados['frequencias'][3]->hora))
                                         <span class="badge bg-success">Compareceu</span>
-                                        @elseif($batida->todas->count() > 1 && $batida->todas->count() < 4)
+                                        @elseif(count($dados['frequencias']) > 1 && count($dados['frequencias']) < 4)
                                         <span class="badge bg-warning">Não Finalizada</span>
+                                        @endif
+                                        @else
+                                        <span class="badge bg-danger">Não compareceu</span>
                                         @endif
                                     </td>
                                     <td>
-                                        @if($batida[0]->document)
-                                        <a class="text-success me-2" style="font-size: 23px;line-height: 20px;" href="{{ $batida[0]->document }}">
+                                        @if(!empty($dados['frequencias']) && isset($dados['frequencias'][0]->document))
+                                        <a class="text-success me-2" style="font-size: 23px;line-height: 20px;" href="{{ $dados['frequencias'][0]->document }}">
                                             <i style="margin:0px 0px -4px;" class="nav-icon i-File fw-bold"></i>
                                         </a>
                                         @else
                                         -
                                         @endif
                                     </td>
+                                    <td>
+                                        @if($dados['atestado'])
+                                        <a href="{{ $dados['atestado']->path }}/{{ $dados['atestado']->file }}" target="_blank" download>
+                                            Download Atestado
+                                        </a>
+                                        @else
+                                        -
+                                        @endif
+                                    </td>
+
+
                                 </tr>
                                 @endforeach
                                 </tbody>

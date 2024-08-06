@@ -160,13 +160,15 @@
                                     </td>
                                     <td>
                                         @if($dados['atestado'])
-                                        <a href="{{ $dados['atestado']->path }}/{{ $dados['atestado']->file }}" target="_blank">
+                                        <a href="{{ $dados['atestado']->path }}/{{ $dados['atestado']->file }}" target="_blank" download>
                                             Download Atestado
                                         </a>
                                         @else
                                         -
                                         @endif
                                     </td>
+
+
                                 </tr>
                                 @endforeach
                                 </tbody>

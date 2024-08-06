@@ -91,7 +91,6 @@ class Funcionario extends Model
                 $carga_semanal += $horasEmNumeros;
             }
         }
-
         return $carga_semanal;
     }
 

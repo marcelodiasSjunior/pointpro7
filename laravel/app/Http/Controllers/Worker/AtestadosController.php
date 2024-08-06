@@ -8,7 +8,6 @@ use App\Models\Atestado;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Redirect;
 use Intervention\Image\ImageManagerStatic as Image;
 
 class AtestadosController extends Controller
@@ -27,12 +26,11 @@ class AtestadosController extends Controller
                 $constraint->aspectRatio();
             })->encode('jpg', 75);
 
-            Storage::disk('s3')->put($fileName, $image, 'public'); // Definindo permissão pública
+            Storage::disk('s3')->put($folder . '/' . $fileName, $image, 'public');
 
             $mediaType = 'picture';
-            $path = $fileName; // Define o path para imagens
         } else {
-            $path = $file->storePubliclyAs($folder, $fileName, 'public'); // Definindo permissão pública
+            Storage::disk('s3')->putFileAs($folder, $file, $fileName, 'public');
             $mediaType = 'pdf';
         }
 
@@ -41,8 +39,8 @@ class AtestadosController extends Controller
 
         $atestado = Atestado::create([
             'user_id' => $user->id,
-            'path' => config('app.host_asset_s3'),
-            'file' => $fileName,
+            'path' => rtrim(config('app.host_asset_s3'), '/'), // Remover a barra final, se houver
+            'file' => $folder . '/' . $fileName, // Adicionar o caminho completo aqui
             'media_type' => $mediaType,
             'dateUpload' => now(),
             'startDate' => $startDate,

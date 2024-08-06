@@ -4,6 +4,9 @@
  docker-compose -f ./pro7_dev/docker-compose.yml up -d --build
  docker exec pro7_php composer update
 # docker exec pro7_php php artisan migrate:refresh --seed --force
+ docker exec pro7_php php artisan config:cache
+docker exec pro7_php php artisan route:cache
+ docker exec pro7_php php artisan view:cache
  docker restart pro7_php
 
 #cp ./laravel/.env.production ./laravel/.env

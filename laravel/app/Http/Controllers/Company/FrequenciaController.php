@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Company;
 
 use App\Exports\FrequenciasExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Worker\AtestadosController;
 use App\Http\Services\CommomDataService;
 use App\Models\Company;
 use App\Models\Frequencia;
+use App\Models\Atestado;
 use App\Models\Funcao;
 use App\Models\Funcionario;
 use App\Models\Jornada;

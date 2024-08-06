@@ -47,12 +47,16 @@ class Jornada extends Model
 
     private function sumHoras($horas)
     {
-        $total = Carbon::createFromTime(0, 0, 0);
+        $totalMinutes = 0;
         foreach ($horas as $hora) {
             $parts = explode(':', $hora);
-            $total->addHours($parts[0])->addMinutes($parts[1]);
+            $totalMinutes += $parts[0] * 60 + $parts[1];
         }
-        return $total->format('H:i');
+
+        $hours = floor($totalMinutes / 60);
+        $minutes = $totalMinutes % 60;
+
+        return sprintf('%02d:%02d', $hours, $minutes);
     }
 
     public function getHorasDia($dia)
@@ -67,6 +71,8 @@ class Jornada extends Model
             'domingo' => 'domingo'
         ];
 
-        return $this->{$map[$dia] ?? 'segunda'}; // Default to 'segunda' if the day is not found
+        $horaString = $this->{$map[$dia] ?? 'segunda'}; // Default to 'segunda' if the day is not found
+        $horaCarbon = Carbon::parse($horaString);
+        return $horaCarbon->hour + ($horaCarbon->minute / 60) + ($horaCarbon->second / 3600);
     }
 }

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 \URL::forceScheme('https');
 
 Route::get('/', [WorkerDashboardController::class, 'home']);
+Route::get('/', [WorkerDashboardController::class, 'home'])->name('worker.home');
 Route::get('/perfil', [WorkerDashboardController::class, 'perfil']);
 Route::post('/perfil', [WorkerDashboardController::class, 'perfil_atualizar']);
 
@@ -50,6 +51,7 @@ Route::get('/frequencia/{id}/export-pdf/{ano}/{mes}', [FrequenciaController::cla
 Route::get('/politicaprivacidade', function () {
     return view('pages.worker.politicaprivacidade');
 });
+
 Route::post('/worker/anexar-atestado', [AtestadosController::class, 'anexarAtestado'])->name('worker.anexarAtestado');
 
 Route::get('/termosdeuso', function () {

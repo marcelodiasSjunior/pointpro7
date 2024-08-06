@@ -100,28 +100,28 @@
                                         <div class="table-responsive">
                                             <table class="table table-hover table-striped ">
                                                 <thead style="text-align: center;">
-                                                    <tr>
-                                                        <th scope="col">Progresso das Atividades</th>
-                                                        <th scope="col">Atividades</th>
-                                                        <th scope="col">Ver</th>
-                                                    </tr>
+                                                <tr>
+                                                    <th scope="col">Progresso das Atividades</th>
+                                                    <th scope="col">Atividades</th>
+                                                    <th scope="col">Ver</th>
+                                                </tr>
                                                 </thead>
                                                 <tbody style="text-align: center;">
-                                                    <tr>
-                                                        <th scope="row">
-                                                            <div class="progress mb-3">
-                                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ $porcentagem_completas }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                                                    {{ $porcentagem_completas }}%
-                                                                </div>
+                                                <tr>
+                                                    <th scope="row">
+                                                        <div class="progress mb-3">
+                                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ $porcentagem_completas }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                                                {{ $porcentagem_completas }}%
                                                             </div>
-                                                        </th>
-                                                        <td>{{ $atividades_hoje->count() }}</td>
-                                                        <td>
-                                                            <a class="text-primary me-2" style="font-size: 23px;" href="/atividades">
-                                                                <i class="nav-icon i-Eye fw-bold"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
+                                                        </div>
+                                                    </th>
+                                                    <td>{{ $atividades_hoje->count() }}</td>
+                                                    <td>
+                                                        <a class="text-primary me-2" style="font-size: 23px;" href="/atividades">
+                                                            <i class="nav-icon i-Eye fw-bold"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -170,51 +170,51 @@
                             <div class="table-responsive">
                                 <table class="table table-hover table-striped ">
                                     <thead style="text-align: center;">
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col" style="min-width: 270px;">Atividade</th>
-                                            <th scope="col" style="min-width: 200px;">Última Interação</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Observações</th>
-                                        </tr>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col" style="min-width: 270px;">Atividade</th>
+                                        <th scope="col" style="min-width: 200px;">Última Interação</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Observações</th>
+                                    </tr>
                                     </thead>
                                     <tbody style="text-align: center;">
-                                        @foreach($atividades as $atividade)
-                                        <tr>
-                                            <th scope="row">{{ $atividade->id }}</th>
-                                            <td>{{ $atividade->description }}</td>
+                                    @foreach($atividades as $atividade)
+                                    <tr>
+                                        <th scope="row">{{ $atividade->id }}</th>
+                                        <td>{{ $atividade->description }}</td>
 
-                                            <td>
-                                                @if($atividade->observacao)
-                                                {{ $atividade->observacao }}
-                                                @else
-                                                Nenhuma mensagem enviada ou recebida
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($atividade->funcionario_atividade !== 0 && $atividade->funcionario_atividade !== 1)
-                                                <span class="badge bg-danger">Não realizado</span>
-                                                @elseif($atividade->funcionario_atividade == 0)
-                                                <span class="badge bg-warning">Em andamento</span>
-                                                @elseif($atividade->funcionario_atividade == 1)
-                                                <span class="badge bg-success">Concluído</span>
-                                                @endif
-                                            </td>
-                                            <td style="padding-bottom: 3px;">
-                                                <a class="text-primary badge-top-container" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
-                                                    <span class="badge bg-danger">{{ $atividade->observacoes_count}}</span>
-                                                    <i class="i-Speach-Bubbles fw-bold text-primary header-icon" style="font-size: 33px;"></i>
-                                                </a>
-                                                <div class="dropdown-menu menu-opcoes" x-placement="bottom-start">
+                                        <td>
+                                            @if($atividade->observacao)
+                                            {{ $atividade->observacao }}
+                                            @else
+                                            Nenhuma mensagem enviada ou recebida
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($atividade->funcionario_atividade !== 0 && $atividade->funcionario_atividade !== 1)
+                                            <span class="badge bg-danger">Não realizado</span>
+                                            @elseif($atividade->funcionario_atividade == 0)
+                                            <span class="badge bg-warning">Em andamento</span>
+                                            @elseif($atividade->funcionario_atividade == 1)
+                                            <span class="badge bg-success">Concluído</span>
+                                            @endif
+                                        </td>
+                                        <td style="padding-bottom: 3px;">
+                                            <a class="text-primary badge-top-container" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
+                                                <span class="badge bg-danger">{{ $atividade->observacoes_count}}</span>
+                                                <i class="i-Speach-Bubbles fw-bold text-primary header-icon" style="font-size: 33px;"></i>
+                                            </a>
+                                            <div class="dropdown-menu menu-opcoes" x-placement="bottom-start">
                                                 @if(isset($atividade->observacao))
                                                 <a class="dropdown-item ul-widget__link--font" href="/observacoes/{{$atividade->id}}">Observações da Atividade</a>
                                                 @else
                                                 <a class="dropdown-item ul-widget__link--font" href="#">Nenhuma observação cadastrada</a>
                                                 @endif
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
 
                                     </tbody>
                                 </table>
@@ -296,110 +296,110 @@
 
                                                         @if(Auth::user()->funcionario->company->plan == 2)
                                                         @if($totalBatidasPontoHoje < 4) <div id="webcamFacial" class="alert alert-dismissible fade show alert-card alert-danger" style="display:none" role="alert"><strong class="text-capitalize">Erro:</strong> :Foto invalida </div>
-                                                    <div id="webcamWrapper">
+                                                        <div id="webcamWrapper">
 
-                                                        <video id="webcam" autoplay muted playsinline></video>
+                                                            <video id="webcam" autoplay muted playsinline></video>
 
-                                                        <canvas id="canvasWebcam"></canvas>
-                                                    </div>
-                                                    @endif
-                                                    @else
-                                                    <div id="folhaPontoDefault"></div>
-                                                    @endif
-
-                                                    <input type="hidden" name="api_token_for_web" value="{{ $api_token_for_web }}" />
-                                                    <input type="hidden" name="plainTextToken" value="{{ $plainTextToken }}" />
-                                                    <input type="hidden" name="python_api_prefix" value="{{ config('app.python_api_prefix') }}" />
-                                                    <input type="hidden" name="plainTextToken" value="{{ $plainTextToken }}" />
-                                                    <input type="hidden" name="asdasd" value="{{ Auth::user()->funcionario->company->id }}" />
-
-                                                    @if(Auth::user()->funcionario->company->plan == 2)
-                                                    <div class="row" style="display:none" id="sendPicturePonto">
-                                                        <div class="col-md-2 mb-4"></div>
-                                                        <div class="col-md-8 mb-4" style="text-align: center;">
-                                                            <button class="btn btn-success btn-lg" style="margin-top: 15px;min-width: 230px;width: 100%;"><b>Confirmar</b></button>
+                                                            <canvas id="canvasWebcam"></canvas>
                                                         </div>
-                                                        <div class="col-md-2 mb-4"></div>
-                                                    </div>
-                                                    @endif
+                                                        @endif
+                                                        @else
+                                                        <div id="folhaPontoDefault"></div>
+                                                        @endif
+
+                                                        <input type="hidden" name="api_token_for_web" value="{{ $api_token_for_web }}" />
+                                                        <input type="hidden" name="plainTextToken" value="{{ $plainTextToken }}" />
+                                                        <input type="hidden" name="python_api_prefix" value="{{ config('app.python_api_prefix') }}" />
+                                                        <input type="hidden" name="plainTextToken" value="{{ $plainTextToken }}" />
+                                                        <input type="hidden" name="asdasd" value="{{ Auth::user()->funcionario->company->id }}" />
+
+                                                        @if(Auth::user()->funcionario->company->plan == 2)
+                                                        <div class="row" style="display:none" id="sendPicturePonto">
+                                                            <div class="col-md-2 mb-4"></div>
+                                                            <div class="col-md-8 mb-4" style="text-align: center;">
+                                                                <button class="btn btn-success btn-lg" style="margin-top: 15px;min-width: 230px;width: 100%;"><b>Confirmar</b></button>
+                                                            </div>
+                                                            <div class="col-md-2 mb-4"></div>
+                                                        </div>
+                                                        @endif
 
 
-                                                    @if(!$ultimaBatidaPontoHoje)
-                                                    <div class="row" id="takePicture">
-                                                        <div class="col-md-2 mb-4"></div>
-                                                        <div class="col-md-8 mb-4" style="text-align: center;">
-                                                            <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>INICIAR JORNADA</b></button>
+                                                        @if(!$ultimaBatidaPontoHoje)
+                                                        <div class="row" id="takePicture">
+                                                            <div class="col-md-2 mb-4"></div>
+                                                            <div class="col-md-8 mb-4" style="text-align: center;">
+                                                                <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>INICIAR JORNADA</b></button>
+                                                            </div>
+                                                            <div class="col-md-2 mb-4"></div>
                                                         </div>
-                                                        <div class="col-md-2 mb-4"></div>
-                                                    </div>
-                                                    <input type="hidden" name="direction" value="1" />
-                                                    @endif
-                                                    @if($ultimaBatidaPontoHoje && $totalBatidasPontoHoje === 1)
-                                                    <div class="row" id="takePicture">
-                                                        <div class="col-md-2 mb-4"></div>
-                                                        <div class="col-md-8 mb-4" style="text-align: center;">
-                                                            <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>INICIAR INTERVALO</b></button>
+                                                        <input type="hidden" name="direction" value="1" />
+                                                        @endif
+                                                        @if($ultimaBatidaPontoHoje && $totalBatidasPontoHoje === 1)
+                                                        <div class="row" id="takePicture">
+                                                            <div class="col-md-2 mb-4"></div>
+                                                            <div class="col-md-8 mb-4" style="text-align: center;">
+                                                                <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>INICIAR INTERVALO</b></button>
+                                                            </div>
+                                                            <div class="col-md-2 mb-4"></div>
                                                         </div>
-                                                        <div class="col-md-2 mb-4"></div>
-                                                    </div>
-                                                    <input type="hidden" name="direction" value="2" />
-                                                    @endif
-                                                    @if($ultimaBatidaPontoHoje && $totalBatidasPontoHoje === 2)
-                                                    <div class="row" id="takePicture">
-                                                        <div class="col-md-2 mb-4"></div>
-                                                        <div class="col-md-8 mb-4" style="text-align: center;">
-                                                            <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>FINALIZAR INTERVALO</b></button>
+                                                        <input type="hidden" name="direction" value="2" />
+                                                        @endif
+                                                        @if($ultimaBatidaPontoHoje && $totalBatidasPontoHoje === 2)
+                                                        <div class="row" id="takePicture">
+                                                            <div class="col-md-2 mb-4"></div>
+                                                            <div class="col-md-8 mb-4" style="text-align: center;">
+                                                                <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>FINALIZAR INTERVALO</b></button>
+                                                            </div>
+                                                            <div class="col-md-2 mb-4"></div>
                                                         </div>
-                                                        <div class="col-md-2 mb-4"></div>
-                                                    </div>
-                                                    <input type="hidden" name="direction" value="1" />
-                                                    @endif
-                                                    @if($ultimaBatidaPontoHoje && $totalBatidasPontoHoje === 3)
-                                                    <div class="row" id="takePicture">
-                                                        <div class="col-md-2 mb-4"></div>
-                                                        <div class="col-md-8 mb-4" style="text-align: center;">
-                                                            <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>FINALIZAR JORNADA</b></button>
+                                                        <input type="hidden" name="direction" value="1" />
+                                                        @endif
+                                                        @if($ultimaBatidaPontoHoje && $totalBatidasPontoHoje === 3)
+                                                        <div class="row" id="takePicture">
+                                                            <div class="col-md-2 mb-4"></div>
+                                                            <div class="col-md-8 mb-4" style="text-align: center;">
+                                                                <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>FINALIZAR JORNADA</b></button>
+                                                            </div>
+                                                            <div class="col-md-2 mb-4"></div>
                                                         </div>
-                                                        <div class="col-md-2 mb-4"></div>
-                                                    </div>
-                                                    <input type="hidden" name="direction" value="2" />
-                                                    @endif
+                                                        <input type="hidden" name="direction" value="2" />
+                                                        @endif
 
-                                                    @if($ultimaBatidaPontoHoje && $totalBatidasPontoHoje === 4)
-                                                    <div class="row">
-                                                        <div class="col-md-2 mb-4"></div>
-                                                        <div class="col-md-8 mb-4" style="text-align: center;">
-                                                            <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>JORNADA ENCERRADA</b></button>
+                                                        @if($ultimaBatidaPontoHoje && $totalBatidasPontoHoje === 4)
+                                                        <div class="row">
+                                                            <div class="col-md-2 mb-4"></div>
+                                                            <div class="col-md-8 mb-4" style="text-align: center;">
+                                                                <button class="btn btn-primary btn-lg" style="margin-top: 5px;min-width: 230px;width: 100%;"><b>JORNADA ENCERRADA</b></button>
+                                                            </div>
+                                                            <div class="col-md-2 mb-4"></div>
                                                         </div>
-                                                        <div class="col-md-2 mb-4"></div>
-                                                    </div>
-                                                    <input type="hidden" name="direction" value="2" />
-                                                    @endif
+                                                        <input type="hidden" name="direction" value="2" />
+                                                        @endif
 
-                                                    @foreach($batidasPontoHoje as $batida)
-                                                    <div class="row">
-                                                        <div class="col-md-2 mb-2"></div>
-                                                        <div class="col-md-8 mb-2" style="text-align: center;">
-                                                            <button class="btn btn-success btn-lg" style="min-width: 230px;width: 100%;">
-                                                                @if($loop->index === 0)
-                                                                Inicio da jornada:
-                                                                @elseif($loop->index === 1)
-                                                                Inicio do intervalo:
-                                                                @elseif($loop->index === 2)
-                                                                Fim do intervalo:
-                                                                @elseif($loop->index === 3)
-                                                                Fim da jornada:
-                                                                @endif
-                                                                <b>{{ $batida->hora }}</b>
-                                                            </button>
+                                                        @foreach($batidasPontoHoje as $batida)
+                                                        <div class="row">
+                                                            <div class="col-md-2 mb-2"></div>
+                                                            <div class="col-md-8 mb-2" style="text-align: center;">
+                                                                <button class="btn btn-success btn-lg" style="min-width: 230px;width: 100%;">
+                                                                    @if($loop->index === 0)
+                                                                    Inicio da jornada:
+                                                                    @elseif($loop->index === 1)
+                                                                    Inicio do intervalo:
+                                                                    @elseif($loop->index === 2)
+                                                                    Fim do intervalo:
+                                                                    @elseif($loop->index === 3)
+                                                                    Fim da jornada:
+                                                                    @endif
+                                                                    <b>{{ $batida->hora }}</b>
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-md-2 mb-2"></div>
                                                         </div>
-                                                        <div class="col-md-2 mb-2"></div>
+                                                        @endforeach
                                                     </div>
-                                                    @endforeach
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
                                         <div class="card ul-card__v-space">
                                             <div class="card-header header-elements-inline">
                                                 <h6 class="card-title ul-collapse__icon--size ul-collapse__right-icon mb-0">
@@ -495,183 +495,183 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                <div class="card ul-card__v-space">
-                                    <div class="card-header header-elements-inline">
-                                        <h6 class="card-title ul-collapse__icon--size ul-collapse__right-icon mb-0">
-                                            <a class="text-default collapsed" data-bs-toggle="collapse" href="#accordion-item-icon-right-3">COMUNICAR FÉRIAS</a>
-                                        </h6>
-                                    </div>
-                                    <div class="collapse" id="accordion-item-icon-right-3" data-parent="#accordionRightIcon">
-                                        <form method="get" action="/">
-                                            <div class="card-body">
 
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <p style="margin-bottom: 3px;">Ausente:</p>
-                                                        <div class="row">
-                                                            <div class="col-sm-3 mb-3">
-                                                            <label for="picker1">Selecionar o dia</label>
-                                                                <select class="form-control">
-                                                                    <option>01</option>
-                                                                    <option>02</option>
-                                                                    <option>03</option>
-                                                                    <option>04</option>
-                                                                    <option>05</option>
-                                                                    <option>06</option>
-                                                                    <option>07</option>
-                                                                    <option>08</option>
-                                                                    <option>09</option>
-                                                                    <option>10</option>
-                                                                    <option>11</option>
-                                                                    <option>12</option>
-                                                                    <option>13</option>
-                                                                    <option>14</option>
-                                                                    <option>15</option>
-                                                                    <option>16</option>
-                                                                    <option>17</option>
-                                                                    <option>18</option>
-                                                                    <option>19</option>
-                                                                    <option>20</option>
-                                                                    <option>21</option>
-                                                                    <option>22</option>
-                                                                    <option>23</option>
-                                                                    <option>24</option>
-                                                                    <option>25</option>
-                                                                    <option>26</option>
-                                                                    <option>27</option>
-                                                                    <option>28</option>
-                                                                    <option>29</option>
-                                                                    <option>30</option>
-                                                                    <option>31</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-sm-4 mb-3">
-                                                                <label for="picker1">Selecionar mês</label>
-                                                                <select class="form-control">
-                                                                    <option>Janeiro</option>
-                                                                    <option>Fevereiro</option>
-                                                                    <option>Março</option>
-                                                                    <option>Abril</option>
-                                                                    <option>Maio</option>
-                                                                    <option>Junho</option>
-                                                                    <option>Julho</option>
-                                                                    <option>Agosto</option>
-                                                                    <option>Setembro</option>
-                                                                    <option>Outubro</option>
-                                                                    <option>Novembro</option>
-                                                                    <option>Dezembro</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-sm-3 mb-3">
-                                                                <label for="picker1">Selecionar ano</label>
-                                                                <select class="form-control">
-                                                                    <option>2024</option>
-                                                                    <option>2023</option>
-                                                                    <option>2022</option>
-                                                                    <option>2021</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-6 mb-3">
-                                                        <p style="margin-bottom: 3px;">Até:</p>
-                                                        <div class="row">
-                                                            <div class="col-sm-3 mb-3">
-                                                            <label for="picker1">Selecionar o dia</label>
-                                                                <select class="form-control">
-                                                                    <option>01</option>
-                                                                    <option>02</option>
-                                                                    <option>03</option>
-                                                                    <option>04</option>
-                                                                    <option>05</option>
-                                                                    <option>06</option>
-                                                                    <option>07</option>
-                                                                    <option>08</option>
-                                                                    <option>09</option>
-                                                                    <option>10</option>
-                                                                    <option>11</option>
-                                                                    <option>12</option>
-                                                                    <option>13</option>
-                                                                    <option>14</option>
-                                                                    <option>15</option>
-                                                                    <option>16</option>
-                                                                    <option>17</option>
-                                                                    <option>18</option>
-                                                                    <option>19</option>
-                                                                    <option>20</option>
-                                                                    <option>21</option>
-                                                                    <option>22</option>
-                                                                    <option>23</option>
-                                                                    <option>24</option>
-                                                                    <option>25</option>
-                                                                    <option>26</option>
-                                                                    <option>27</option>
-                                                                    <option>28</option>
-                                                                    <option>29</option>
-                                                                    <option>30</option>
-                                                                    <option>31</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-sm-4 mb-3">
-                                                                <label for="picker1">Selecionar mês</label>
-                                                                <select class="form-control">
-                                                                    <option>Janeiro</option>
-                                                                    <option>Fevereiro</option>
-                                                                    <option>Março</option>
-                                                                    <option>Abril</option>
-                                                                    <option>Maio</option>
-                                                                    <option>Junho</option>
-                                                                    <option>Julho</option>
-                                                                    <option>Agosto</option>
-                                                                    <option>Setembro</option>
-                                                                    <option>Outubro</option>
-                                                                    <option>Novembro</option>
-                                                                    <option>Dezembro</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-sm-3 mb-3">
-                                                                <label for="picker1">Selecionar ano</label>
-                                                                <select class="form-control">
-                                                                    <option>2024</option>
-                                                                    <option>2023</option>
-                                                                    <option>2022</option>
-                                                                    <option>2021</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div style="margin:0px 0px 25px;">
-                                                <div class="row">
-                                                        <div class="col-md-12" style="text-align: center;">
-                                                            <button class="btn btn-outline-primary" style="min-width: 290px;"><b>COMUNICAR FÉRIAS</b></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
+                                        <div class="card ul-card__v-space">
+                                            <div class="card-header header-elements-inline">
+                                                <h6 class="card-title ul-collapse__icon--size ul-collapse__right-icon mb-0">
+                                                    <a class="text-default collapsed" data-bs-toggle="collapse" href="#accordion-item-icon-right-3">COMUNICAR FÉRIAS</a>
+                                                </h6>
                                             </div>
-                                        </form>
+                                            <div class="collapse" id="accordion-item-icon-right-3" data-parent="#accordionRightIcon">
+                                                <form method="get" action="/">
+                                                    <div class="card-body">
+
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-3">
+                                                                <p style="margin-bottom: 3px;">Ausente:</p>
+                                                                <div class="row">
+                                                                    <div class="col-sm-3 mb-3">
+                                                                        <label for="picker1">Selecionar o dia</label>
+                                                                        <select class="form-control">
+                                                                            <option>01</option>
+                                                                            <option>02</option>
+                                                                            <option>03</option>
+                                                                            <option>04</option>
+                                                                            <option>05</option>
+                                                                            <option>06</option>
+                                                                            <option>07</option>
+                                                                            <option>08</option>
+                                                                            <option>09</option>
+                                                                            <option>10</option>
+                                                                            <option>11</option>
+                                                                            <option>12</option>
+                                                                            <option>13</option>
+                                                                            <option>14</option>
+                                                                            <option>15</option>
+                                                                            <option>16</option>
+                                                                            <option>17</option>
+                                                                            <option>18</option>
+                                                                            <option>19</option>
+                                                                            <option>20</option>
+                                                                            <option>21</option>
+                                                                            <option>22</option>
+                                                                            <option>23</option>
+                                                                            <option>24</option>
+                                                                            <option>25</option>
+                                                                            <option>26</option>
+                                                                            <option>27</option>
+                                                                            <option>28</option>
+                                                                            <option>29</option>
+                                                                            <option>30</option>
+                                                                            <option>31</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-sm-4 mb-3">
+                                                                        <label for="picker1">Selecionar mês</label>
+                                                                        <select class="form-control">
+                                                                            <option>Janeiro</option>
+                                                                            <option>Fevereiro</option>
+                                                                            <option>Março</option>
+                                                                            <option>Abril</option>
+                                                                            <option>Maio</option>
+                                                                            <option>Junho</option>
+                                                                            <option>Julho</option>
+                                                                            <option>Agosto</option>
+                                                                            <option>Setembro</option>
+                                                                            <option>Outubro</option>
+                                                                            <option>Novembro</option>
+                                                                            <option>Dezembro</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-sm-3 mb-3">
+                                                                        <label for="picker1">Selecionar ano</label>
+                                                                        <select class="form-control">
+                                                                            <option>2024</option>
+                                                                            <option>2023</option>
+                                                                            <option>2022</option>
+                                                                            <option>2021</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6 mb-3">
+                                                                <p style="margin-bottom: 3px;">Até:</p>
+                                                                <div class="row">
+                                                                    <div class="col-sm-3 mb-3">
+                                                                        <label for="picker1">Selecionar o dia</label>
+                                                                        <select class="form-control">
+                                                                            <option>01</option>
+                                                                            <option>02</option>
+                                                                            <option>03</option>
+                                                                            <option>04</option>
+                                                                            <option>05</option>
+                                                                            <option>06</option>
+                                                                            <option>07</option>
+                                                                            <option>08</option>
+                                                                            <option>09</option>
+                                                                            <option>10</option>
+                                                                            <option>11</option>
+                                                                            <option>12</option>
+                                                                            <option>13</option>
+                                                                            <option>14</option>
+                                                                            <option>15</option>
+                                                                            <option>16</option>
+                                                                            <option>17</option>
+                                                                            <option>18</option>
+                                                                            <option>19</option>
+                                                                            <option>20</option>
+                                                                            <option>21</option>
+                                                                            <option>22</option>
+                                                                            <option>23</option>
+                                                                            <option>24</option>
+                                                                            <option>25</option>
+                                                                            <option>26</option>
+                                                                            <option>27</option>
+                                                                            <option>28</option>
+                                                                            <option>29</option>
+                                                                            <option>30</option>
+                                                                            <option>31</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-sm-4 mb-3">
+                                                                        <label for="picker1">Selecionar mês</label>
+                                                                        <select class="form-control">
+                                                                            <option>Janeiro</option>
+                                                                            <option>Fevereiro</option>
+                                                                            <option>Março</option>
+                                                                            <option>Abril</option>
+                                                                            <option>Maio</option>
+                                                                            <option>Junho</option>
+                                                                            <option>Julho</option>
+                                                                            <option>Agosto</option>
+                                                                            <option>Setembro</option>
+                                                                            <option>Outubro</option>
+                                                                            <option>Novembro</option>
+                                                                            <option>Dezembro</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-sm-3 mb-3">
+                                                                        <label for="picker1">Selecionar ano</label>
+                                                                        <select class="form-control">
+                                                                            <option>2024</option>
+                                                                            <option>2023</option>
+                                                                            <option>2022</option>
+                                                                            <option>2021</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div style="margin:0px 0px 25px;">
+                                                            <div class="row">
+                                                                <div class="col-md-12" style="text-align: center;">
+                                                                    <button class="btn btn-outline-primary" style="min-width: 290px;"><b>COMUNICAR FÉRIAS</b></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
+
+
                                 </div>
+                                <div class="col-lg-1 col-md-12 col-sm-12 form-group mb-3"></div>
                             </div>
 
-
                         </div>
-                        <div class="col-lg-1 col-md-12 col-sm-12 form-group mb-3"></div>
                     </div>
 
                 </div>
             </div>
-
         </div>
+
     </div>
-</div>
 
-</div>
+    <!-- end of main-content -->
 
-<!-- end of main-content -->
-
-@endsection
+    @endsection

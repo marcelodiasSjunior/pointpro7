@@ -149,15 +149,15 @@
                                         <span class="badge bg-danger">Não compareceu</span>
                                         @endif
                                     </td>
-                                    <td>
-                                        @if(!empty($dados['frequencias']) && isset($dados['frequencias'][0]->document))
-                                        <a class="text-success me-2" style="font-size: 23px;line-height: 20px;" href="{{ $dados['frequencias'][0]->document }}">
-                                            <i style="margin:0px 0px -4px;" class="nav-icon i-File fw-bold"></i>
-                                        </a>
-                                        @else
-                                        -
-                                        @endif
-                                    </td>
+<!--                                    <td>-->
+<!--                                        @if(!empty($dados['frequencias']) && isset($dados['frequencias'][0]->document))-->
+<!--                                        <a class="text-success me-2" style="font-size: 23px;line-height: 20px;" href="{{ $dados['frequencias'][0]->document }}">-->
+<!--                                            <i style="margin:0px 0px -4px;" class="nav-icon i-File fw-bold"></i>-->
+<!--                                        </a>-->
+<!--                                        @else-->
+<!--                                        --->
+<!--                                        @endif-->
+<!--                                    </td>-->
                                     <td>
                                         @if($dados['atestado'])
                                         <a href="{{ $dados['atestado']->path }}/{{ $dados['atestado']->file }}" target="_blank" download>

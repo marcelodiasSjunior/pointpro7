@@ -53,22 +53,35 @@ class FrequenciaController extends Controller
         $company_id = $req->user()->company->id;
         $commonDates = CommomDataService::getCommonDates($req);
 
+        // Obter o user_id a partir do funcionario_id
+        $user_id = Funcionario::where('id', $funcionario_id)->value('user_id');
+
+        $inicio = Carbon::create($commonDates['yearNumber'], $commonDates['monthNumber'], 1);
+        $fim = Carbon::create($commonDates['yearNumber'], $commonDates['monthNumber'])->endOfMonth();
+
+        $dias = [];
+
+        for ($date = $inicio; $date->lte($fim); $date->addDay()) {
+            $dias[$date->format('Y-m-d')] = [
+                'ponto' => $date->format('Y-m-d'),
+                'frequencias' => [],
+                'atestado' => Atestado::where('user_id', $user_id)
+                    ->whereDate('startDate', '<=', $date)
+                    ->whereDate('endDate', '>=', $date)
+                    ->first()
+            ];
+        }
+
         $frequencias = Frequencia::where('funcionario_id', $funcionario_id)
             ->where('company_id', $company_id)
             ->whereMonth('ponto', $commonDates['monthNumber'])
             ->whereYear('ponto', $commonDates['yearNumber'])
-            ->get()
-            ->groupBy(function ($val) {
-                return Carbon::parse($val->ponto)->format('d');
-            });
+            ->get();
 
-            foreach ($frequencias as $batida) {
-                $pontoDate = date("Y-m-d", strtotime($batida[0]['ponto']));
-                $batida->todas = Frequencia::where('funcionario_id', $funcionario_id)
-                    ->where('company_id', $company_id)
-                    ->whereDate('ponto', $pontoDate)
-                    ->get();
-            }
+        foreach ($frequencias as $frequencia) {
+            $date = Carbon::parse($frequencia->ponto)->format('Y-m-d');
+            $dias[$date]['frequencias'][] = $frequencia;
+        }
 
         $funcao_id = Funcionario::where('id', $funcionario_id)->value('funcao_id');
         $funcao_title = Funcao::where('id', $funcao_id)->value('title');
@@ -79,7 +92,7 @@ class FrequenciaController extends Controller
         $funcionario_name = Funcionario::where('funcionarios.id', $funcionario_id)->join('users', 'users.id', 'funcionarios.user_id')->value('users.name');
 
         $data = [
-            'frequencias' => $frequencias,
+            'dias' => $dias,
             ...$commonDates,
             'funcao_title' => $funcao_title,
             'jornada_title' => $jornada_title,

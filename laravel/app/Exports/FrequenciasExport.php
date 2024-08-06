@@ -87,10 +87,9 @@ class FrequenciasExport implements FromCollection, WithHeadings
                 $horasPrevistasEmMinutos = $horasPrevistas * 60;
                 $saldoMinutos = $horasTrabalhadas - $horasPrevistasEmMinutos;
 
-                $horasSaldo = intdiv($saldoMinutos, 60);
-                $minutosSaldo = $saldoMinutos % 60;
-
-                $saldoFormatado = sprintf('%02d:%02d', $horasSaldo, $minutosSaldo);
+                $horasSaldo = intdiv(abs($saldoMinutos), 60);
+                $minutosSaldo = abs($saldoMinutos) % 60;
+                $saldoFormatado = sprintf('%s%02d:%02d', $saldoMinutos < 0 ? '-' : '', $horasSaldo, $minutosSaldo);
 
                 $status = "Compareceu";
                 if (!$inicioJornada && !$inicioIntervalo && !$fimIntervalo && !$fimJornada) {

@@ -92,7 +92,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
                 $totalSaldoMinutos += $saldoMinutos; // Acumula o saldo do dia
 
                 $horasSaldo = intdiv($saldoMinutos, 60);
-                $minutosSaldo = $saldoMinutos % 60;
+                $minutosSaldo = abs($saldoMinutos % 60); // Usar abs para minutos negativos
 
                 $saldoFormatado = sprintf('%02d:%02d', $horasSaldo, $minutosSaldo);
 
@@ -135,7 +135,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
 
         // Adiciona uma linha com o total do saldo
         $horasTotalSaldo = intdiv($totalSaldoMinutos, 60);
-        $minutosTotalSaldo = $totalSaldoMinutos % 60;
+        $minutosTotalSaldo = abs($totalSaldoMinutos % 60); // Usar abs para minutos negativos
         $totalSaldoFormatado = sprintf('%02d:%02d', $horasTotalSaldo, $minutosTotalSaldo);
 
         $data->push([
@@ -171,5 +171,4 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Totalizador' // Adiciona o cabeçalho do totalizador aqui
         ];
     }
-
 }

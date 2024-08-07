@@ -26,10 +26,13 @@ class FrequenciasExport implements FromCollection, WithHeadings
 
     // Método `collection` da classe `FrequenciasExport`
 
+    // Método `collection` da classe `FrequenciasExport`
+
     public function collection() {
         $startDate = Carbon::parse("{$this->ano}-{$this->mes}-01");
         $endDate = Carbon::parse("{$this->ano}-{$this->mes}-01")->endOfMonth();
         $allDays = collect();
+        $totalSaldoMinutos = 0; // Variável para armazenar o saldo total em minutos
 
         while ($startDate->lte($endDate)) {
             $allDays->push($startDate->copy());
@@ -52,7 +55,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
         $jornada = $funcionario->jornada;
         $funcionarioUser = $funcionario->user;
 
-        $data = $allDays->map(function ($date) use ($frequencias, $funcionarioUser, $jornada) {
+        $data = $allDays->map(function ($date) use ($frequencias, $funcionarioUser, $jornada, &$totalSaldoMinutos) {
             $day = $date->format('d/m/Y');
             $month = $date->translatedFormat('F'); // Nome do mês em português
             $year = $date->format('Y');
@@ -86,6 +89,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
 
                 $horasPrevistasEmMinutos = $horasPrevistas * 60;
                 $saldoMinutos = $horasTrabalhadas - $horasPrevistasEmMinutos;
+                $totalSaldoMinutos += $saldoMinutos; // Acumula o saldo do dia
 
                 $horasSaldo = intdiv($saldoMinutos, 60);
                 $minutosSaldo = $saldoMinutos % 60;
@@ -109,7 +113,8 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Fim do intervalo' => $fimIntervalo,
                     'Fim da jornada' => $fimJornada,
                     'Status' => $status,
-                    'Saldo' => $saldoFormatado
+                    'Saldo' => $saldoFormatado,
+                    'Totalizador' => '' // Campo vazio para manter o alinhamento
                 ];
             } else {
                 return [
@@ -122,10 +127,30 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Fim do intervalo' => '-',
                     'Fim da jornada' => '-',
                     'Status' => 'Não compareceu',
-                    'Saldo' => '00:00'
+                    'Saldo' => '00:00',
+                    'Totalizador' => '' // Campo vazio para manter o alinhamento
                 ];
             }
         });
+
+        // Adiciona uma linha com o total do saldo
+        $horasTotalSaldo = intdiv($totalSaldoMinutos, 60);
+        $minutosTotalSaldo = $totalSaldoMinutos % 60;
+        $totalSaldoFormatado = sprintf('%02d:%02d', $horasTotalSaldo, $minutosTotalSaldo);
+
+        $data->push([
+            'Dia' => '',
+            'Mês' => '',
+            'Ano' => '',
+            'Semana' => '',
+            'Início da jornada' => '',
+            'Início do intervalo' => '',
+            'Fim do intervalo' => '',
+            'Fim da jornada' => '',
+            'Status' => 'Total',
+            'Saldo' => '',
+            'Totalizador' => $totalSaldoFormatado // Adiciona o totalizador aqui
+        ]);
 
         return collect($data);
     }
@@ -142,7 +167,9 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Fim do intervalo',
             'Fim da jornada',
             'Status',
-            'Saldo'
+            'Saldo',
+            'Totalizador' // Adiciona o cabeçalho do totalizador aqui
         ];
     }
+
 }

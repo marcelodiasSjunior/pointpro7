@@ -91,10 +91,11 @@ class FrequenciasExport implements FromCollection, WithHeadings
                 $saldoMinutos = $horasTrabalhadas - $horasPrevistasEmMinutos;
                 $totalSaldoMinutos += $saldoMinutos; // Acumula o saldo do dia
 
-                $horasSaldo = intdiv($saldoMinutos, 60);
+                $horasSaldo = intdiv(abs($saldoMinutos), 60); // Use abs para evitar horas negativas
                 $minutosSaldo = abs($saldoMinutos % 60); // Usar abs para minutos negativos
 
-                $saldoFormatado = sprintf('%02d:%02d', $horasSaldo, $minutosSaldo);
+                // Formatando o saldo
+                $saldoFormatado = sprintf('%s%02d:%02d', $saldoMinutos < 0 ? '-' : '', $horasSaldo, $minutosSaldo);
 
                 $status = "Compareceu";
                 if (!$inicioJornada && !$inicioIntervalo && !$fimIntervalo && !$fimJornada) {
@@ -134,9 +135,9 @@ class FrequenciasExport implements FromCollection, WithHeadings
         });
 
         // Adiciona uma linha com o total do saldo
-        $horasTotalSaldo = intdiv($totalSaldoMinutos, 60);
+        $horasTotalSaldo = intdiv(abs($totalSaldoMinutos), 60); // Use abs para evitar horas negativas
         $minutosTotalSaldo = abs($totalSaldoMinutos % 60); // Usar abs para minutos negativos
-        $totalSaldoFormatado = sprintf('%02d:%02d', $horasTotalSaldo, $minutosTotalSaldo);
+        $totalSaldoFormatado = sprintf('%s%02d:%02d', $totalSaldoMinutos < 0 ? '-' : '', $horasTotalSaldo, $minutosTotalSaldo);
 
         $data->push([
             'Dia' => '',
@@ -154,6 +155,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
 
         return collect($data);
     }
+
 
     public function headings(): array
     {

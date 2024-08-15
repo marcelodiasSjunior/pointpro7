@@ -99,7 +99,6 @@ class WorkerDashboardController extends Controller
             ->limit(10)
             ->orderBy('id', 'desc')
             ->get();
-        
         $atividadesCompleta = FuncionarioAtividade::where('company_id', $company->id)
             ->where('dia', $commonDates['dateForMySQL'])
             ->where('funcionario_id',  $funcionario_id)
@@ -230,7 +229,7 @@ class WorkerDashboardController extends Controller
             ->limit(10)
             ->orderBy('id', 'desc')
             ->get();
-            
+
         $atividadesCompleta = FuncionarioAtividade::where('company_id', $company->id)
             ->whereIn('atividade_id', $atividades_id)
             ->where('dia_da_semana', $commonDates['dayOfTheWeek'])

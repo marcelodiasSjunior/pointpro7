@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4acaec7b-de7d-4710-b11d-22479fae902f" name="Changes" comment="ajuste dev">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/phpunit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/phpunit.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/laravel/app/Http/Controllers/Worker/WorkerDashboardController.php" beforeDir="false" afterPath="$PROJECT_DIR$/laravel/app/Http/Controllers/Worker/WorkerDashboardController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/laravel/app/Http/Requests/AdminCompanySaveRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/laravel/app/Http/Requests/AdminCompanySaveRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/laravel/app/Http/Requests/AdminCompanyUpdateRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/laravel/app/Http/Requests/AdminCompanyUpdateRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/laravel/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/laravel/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/laravel/resources/views/components/form-empresa.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/laravel/resources/views/components/form-empresa.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/laravel/resources/views/pages/worker/home.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/laravel/resources/views/pages/worker/home.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -217,19 +220,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop01&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "develop01",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/OBA/plataforma-back-worker",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
@@ -361,6 +365,8 @@
       <option name="presentableId" value="Default" />
       <updated>1722999375614</updated>
       <workItem from="1722999377659" duration="1433000" />
+      <workItem from="1724208963810" duration="1498000" />
+      <workItem from="1724348923190" duration="5023000" />
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
@@ -370,7 +376,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ajuste dev" />
-    <option name="LAST_COMMIT_MESSAGE" value="ajuste dev" />
+    <MESSAGE value="ajuste remoção card de observações" />
+    <option name="LAST_COMMIT_MESSAGE" value="ajuste remoção card de observações" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

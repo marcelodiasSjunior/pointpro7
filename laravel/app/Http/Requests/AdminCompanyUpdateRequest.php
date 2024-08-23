@@ -27,7 +27,7 @@ class AdminCompanyUpdateRequest extends FormRequest
             'razao_social' => 'required',
             'cnpj' => 'required|size:18',
             'telefone' => 'required|min:14, max:15',
-            'cep' => 'required|size:9',
+            'cep' => 'required|size:8',
             'endereco' => 'required',
             'bairro' => 'required',
             'city_id' => 'required',

@@ -400,7 +400,7 @@ class AtividadesController extends Controller
         if ($atividadesFuncionarioCompany->count() <= 1) {
             return Redirect::back()->withErrors(['msg' => 'O funcionário possui apenas uma atividade cadastrada. Crie uma nova e mova o funcionário antes de deletar!']);
         } else {
-            AtividadeFuncionario::where('funcionario_id', $funcionario_id)->where('id', $id_atividade_funcionario)->update(['status' => 0]);
+            AtividadeFuncionario::where('funcionario_id', $funcionario_id)->where('atividade_id', $atividade_id)->update(['status' => 0]);
         }
     }
     public function update(AtividadeUpdateRequest $req, $atividade_id)

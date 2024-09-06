@@ -72,7 +72,7 @@ class AtividadesController extends Controller
 
         $atividades = Atividade::where('company_id', $company_id)
             ->whereHas('atividade_funcionario', function ($queryF) use ($funcionario_id) {
-                $queryF->where('funcionario_id', $funcionario_id);
+                $queryF->where('funcionario_id', $funcionario_id)->where('status', 1);
             })
             ->whereHas('atividade_dias_semana', function ($queryD) use ($commonDates) {
                 $queryD->where('dia_da_semana', $commonDates['dayOfTheWeek']);

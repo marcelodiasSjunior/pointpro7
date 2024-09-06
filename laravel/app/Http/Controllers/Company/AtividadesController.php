@@ -391,12 +391,6 @@ class AtividadesController extends Controller
             ]
         )->where('status', 1)->get();
 
-        $id_atividade_funcionario = AtividadeFuncionario::select('id')
-            ->where('funcionario_id', $funcionario_id, )
-            ->where('company_id', $company_id)
-            ->where('atividade_id', $atividade_id)
-            ->value('id');
-
         if ($atividadesFuncionarioCompany->count() <= 1) {
             return Redirect::back()->withErrors(['msg' => 'O funcionário possui apenas uma atividade cadastrada. Crie uma nova e mova o funcionário antes de deletar!']);
         } else {
@@ -415,11 +409,6 @@ class AtividadesController extends Controller
             $idFuncExistente = $atividadeFuncionario->funcionario_id;
             if (!in_array($idFuncExistente, $req->funcionarios) && array_search('todos', $req->funcionarios) === false) {
                 $this->inativarAtividade($atividade_id, $idFuncExistente, $company_id);
-            } else {
-                AtividadeFuncionario::where(
-                    'funcionario_id', $idFuncExistente
-                    )->where('atividade_id', $atividade_id
-                    )->update(['status' => 1]);
             }
         }
         // Verifica se a atividade existe
@@ -514,8 +503,8 @@ class AtividadesController extends Controller
             $funcionarios = [];
             $funcionariosList = Funcionario::where('company_id', $req->user()->company->id)->where('funcao_id', $req->funcao)->wherehas('user')->get();
 
-            foreach ($funcionariosList as $f) {
-                array_push($funcionarios, $f->id);
+            foreach ($funcionariosList as $funcionario) {
+                array_push($funcionarios, $funcionario->id);
             }
         }
 
@@ -534,6 +523,8 @@ class AtividadesController extends Controller
                     'atividade_id' => $atividade->id,
                     'status' => 1
                 ]);
+            } else{
+                $existingRecord->update(['status' => 1]);
             }
         }
     }

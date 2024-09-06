@@ -52,7 +52,7 @@
                                                         <th scope="col" style="min-width: 150px;">Função</th>
                                                         <th scope="col" style="min-width: 250px;">Progresso das Atividades</th>
                                                         <th scope="col">Atividades</th>
-                                                        <th scope="col">Funcionários</th>
+                                                        <th scope="col">Funcionários com Atividade</th>
                                                         <th scope="col">Ver</th>
                                                     </tr>
                                                 </thead>

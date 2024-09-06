@@ -155,7 +155,7 @@ class AtividadesController extends Controller
 
     public function listar_por_funcionario_todas(Request $req, $funcionario_id)
     {
-        $funcionario_id = (int)$funcionario_id;
+        $funcionario_id = (int) $funcionario_id;
         $commonDates = CommomDataService::getCommonDates($req);
         $company_id = $req->user()->company->id;
 
@@ -176,7 +176,7 @@ class AtividadesController extends Controller
             $atividadesCompleta = FuncionarioAtividade::where('company_id', $company_id)
                 ->where('atividade_id', $atividade->id)
                 ->where('dia', $commonDates['dateForMySQL'])
-                ->where('funcionario_id',  $funcionario_id)
+                ->where('funcionario_id', $funcionario_id)
                 ->first();
 
             $atividade->nao_iniciada = !$atividadesCompleta;
@@ -199,7 +199,7 @@ class AtividadesController extends Controller
     public function listar_por_funcionario(Request $req, $funcionario_id)
     {
 
-        $funcionario_id = (int)$funcionario_id;
+        $funcionario_id = (int) $funcionario_id;
         $commonDates = CommomDataService::getCommonDates($req);
         $company_id = $req->user()->company->id;
 
@@ -224,7 +224,7 @@ class AtividadesController extends Controller
                 ->where('atividade_id', $atividade->id)
                 ->where('dia_da_semana', $commonDates['dayOfTheWeek'])
                 ->where('dia', $commonDates['dateForMySQL'])
-                ->where('funcionario_id',  $funcionario_id)
+                ->where('funcionario_id', $funcionario_id)
                 ->first();
 
 
@@ -251,14 +251,14 @@ class AtividadesController extends Controller
         $company_id = $req->user()->company->id;
         $commonDates = CommomDataService::getCommonDates($req);
 
-        $atividade_funcionario =  AtividadeFuncionario::where('company_id', $company_id)
+        $atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
             ->where('atividade_id', $atividade_id)
             ->where('funcionario_id', $funcionario_id)
             ->where('status', 1)
             ->first();
 
 
-        if ($req->deletar && (int)$req->deletar === 1) {
+        if ($req->deletar && (int) $req->deletar === 1) {
             FuncionarioAtividade::where('atividade_id', $atividade_id)
                 ->where('funcionario_id', $funcionario_id)
                 ->where('atividade_funcionario_id', $atividade_funcionario->id)
@@ -279,7 +279,7 @@ class AtividadesController extends Controller
 
         if (!$exists) {
             $dataNew = [
-                'atividade_id' => (int)$req->atividade_id,
+                'atividade_id' => (int) $req->atividade_id,
                 'funcionario_id' => $funcionario_id,
                 'company_id' => $company_id,
                 'status' => 0,
@@ -311,7 +311,7 @@ class AtividadesController extends Controller
         $company_id = $req->user()->company->id;
 
 
-        $atividade_funcionario =  AtividadeFuncionario::where('company_id', $company_id)
+        $atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
             ->where('atividade_id', $atividade_id)
             ->where('funcionario_id', $funcionario_id)
             ->where('status', 1)
@@ -349,15 +349,15 @@ class AtividadesController extends Controller
         $atividadesFuncionarioCompany = AtividadeFuncionario::where(['funcionario_id' => $funcionario_id, 'company_id' => $req->user()->company->id])->where('status', 1)->get();
 
         $id_atividade_funcionario = AtividadeFuncionario::select('id')
-                                    ->where('funcionario_id', $funcionario_id,)
-                                    ->where('company_id', $req->user()->company->id)
-                                    ->where('atividade_id', $atividade_id)
-                                    ->value('id');
+            ->where('funcionario_id', $funcionario_id, )
+            ->where('company_id', $req->user()->company->id)
+            ->where('atividade_id', $atividade_id)
+            ->value('id');
 
-        if($atividadesFuncionarioCompany->count() <= 1) {
+        if ($atividadesFuncionarioCompany->count() <= 1) {
             return Redirect::back()->withErrors(['msg' => 'O funcionário possui apenas uma atividade cadastrada. Crie uma nova e mova o funcionário antes de deletar!']);
         } else {
-            AtividadeFuncionario::where('funcionario_id',$funcionario_id)->where('id', $id_atividade_funcionario)->update(['status' => 0]);
+            AtividadeFuncionario::where('funcionario_id', $funcionario_id)->where('id', $id_atividade_funcionario)->update(['status' => 0]);
         }
 
         Session::flash('success', "Atividade inativada com sucesso para esse funcionario!");
@@ -385,6 +385,22 @@ class AtividadesController extends Controller
 
     public function update(AtividadeUpdateRequest $req, $atividade_id)
     {
+        $atividadeFuncionarioList = [];
+
+        $atividadeFuncionarioList = AtividadeFuncionario::where('company_id', $req->user()->company->id)
+            ->where('atividade_id', $atividade_id)
+            ->get();
+        foreach ($atividadeFuncionarioList as $atividadeFuncionario) {
+            $idFuncExistente = $atividadeFuncionario->funcionario_id;
+            if (!in_array($idFuncExistente, $req->funcionarios) && array_search('todos', $req->funcionarios) === false) {
+                AtividadeFuncionario::where('company_id', $req->user()->company->id)
+                    ->where('atividade_id', $atividade_id)
+                    ->where('funcionario_id', $idFuncExistente)
+                    ->delete();
+                dd($idFuncExistente);
+            };
+        }
+
         $company_id = $req->user()->company->id;
 
         // Verifica se a atividade existe
@@ -421,6 +437,7 @@ class AtividadesController extends Controller
             $af->update([
                 'status' => $af->status, // ou outros campos que precisam ser atualizados
                 // outros campos a serem atualizados conforme necessário
+
             ]);
         }
 

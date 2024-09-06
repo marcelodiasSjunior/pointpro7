@@ -385,6 +385,20 @@ class AtividadesController extends Controller
 
     public function update(AtividadeUpdateRequest $req, $atividade_id)
     {
+        $atividadeFuncionarioList = [];
+
+        $atividadeFuncionarioList = AtividadeFuncionario::where('company_id', $req->user()->company->id)
+            ->where('atividade_id', $atividade_id)
+            ->get();
+        foreach ($atividadeFuncionarioList as $atividadeFuncionario) {
+            $idFuncExistente = $atividadeFuncionario->funcionario_id;
+            if (!in_array($idFuncExistente, $req->funcionarios) && array_search('todos', $req->funcionarios) === false) {
+                AtividadeFuncionario::where('company_id', $req->user()->company->id)
+                    ->where('atividade_id', $atividade_id)
+                    ->where('funcionario_id', $idFuncExistente)
+                    ->delete();
+            };
+        }
         $company_id = $req->user()->company->id;
 
         // Verifica se a atividade existe

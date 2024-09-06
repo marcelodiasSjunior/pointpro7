@@ -155,7 +155,7 @@ class AtividadesController extends Controller
 
     public function listar_por_funcionario_todas(Request $req, $funcionario_id)
     {
-        $funcionario_id = (int)$funcionario_id;
+        $funcionario_id = (int) $funcionario_id;
         $commonDates = CommomDataService::getCommonDates($req);
         $company_id = $req->user()->company->id;
 
@@ -176,7 +176,7 @@ class AtividadesController extends Controller
             $atividadesCompleta = FuncionarioAtividade::where('company_id', $company_id)
                 ->where('atividade_id', $atividade->id)
                 ->where('dia', $commonDates['dateForMySQL'])
-                ->where('funcionario_id',  $funcionario_id)
+                ->where('funcionario_id', $funcionario_id)
                 ->first();
 
             $atividade->nao_iniciada = !$atividadesCompleta;
@@ -199,7 +199,7 @@ class AtividadesController extends Controller
     public function listar_por_funcionario(Request $req, $funcionario_id)
     {
 
-        $funcionario_id = (int)$funcionario_id;
+        $funcionario_id = (int) $funcionario_id;
         $commonDates = CommomDataService::getCommonDates($req);
         $company_id = $req->user()->company->id;
 
@@ -224,7 +224,7 @@ class AtividadesController extends Controller
                 ->where('atividade_id', $atividade->id)
                 ->where('dia_da_semana', $commonDates['dayOfTheWeek'])
                 ->where('dia', $commonDates['dateForMySQL'])
-                ->where('funcionario_id',  $funcionario_id)
+                ->where('funcionario_id', $funcionario_id)
                 ->first();
 
 
@@ -251,14 +251,14 @@ class AtividadesController extends Controller
         $company_id = $req->user()->company->id;
         $commonDates = CommomDataService::getCommonDates($req);
 
-        $atividade_funcionario =  AtividadeFuncionario::where('company_id', $company_id)
+        $atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
             ->where('atividade_id', $atividade_id)
             ->where('funcionario_id', $funcionario_id)
             ->where('status', 1)
             ->first();
 
 
-        if ($req->deletar && (int)$req->deletar === 1) {
+        if ($req->deletar && (int) $req->deletar === 1) {
             FuncionarioAtividade::where('atividade_id', $atividade_id)
                 ->where('funcionario_id', $funcionario_id)
                 ->where('atividade_funcionario_id', $atividade_funcionario->id)
@@ -279,7 +279,7 @@ class AtividadesController extends Controller
 
         if (!$exists) {
             $dataNew = [
-                'atividade_id' => (int)$req->atividade_id,
+                'atividade_id' => (int) $req->atividade_id,
                 'funcionario_id' => $funcionario_id,
                 'company_id' => $company_id,
                 'status' => 0,
@@ -311,7 +311,7 @@ class AtividadesController extends Controller
         $company_id = $req->user()->company->id;
 
 
-        $atividade_funcionario =  AtividadeFuncionario::where('company_id', $company_id)
+        $atividade_funcionario = AtividadeFuncionario::where('company_id', $company_id)
             ->where('atividade_id', $atividade_id)
             ->where('funcionario_id', $funcionario_id)
             ->where('status', 1)
@@ -349,15 +349,15 @@ class AtividadesController extends Controller
         $atividadesFuncionarioCompany = AtividadeFuncionario::where(['funcionario_id' => $funcionario_id, 'company_id' => $req->user()->company->id])->where('status', 1)->get();
 
         $id_atividade_funcionario = AtividadeFuncionario::select('id')
-                                    ->where('funcionario_id', $funcionario_id,)
-                                    ->where('company_id', $req->user()->company->id)
-                                    ->where('atividade_id', $atividade_id)
-                                    ->value('id');
+            ->where('funcionario_id', $funcionario_id, )
+            ->where('company_id', $req->user()->company->id)
+            ->where('atividade_id', $atividade_id)
+            ->value('id');
 
-        if($atividadesFuncionarioCompany->count() <= 1) {
+        if ($atividadesFuncionarioCompany->count() <= 1) {
             return Redirect::back()->withErrors(['msg' => 'O funcionário possui apenas uma atividade cadastrada. Crie uma nova e mova o funcionário antes de deletar!']);
         } else {
-            AtividadeFuncionario::where('funcionario_id',$funcionario_id)->where('id', $id_atividade_funcionario)->update(['status' => 0]);
+            AtividadeFuncionario::where('funcionario_id', $funcionario_id)->where('id', $id_atividade_funcionario)->update(['status' => 0]);
         }
 
         Session::flash('success', "Atividade inativada com sucesso para esse funcionario!");
@@ -382,7 +382,27 @@ class AtividadesController extends Controller
 
         return view('pages.company.editar_atividade', $data);
     }
+    private function inativarAtividade($atividade_id, $funcionario_id, $company_id)
+    {
+        $atividadesFuncionarioCompany = AtividadeFuncionario::where(
+            [
+                'funcionario_id' => $funcionario_id,
+                'company_id' => $company_id
+            ]
+        )->where('status', 1)->get();
 
+        $id_atividade_funcionario = AtividadeFuncionario::select('id')
+            ->where('funcionario_id', $funcionario_id, )
+            ->where('company_id', $company_id)
+            ->where('atividade_id', $atividade_id)
+            ->value('id');
+
+        if ($atividadesFuncionarioCompany->count() <= 1) {
+            return Redirect::back()->withErrors(['msg' => 'O funcionário possui apenas uma atividade cadastrada. Crie uma nova e mova o funcionário antes de deletar!']);
+        } else {
+            AtividadeFuncionario::where('funcionario_id', $funcionario_id)->where('id', $id_atividade_funcionario)->update(['status' => 0]);
+        }
+    }
     public function update(AtividadeUpdateRequest $req, $atividade_id)
     {
         $company_id = $req->user()->company->id;

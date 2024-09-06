@@ -370,7 +370,7 @@ class AtividadesController extends Controller
         $funcionarios = Funcionario::where('company_id', $req->user()->company->id)->wherehas('user')->get();
         $atividade = Atividade::where('company_id', $req->user()->company->id)->where('id', $atividade_id)->first();
         $dias_salvos = AtividadeDiasSemana::where('company_id', $req->user()->company->id)->where('atividade_id', $atividade_id)->get()->pluck('dia_da_semana')->toArray();
-        $funcionarios_salvos = AtividadeFuncionario::where('company_id', $req->user()->company->id)->where('atividade_id', $atividade_id)->pluck('funcionario_id')->toArray();
+        $funcionarios_salvos = AtividadeFuncionario::where('company_id', $req->user()->company->id)->where('atividade_id', $atividade_id)->where('status', 1)->pluck('funcionario_id')->toArray();
 
         $data = [
             'atividade' => $atividade,

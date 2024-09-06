@@ -382,7 +382,27 @@ class AtividadesController extends Controller
 
         return view('pages.company.editar_atividade', $data);
     }
+    private function inativarAtividade($atividade_id, $funcionario_id, $company_id)
+    {
+        $atividadesFuncionarioCompany = AtividadeFuncionario::where(
+            [
+                'funcionario_id' => $funcionario_id,
+                'company_id' => $company_id
+            ]
+        )->where('status', 1)->get();
 
+        $id_atividade_funcionario = AtividadeFuncionario::select('id')
+            ->where('funcionario_id', $funcionario_id, )
+            ->where('company_id', $company_id)
+            ->where('atividade_id', $atividade_id)
+            ->value('id');
+
+        if ($atividadesFuncionarioCompany->count() <= 1) {
+            return Redirect::back()->withErrors(['msg' => 'O funcionário possui apenas uma atividade cadastrada. Crie uma nova e mova o funcionário antes de deletar!']);
+        } else {
+            AtividadeFuncionario::where('funcionario_id', $funcionario_id)->where('id', $id_atividade_funcionario)->update(['status' => 0]);
+        }
+    }
     public function update(AtividadeUpdateRequest $req, $atividade_id)
     {
         $company_id = $req->user()->company->id;
@@ -394,17 +414,7 @@ class AtividadesController extends Controller
         foreach ($atividadeFuncionarioList as $atividadeFuncionario) {
             $idFuncExistente = $atividadeFuncionario->funcionario_id;
             if (!in_array($idFuncExistente, $req->funcionarios) && array_search('todos', $req->funcionarios) === false) {
-                $atividadesEmProgresso = FuncionarioAtividade::where('company_id', $company_id)->where(
-                    'funcionario_id',
-                    $idFuncExistente
-                )->where('atividade_id', $atividade_id)
-                    ->get();
-                if (!empty($atividadesEmProgresso)) {
-                    foreach ($atividadesEmProgresso as $atividade) {
-                        $atividade->delete();
-                    }
-                }
-                $atividadeFuncionario->delete();
+                $this->inativarAtividade($atividade_id, $idFuncExistente, $company_id);
             }
         }
         // Verifica se a atividade existe

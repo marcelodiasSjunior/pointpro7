@@ -394,17 +394,7 @@ class AtividadesController extends Controller
         foreach ($atividadeFuncionarioList as $atividadeFuncionario) {
             $idFuncExistente = $atividadeFuncionario->funcionario_id;
             if (!in_array($idFuncExistente, $req->funcionarios) && array_search('todos', $req->funcionarios) === false) {
-                $atividadesEmProgresso = FuncionarioAtividade::where('company_id', $company_id)->where(
-                    'funcionario_id',
-                    $idFuncExistente
-                )->where('atividade_id', $atividade_id)
-                    ->get();
-                if (!empty($atividadesEmProgresso)) {
-                    foreach ($atividadesEmProgresso as $atividade) {
-                        $atividade->delete();
-                    }
-                }
-                $atividadeFuncionario->delete();
+                $this->inativarAtividade($atividade_id, $idFuncExistente, $company_id);
             }
         }
         // Verifica se a atividade existe

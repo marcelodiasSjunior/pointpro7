@@ -415,6 +415,11 @@ class AtividadesController extends Controller
             $idFuncExistente = $atividadeFuncionario->funcionario_id;
             if (!in_array($idFuncExistente, $req->funcionarios) && array_search('todos', $req->funcionarios) === false) {
                 $this->inativarAtividade($atividade_id, $idFuncExistente, $company_id);
+            } else {
+                AtividadeFuncionario::where(
+                    'funcionario_id', $idFuncExistente
+                    )->where('atividade_id', $atividade_id
+                    )->update(['status' => 1]);
             }
         }
         // Verifica se a atividade existe

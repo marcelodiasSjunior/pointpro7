@@ -29,6 +29,14 @@
 
 <!-- DIVIDE HERE -->
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                console.log(position.coords.latitude, position.coords.longitude);
+            });
+
+        });
+    let localizacao = position.coords.latitude, position.coords.longitude;
+    console.log(localizacao);
     function showErrorWebcam() {
         $('#webcamFacial').show();
     }
@@ -79,13 +87,11 @@
         console.log("A função recognizeUserDefault foi chamada");
         $(".loadscreen").show();
         const plainTextToken = $('input[name=plainTextToken]').val();
-        console.log("Linha 82 ----> " + plainTextToken);
         var form = new FormData();
         form.append('api_token_for_web', $('input[name=api_token_for_web]').val());
         form.append('direction', $('input[name=direction]').val());
 
         const url_prefix = $('input[name=python_api_prefix]').val() + 'recognizerDefault';
-        console.log("Linha 88 ----> " + url_prefix);
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url_prefix, true);
         xhr.onload = function(e) {
@@ -94,14 +100,12 @@
                 window.location.reload();
                 $(".loadscreen").hide();
             } catch (e) {
-                console.log("Linha 97 ----> " + e);
                 $(".loadscreen").hide();
                 showErrorBatida();
                 throw e;
             }
         };
         xhr.onerror = function(e) {
-            console.log("Linha 104 -----> " + e.message);
             $(".loadscreen").hide();
             showErrorBatida();
             throw e;

@@ -35,8 +35,6 @@
             });
 
         });
-    let localizacao = position.coords.latitude, position.coords.longitude;
-    console.log(localizacao);
     function showErrorWebcam() {
         $('#webcamFacial').show();
     }

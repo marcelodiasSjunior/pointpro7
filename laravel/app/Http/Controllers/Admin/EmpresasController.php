@@ -60,7 +60,8 @@ class EmpresasController extends Controller
             'bairro',
             'state_id',
             'city_id',
-            'plan'
+            'plan',
+            'ativa'
         ]);
 
         Company::where('id', $id)->update($data);
@@ -86,7 +87,8 @@ class EmpresasController extends Controller
             'bairro',
             'state_id',
             'city_id',
-            'plan'
+            'plan',
+            'ativa'
         ]);
 
         Company::create($data);

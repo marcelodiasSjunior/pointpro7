@@ -22,6 +22,7 @@ class Company extends Model
         'numero',
         'complemento',
         'bairro',
+        'ativa',
         'state_id',
         'city_id'
     ];

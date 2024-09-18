@@ -23,6 +23,17 @@
             </select>
         </div>
     </div>
+    <div class="col-md-8 form-group mb-3">
+        <label for="plano-add">Ativa</label>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="plano-add">Ativa</span>
+            <select class="form-control" name="ativa" required id="ativa">
+                <option value="">SELECIONE</option>
+                <option value="1" {{ isset($company) && $company->ativa === 1 ? 'selected' : '' }}>Ativa</option>
+                <option value="2" {{ isset($company) && $company->ativa === 2 ? 'selected' : '' }}>Inativa</option>
+            </select>
+        </div>
+    </div>
     <div class="col-md-2 form-group mb-3"></div>
 </div>
 <div class="row">

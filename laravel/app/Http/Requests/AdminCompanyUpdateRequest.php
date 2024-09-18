@@ -31,7 +31,8 @@ class AdminCompanyUpdateRequest extends FormRequest
             'endereco' => 'required',
             'bairro' => 'required',
             'city_id' => 'required',
-            'plan' => 'required'
+            'plan' => 'required',
+            'ativa' => 'required'
         ];
     }
 }

@@ -27,11 +27,12 @@ class AdminCompanySaveRequest extends FormRequest
             'razao_social' => 'required',
             'cnpj' => 'required|size:18|unique:companies',
             'telefone' => 'required|min:14, max:15',
-            'cep' => 'required|size:9',
+            'cep' => 'required|size:8',
             'endereco' => 'required',
             'bairro' => 'required',
             'city_id' => 'required',
-            'plan' => 'required'
+            'plan' => 'required',
+            'ativa' => 'required'
         ];
     }
 }

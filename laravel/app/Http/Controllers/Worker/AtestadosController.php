@@ -36,7 +36,8 @@ class AtestadosController extends Controller
 
         $startDate = Carbon::create($request->input('startYear'), $request->input('startMonth'), $request->input('startDay'));
         $endDate = Carbon::create($request->input('endYear'), $request->input('endMonth'), $request->input('endDay'));
-
+        $endtime = $request->input(key: 'endTime');
+        $startTime = $request->input(key: 'startTime');
         $atestado = Atestado::create([
             'user_id' => $user->id,
             'path' => rtrim(config('app.host_asset_s3'), '/'), // Remover a barra final, se houver
@@ -45,6 +46,8 @@ class AtestadosController extends Controller
             'dateUpload' => now(),
             'startDate' => $startDate,
             'endDate' => $endDate,
+            'startTime' => $startTime,
+            'endTime' => $endtime
         ]);
 
         session()->flash('success', 'Atestado enviado com sucesso!');

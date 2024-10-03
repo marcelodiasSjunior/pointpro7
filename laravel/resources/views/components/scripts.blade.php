@@ -76,16 +76,13 @@
     }
 
     function recognizeUserDefault() {
-        console.log("A função recognizeUserDefault foi chamada");
         $(".loadscreen").show();
         const plainTextToken = $('input[name=plainTextToken]').val();
-        console.log("Linha 82 ----> " + plainTextToken);
         var form = new FormData();
         form.append('api_token_for_web', $('input[name=api_token_for_web]').val());
         form.append('direction', $('input[name=direction]').val());
 
         const url_prefix = $('input[name=python_api_prefix]').val() + 'recognizerDefault';
-        console.log("Linha 88 ----> " + url_prefix);
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url_prefix, true);
         xhr.onload = function(e) {

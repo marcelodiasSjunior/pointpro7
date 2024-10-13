@@ -381,4 +381,4 @@ def register_ponto():
         return jsonify(payloadPresenca)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=('/root/pointpro7/projetos/docker/nginx/cert.pem', '/root/projetos/pointpro7/docker/nginx/key.pem'))
+    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=('/root/projetos/pointpro7/docker/nginx/cert.pem', '/root/projetos/pointpro7/docker/nginx/key.pem'))

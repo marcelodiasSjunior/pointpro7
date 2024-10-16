@@ -150,7 +150,13 @@
     }
 
     $('document').ready(() => {
-
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                console.log("Permissão concedida. Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
+            }, function (error) {
+                console.error("Erro ao solicitar localização:", error.message);
+            });
+        }
         if ($('#folhaPontoDefault').length) {
             if ($('#takePicture').length) {
                 document.querySelector('#takePicture').addEventListener('click', function (e) {

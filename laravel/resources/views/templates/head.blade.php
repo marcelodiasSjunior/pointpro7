@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{{ secure_asset('dist-assets/css/plugins/quill.snow.min.css') }}" />
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
     <link rel="stylesheet" href="{{ secure_asset('dist-assets/css/main.css?rand='.rand()) }}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         #webcamWrapper {
             text-align: center;

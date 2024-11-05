@@ -114,7 +114,8 @@ class FrequenciaController extends Controller
 
         $monthNumber = $commonDates['monthNumber'];
         $monthList = $commonDates['monthList'];
-        $monthName = $monthList['0'.$monthNumber];
+        $monthKey = sprintf('%02d', $monthNumber);
+        $monthName = isset($monthList[$monthKey]) ? $monthList[$monthKey] : 'Mês desconhecido';
 
         $company_id = $req->user()->company->id;
         $company_name = Company::where('id', $company_id)->value('title');

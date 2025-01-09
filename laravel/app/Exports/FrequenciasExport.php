@@ -73,19 +73,16 @@ class FrequenciasExport implements FromCollection, WithHeadings
      * @return \Illuminate\Support\Collection
      */
     protected function getFrequencias(Carbon $startDate, Carbon $endDate)
-    {
-        return Frequencia::where('company_id', $this->company_id)
-            ->where('funcionario_id', $this->funcionario_id)
-            ->whereBetween('ponto', [
-                $startDate->format('Y-m-d 00:00:00'),
-                $endDate->format('Y-m-d 23:59:59')
-            ])
-            ->orderBy('ponto')
-            ->get()
-            ->groupBy(function ($date) {
-                return Carbon::parse($date->ponto)->format('Y-m-d');
-            });
-    }
+{
+    return Frequencia::where('company_id', $this->company_id)
+        ->where('funcionario_id', $this->funcionario_id)
+        ->whereBetween('ponto', [$startDate->toDateTimeString(), $endDate->toDateTimeString()])
+        ->orderBy('ponto')
+        ->get()
+        ->groupBy(function ($date) {
+            return Carbon::parse($date->ponto)->format('Y-m-d');
+        });
+}
 
     /**
      * Obtém os dados do funcionário.
@@ -108,33 +105,32 @@ class FrequenciasExport implements FromCollection, WithHeadings
      * @param int $totalSaldoMinutos
      * @return array
      */
-    protected function processDayData(Carbon $date, $frequencias, $jornada, &$totalSaldoMinutos)
-    {
-        $today = Carbon::now();
+    protected function processDayData(Carbon $date, $frequencias, $jornada)
+{
+    $today = Carbon::now();
 
-        $day = $date->format('d/m/Y');
-        $month = $date->translatedFormat('F');
-        $year = $date->format('Y');
-        $week = $date->translatedFormat('l');
+    $day = $date->format('d/m/Y');
+    $month = $date->translatedFormat('F');
+    $year = $date->format('Y');
+    $week = $date->translatedFormat('l');
 
-        $diaDaSemana = strtolower($date->isoFormat('dddd'));
-        $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
-        $horasPrevistas = is_numeric($horasPrevistas) ? $horasPrevistas : 0;
+    $diaDaSemana = strtolower($date->isoFormat('dddd'));
+    $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
+    $horasPrevistas = is_numeric($horasPrevistas) ? $horasPrevistas : 0;
 
-        if ($date->gt($today)) { // Verifica se a data é futura
-            return $this->processDayWithoutData($day, $month, $year, $week, 0); // Saldo neutro para dias futuros
-        }
-
-        $dayData = $frequencias->get($date->format('Y-m-d'));
-
-        if ($dayData) {
-            return $this->processDayWithData($dayData, $day, $month, $year, $week, $horasPrevistas);
-        } else {
-            // Negativa as horas previstas somente se a data for passada
-            $saldoMinutos = -$horasPrevistas * 60;
-            return $this->processDayWithoutData($day, $month, $year, $week, $saldoMinutos);
-        }
+    if ($date->gt($today)) {
+        return $this->processDayWithoutData($day, $month, $year, $week, 0);
     }
+
+    $dayData = $frequencias->get($date->format('Y-m-d'));
+
+    if ($dayData) {
+        return $this->processDayWithData($dayData, $day, $month, $year, $week, $horasPrevistas);
+    } else {
+        $saldoMinutos = -$horasPrevistas * 60;
+        return $this->processDayWithoutData($day, $month, $year, $week, $saldoMinutos);
+    }
+}
     /**
      * Processa os dados de um dia com frequências registradas.
      *

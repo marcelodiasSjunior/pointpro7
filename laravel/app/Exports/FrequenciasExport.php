@@ -77,6 +77,8 @@ class FrequenciasExport implements FromCollection, WithHeadings
                         $intervalo = $fimIntervalo->diffInMinutes($inicioIntervalo);
                         $horasTrabalhadas -= $intervalo;
                     }
+                } elseif ($inicioJornada && !$fimJornada) {
+                    $horasTrabalhadas = Carbon::now()->diffInMinutes($inicioJornada);
                 }
 
                 $saldoMinutos = $horasTrabalhadas - $horasPrevistasEmMinutos;

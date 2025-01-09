@@ -23,6 +23,11 @@ class FrequenciasExport implements FromCollection, WithHeadings
         $this->mes = $mes;
     }
 
+    /**
+     * Retorna a coleção de dados para exportação.
+     *
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         $startDate = Carbon::parse("{$this->ano}-{$this->mes}-01");
@@ -38,11 +43,18 @@ class FrequenciasExport implements FromCollection, WithHeadings
             return $this->processDayData($date, $frequencias, $jornada, $totalSaldoMinutos);
         });
 
-        $this->addTotalSaldoRow($data);
+        $this->addTotalSaldoRow($data, $totalSaldoMinutos);
 
         return collect($data);
     }
 
+    /**
+     * Gera uma coleção de todos os dias do mês.
+     *
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return \Illuminate\Support\Collection
+     */
     protected function generateAllDays(Carbon $startDate, Carbon $endDate)
     {
         $allDays = collect();
@@ -53,6 +65,13 @@ class FrequenciasExport implements FromCollection, WithHeadings
         return $allDays;
     }
 
+    /**
+     * Obtém as frequências do funcionário no período especificado.
+     *
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return \Illuminate\Support\Collection
+     */
     protected function getFrequencias(Carbon $startDate, Carbon $endDate)
     {
         return Frequencia::where('company_id', $this->company_id)
@@ -65,6 +84,11 @@ class FrequenciasExport implements FromCollection, WithHeadings
             });
     }
 
+    /**
+     * Obtém os dados do funcionário.
+     *
+     * @return Funcionario
+     */
     protected function getFuncionario()
     {
         return Funcionario::where('id', $this->funcionario_id)
@@ -72,6 +96,15 @@ class FrequenciasExport implements FromCollection, WithHeadings
             ->first();
     }
 
+    /**
+     * Processa os dados de um dia específico.
+     *
+     * @param Carbon $date
+     * @param \Illuminate\Support\Collection $frequencias
+     * @param Jornada $jornada
+     * @param int $totalSaldoMinutos
+     * @return array
+     */
     protected function processDayData(Carbon $date, $frequencias, $jornada, &$totalSaldoMinutos)
     {
         $day = $date->format('d/m/Y');
@@ -82,29 +115,41 @@ class FrequenciasExport implements FromCollection, WithHeadings
 
         $diaDaSemana = strtolower($date->isoFormat('dddd'));
         $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
-        $horasPrevistasEmMinutos = is_numeric($horasPrevistas) ? $horasPrevistas * 60 : 0;
+        $horasPrevistas = is_numeric($horasPrevistas) ? $horasPrevistas : 0;
 
         if ($dayData) {
-            return $this->processDayWithData($dayData, $day, $month, $year, $week, $horasPrevistas, $totalSaldoMinutos);
+            return $this->processDayWithData($dayData, $day, $month, $year, $week, $horasPrevistas);
         } else {
-            $saldoMinutos = $date->isPast() ? -$horasPrevistasEmMinutos : 0;
-            return $this->processDayWithoutData($day, $month, $year, $week, $saldoMinutos, $totalSaldoMinutos);
+            // Negativa as horas previstas se não houver dados
+            $saldoMinutos = -$horasPrevistas * 60;
+            return $this->processDayWithoutData($day, $month, $year, $week, $saldoMinutos);
         }
     }
 
-    protected function processDayWithData($dayData, $day, $month, $year, $week, $horasPrevistas, &$totalSaldoMinutos)
+    /**
+     * Processa os dados de um dia com frequências registradas.
+     *
+     * @param \Illuminate\Support\Collection $dayData
+     * @param string $day
+     * @param string $month
+     * @param string $year
+     * @param string $week
+     * @param int $horasPrevistas
+     * @param int $totalSaldoMinutos
+     * @return array
+     */
+    protected function processDayWithData($dayData, $day, $month, $year, $week, $horasPrevistas)
     {
         $sortedBatidas = $dayData->sortBy('ponto')->values();
         $inicioJornada = $this->formatTime($sortedBatidas, 0);
         $inicioIntervalo = $this->formatTime($sortedBatidas, 1);
         $fimIntervalo = $this->formatTime($sortedBatidas, 2);
-        $fimJornada = $this->formatTime($sortedBatidas, count($sortedBatidas) - 1);
+        $fimJornada = $this->formatTime($sortedBatidas, count($sortedBatidas) - 1); // ultimo registro
 
         $horasTrabalhadas = $this->calculateHorasTrabalhadas($sortedBatidas);
         $horasTrabalhadas -= $this->calculateIntervalo($sortedBatidas);
 
         $saldoMinutos = $this->calculateSaldoMinutos($horasTrabalhadas, $horasPrevistas);
-        $totalSaldoMinutos += $saldoMinutos;
 
         $saldoFormatado = $this->formatSaldo($saldoMinutos);
         $status = $this->determineStatus($inicioJornada, $inicioIntervalo, $fimIntervalo, $fimJornada);
@@ -120,14 +165,22 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Fim da jornada' => $fimJornada,
             'Status' => $status,
             'Saldo' => $saldoFormatado,
-            'SaldoMinutos' => $saldoMinutos,
+            'SaldoMinutos' => $saldoMinutos, // Adiciona o saldo em minutos
             'Totalizador' => ''
         ];
     }
 
-    protected function processDayWithoutData($day, $month, $year, $week, $saldoMinutos, &$totalSaldoMinutos)
+    /**
+     * Processa os dados de um dia sem frequências registradas.
+     *
+     * @param string $day
+     * @param string $month
+     * @param string $year
+     * @param string $week
+     * @return array
+     */
+    protected function processDayWithoutData($day, $month, $year, $week, $saldoMinutos)
     {
-        $totalSaldoMinutos += $saldoMinutos;
         $saldoFormatado = $this->formatSaldo($saldoMinutos);
 
         return [
@@ -141,51 +194,66 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Fim da jornada' => '-',
             'Status' => 'Não compareceu',
             'Saldo' => $saldoFormatado,
-            'SaldoMinutos' => $saldoMinutos,
-            'Totalizador' => ''
+            'SaldoMinutos' => $saldoMinutos, // Adiciona o saldo em minutos            'Totalizador' => ''
         ];
     }
 
+    /**
+     * Adiciona uma linha com o total do saldo ao final dos dados.
+     *
+     * @param \Illuminate\Support\Collection $data
+     * @param int $totalSaldoMinutos
+     */
     protected function addTotalSaldoRow(&$data)
     {
         $totalSaldoMinutos = $data->reduce(function ($carry, $item) {
-            return $carry + $item['SaldoMinutos'];
+            return $carry + $item['SaldoMinutos']; // Soma os minutos diretamente
         }, 0);
 
         $horasTotalSaldo = intdiv($totalSaldoMinutos, 60);
-        $minutosTotalSaldo = abs($totalSaldoMinutos) % 60;
-        $totalSaldoFormatado = sprintf('%02d:%02d', abs($horasTotalSaldo), abs($minutosTotalSaldo));
+        $minutosTotalSaldo = $totalSaldoMinutos % 60;
+        $totalSaldoFormatado = sprintf('%02d:%02d', abs($horasTotalSaldo), abs($minutosTotalSaldo)); // Usar abs() para exibir valor positivo
 
         $data->push([
-            'Dia' => '',
-            'Mês' => '',
-            'Ano' => '',
-            'Semana' => '',
-            'Início da jornada' => '',
-            'Início do intervalo' => '',
-            'Fim do intervalo' => '',
-            'Fim da jornada' => '',
-            'Status' => 'Total',
-            'Saldo' => '',
-            'Totalizador' => ($totalSaldoMinutos < 0 ? '-' : '') . $totalSaldoFormatado
+            // ...
+            'Totalizador' => ($totalSaldoMinutos < 0 ? '-' : '') . $totalSaldoFormatado // Adiciona sinal negativo se necessário
         ]);
     }
 
+    /**
+     * Formata o horário de uma batida.
+     *
+     * @param \Illuminate\Support\Collection $sortedBatidas
+     * @param int $index
+     * @return string
+     */
     protected function formatTime($sortedBatidas, $index)
     {
         return isset($sortedBatidas[$index]) ? Carbon::parse($sortedBatidas[$index]->ponto)->format('H:i') : '-';
     }
 
+    /**
+     * Calcula as horas trabalhadas.
+     *
+     * @param \Illuminate\Support\Collection $sortedBatidas
+     * @return int
+     */
     protected function calculateHorasTrabalhadas($sortedBatidas)
     {
         if (count($sortedBatidas) >= 2) {
             $inicioJornadaTime = Carbon::parse($sortedBatidas[0]->ponto);
-            $fimJornadaTime = Carbon::parse(end($sortedBatidas)->ponto);
+            $fimJornadaTime = Carbon::parse(end($sortedBatidas)->ponto); // Pega o último registro como saída
             return $fimJornadaTime->diffInMinutes($inicioJornadaTime);
         }
         return 0;
     }
 
+    /**
+     * Calcula o intervalo de almoço.
+     *
+     * @param \Illuminate\Support\Collection $sortedBatidas
+     * @return int
+     */
     protected function calculateIntervalo($sortedBatidas)
     {
         if (count($sortedBatidas) >= 4) {
@@ -200,19 +268,41 @@ class FrequenciasExport implements FromCollection, WithHeadings
         return 0;
     }
 
+    /**
+     * Calcula o saldo de minutos trabalhados.
+     *
+     * @param int $horasTrabalhadas
+     * @param int $horasPrevistas
+     * @return int
+     */
     protected function calculateSaldoMinutos($horasTrabalhadas, $horasPrevistas)
     {
         $horasPrevistasEmMinutos = $horasPrevistas * 60;
         return $horasTrabalhadas - $horasPrevistasEmMinutos;
     }
 
+    /**
+     * Formata o saldo de minutos trabalhados.
+     *
+     * @param int $saldoMinutos
+     * @return string
+     */
     protected function formatSaldo($saldoMinutos)
     {
         $horasSaldo = intdiv($saldoMinutos, 60);
-        $minutosSaldo = abs($saldoMinutos) % 60;
+        $minutosSaldo = $saldoMinutos % 60;
         return sprintf('%02d:%02d', $horasSaldo, $minutosSaldo);
     }
 
+    /**
+     * Determina o status do dia.
+     *
+     * @param string $inicioJornada
+     * @param string $inicioIntervalo
+     * @param string $fimIntervalo
+     * @param string $fimJornada
+     * @return string
+     */
     protected function determineStatus($inicioJornada, $inicioIntervalo, $fimIntervalo, $fimJornada)
     {
         if (!$inicioJornada && !$inicioIntervalo && !$fimIntervalo && !$fimJornada) {
@@ -223,6 +313,11 @@ class FrequenciasExport implements FromCollection, WithHeadings
         return "Compareceu";
     }
 
+    /**
+     * Retorna os cabeçalhos das colunas para exportação.
+     *
+     * @return array
+     */
     public function headings(): array
     {
         return [

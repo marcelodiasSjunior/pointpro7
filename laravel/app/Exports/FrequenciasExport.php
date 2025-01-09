@@ -106,27 +106,32 @@ class FrequenciasExport implements FromCollection, WithHeadings
      * @return array
      */
     protected function processDayData(Carbon $date, $frequencias, $jornada, &$totalSaldoMinutos)
-    {
-        $day = $date->format('d/m/Y');
-        $month = $date->translatedFormat('F');
-        $year = $date->format('Y');
-        $week = $date->translatedFormat('l');
-        $dayData = $frequencias->get($date->format('Y-m-d'));
+{
+    $today = Carbon::now();
 
-        $diaDaSemana = strtolower($date->isoFormat('dddd'));
-        $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
-        $horasPrevistas = is_numeric($horasPrevistas) ? $horasPrevistas : 0;
+    $day = $date->format('d/m/Y');
+    $month = $date->translatedFormat('F');
+    $year = $date->format('Y');
+    $week = $date->translatedFormat('l');
 
+    $diaDaSemana = strtolower($date->isoFormat('dddd'));
+    $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
+    $horasPrevistas = is_numeric($horasPrevistas) ? $horasPrevistas : 0;
 
-        if ($dayData) {
-            return $this->processDayWithData($dayData, $day, $month, $year, $week, $horasPrevistas);
-        } else {
-            // Negativa as horas previstas se não houver dados
-            $saldoMinutos = -$horasPrevistas * 60;
-            return $this->processDayWithoutData($day, $month, $year, $week, $saldoMinutos);
-        }
+    if ($date->gt($today)) { // Verifica se a data é futura
+        return $this->processDayWithoutData($day, $month, $year, $week, 0); // Saldo neutro para dias futuros
     }
 
+    $dayData = $frequencias->get($date->format('Y-m-d'));
+
+    if ($dayData) {
+        return $this->processDayWithData($dayData, $day, $month, $year, $week, $horasPrevistas);
+    } else {
+        // Negativa as horas previstas somente se a data for passada
+        $saldoMinutos = -$horasPrevistas * 60;
+        return $this->processDayWithoutData($day, $month, $year, $week, $saldoMinutos);
+    }
+}
     /**
      * Processa os dados de um dia com frequências registradas.
      *

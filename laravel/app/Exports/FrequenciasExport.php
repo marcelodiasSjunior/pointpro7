@@ -32,7 +32,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
 {
     $startDate = Carbon::parse("{$this->ano}-{$this->mes}-01");
     $endDate = Carbon::parse("{$this->ano}-{$this->mes}-01")->endOfMonth();
-    $today = Carbon::now()->startOfDay(); // Data atual zerada (00:00:00)
+    $today = Carbon::now()->startOfDay();
     $allDays = collect();
     $totalSaldoMinutos = 0;
 
@@ -62,9 +62,8 @@ class FrequenciasExport implements FromCollection, WithHeadings
         $year = $date->format('Y');
         $week = $date->translatedFormat('l');
 
-        // *** NOVA VERIFICAÇÃO CRUCIAL ***
         if ($date->gt($today)) {
-            return [ // Retorna dados em branco para dias futuros
+            return [
                 'Dia' => $day, 'Mês' => $month, 'Ano' => $year, 'Semana' => $week,
                 'Início da jornada' => '-', 'Início do intervalo' => '-',
                 'Fim do intervalo' => '-', 'Fim da jornada' => '-',
@@ -81,24 +80,29 @@ class FrequenciasExport implements FromCollection, WithHeadings
         $horasTrabalhadas = 0;
         $status = "Não compareceu";
 
+        $inicioJornada = '-';
+        $inicioIntervalo = '-';
+        $fimIntervalo = '-';
+        $fimJornada = '-';
+
         if ($dayData) {
             $sortedBatidas = $dayData->sortBy('ponto')->values();
             $numBatidas = count($sortedBatidas);
 
-            $inicioJornada = isset($sortedBatidas[0]) ? Carbon::parse($sortedBatidas[0]->ponto) : null;
-            $inicioIntervalo = isset($sortedBatidas[1]) ? Carbon::parse($sortedBatidas[1]->ponto) : null;
-            $fimIntervalo = isset($sortedBatidas[2]) ? Carbon::parse($sortedBatidas[2]->ponto) : null;
-            $fimJornada = isset($sortedBatidas[3]) ? Carbon::parse($sortedBatidas[3]->ponto) : null;
+            $inicioJornada = isset($sortedBatidas[0]) ? Carbon::parse($sortedBatidas[0]->ponto)->format('H:i') : '-';
+            $inicioIntervalo = isset($sortedBatidas[1]) ? Carbon::parse($sortedBatidas[1]->ponto)->format('H:i') : '-';
+            $fimIntervalo = isset($sortedBatidas[2]) ? Carbon::parse($sortedBatidas[2]->ponto)->format('H:i') : '-';
+            $fimJornada = isset($sortedBatidas[3]) ? Carbon::parse($sortedBatidas[3]->ponto)->format('H:i') : '-';
 
-            if ($numBatidas === 4 && $inicioJornada && $fimJornada && $inicioIntervalo && $fimIntervalo) {
-                $horasTrabalhadas = $fimJornada->diffInMinutes($inicioJornada) - $fimIntervalo->diffInMinutes($inicioIntervalo);
+            if ($numBatidas === 4) {
+                $horasTrabalhadas = Carbon::parse($fimJornada)->diffInMinutes(Carbon::parse($inicioJornada)) - Carbon::parse($fimIntervalo)->diffInMinutes(Carbon::parse($inicioIntervalo));
                 $status = "Compareceu";
             } elseif ($numBatidas < 4 && $numBatidas > 0) {
                 $status = "Incompleto";
-                if ($inicioJornada && !$fimJornada){
-                    $horasTrabalhadas = $inicioJornada->diffInMinutes(Carbon::now());
-                }elseif ($inicioJornada && $fimJornada){
-                    $horasTrabalhadas = $fimJornada->diffInMinutes($inicioJornada);
+                if ($inicioJornada != '-' && $fimJornada != '-'){
+                    $horasTrabalhadas = Carbon::parse($fimJornada)->diffInMinutes(Carbon::parse($inicioJornada));
+                }elseif ($inicioJornada != '-' && $fimJornada == '-'){
+                    $horasTrabalhadas = Carbon::parse($inicioJornada)->diffInMinutes(Carbon::now());
                 }
             }
         }
@@ -110,8 +114,8 @@ class FrequenciasExport implements FromCollection, WithHeadings
             $saldoFormatado = $saldoMinutos < 0 ? "-$saldoFormatado" : $saldoFormatado;
             return [
                 'Dia' => $day, 'Mês' => $month, 'Ano' => $year, 'Semana' => $week,
-                'Início da jornada' => '-', 'Início do intervalo' => '-',
-                'Fim do intervalo' => '-', 'Fim da jornada' => '-',
+                'Início da jornada' => $inicioJornada, 'Início do intervalo' => $inicioIntervalo,
+                'Fim do intervalo' => $fimIntervalo, 'Fim da jornada' => $fimJornada,
                 'Status' => $status, 'Saldo' => $saldoFormatado, 'Totalizador' => ''
             ];
         }
@@ -123,10 +127,8 @@ class FrequenciasExport implements FromCollection, WithHeadings
 
         return [
             'Dia' => $day, 'Mês' => $month, 'Ano' => $year, 'Semana' => $week,
-            'Início da jornada' => $inicioJornada ? $inicioJornada->format('H:i') : '-',
-            'Início do intervalo' => $inicioIntervalo ? $inicioIntervalo->format('H:i') : '-',
-            'Fim do intervalo' => $fimIntervalo ? $fimIntervalo->format('H:i') : '-',
-            'Fim da jornada' => $fimJornada ? $fimJornada->format('H:i') : '-',
+            'Início da jornada' => $inicioJornada, 'Início do intervalo' => $inicioIntervalo,
+            'Fim do intervalo' => $fimIntervalo, 'Fim da jornada' => $fimJornada,
             'Status' => $status, 'Saldo' => $saldoFormatado, 'Totalizador' => ''
         ];
     });

@@ -29,129 +29,122 @@ class FrequenciasExport implements FromCollection, WithHeadings
     // Método `collection` da classe `FrequenciasExport`
 
     public function collection()
-    {
-        $startDate = Carbon::parse("{$this->ano}-{$this->mes}-01");
-        $endDate = Carbon::parse("{$this->ano}-{$this->mes}-01")->endOfMonth();
-        $allDays = collect();
-        $totalSaldoMinutos = 0;
+{
+    $startDate = Carbon::parse("{$this->ano}-{$this->mes}-01");
+    $endDate = Carbon::parse("{$this->ano}-{$this->mes}-01")->endOfMonth();
+    $today = Carbon::now()->startOfDay(); // Data atual zerada (00:00:00)
+    $allDays = collect();
+    $totalSaldoMinutos = 0;
 
-        while ($startDate->lte($endDate)) {
-            $allDays->push($startDate->copy());
-            $startDate->addDay();
+    while ($startDate->lte($endDate)) {
+        $allDays->push($startDate->copy());
+        $startDate->addDay();
+    }
+
+    $frequencias = Frequencia::where('company_id', $this->company_id)
+        ->where('funcionario_id', $this->funcionario_id)
+        ->whereBetween('ponto', ["{$this->ano}-{$this->mes}-01 00:00:00", "{$this->ano}-{$this->mes}-{$endDate->day} 23:59:59"])
+        ->orderBy('ponto')
+        ->get()
+        ->groupBy(function ($date) {
+            return Carbon::parse($date->ponto)->format('Y-m-d');
+        });
+
+    $funcionario = Funcionario::where('id', $this->funcionario_id)
+        ->where('company_id', $this->company_id)
+        ->first();
+
+    $jornada = $funcionario->jornada;
+
+    $data = $allDays->map(function ($date) use ($frequencias, $jornada, &$totalSaldoMinutos, $today) {
+        $day = $date->format('d/m/Y');
+        $month = $date->translatedFormat('F');
+        $year = $date->format('Y');
+        $week = $date->translatedFormat('l');
+
+        // *** NOVA VERIFICAÇÃO CRUCIAL ***
+        if ($date->gt($today)) {
+            return [ // Retorna dados em branco para dias futuros
+                'Dia' => $day, 'Mês' => $month, 'Ano' => $year, 'Semana' => $week,
+                'Início da jornada' => '-', 'Início do intervalo' => '-',
+                'Fim do intervalo' => '-', 'Fim da jornada' => '-',
+                'Status' => '-', 'Saldo' => '-', 'Totalizador' => ''
+            ];
         }
 
-        $frequencias = Frequencia::where('company_id', $this->company_id)
-            ->where('funcionario_id', $this->funcionario_id)
-            ->whereBetween('ponto', ["{$this->ano}-{$this->mes}-01 00:00:00", "{$this->ano}-{$this->mes}-{$endDate->day} 23:59:59"])
-            ->orderBy('ponto')
-            ->get()
-            ->groupBy(function ($date) {
-                return Carbon::parse($date->ponto)->format('Y-m-d');
-            });
+        $dayData = $frequencias->get($date->format('Y-m-d'));
 
-        $funcionario = Funcionario::where('id', $this->funcionario_id)
-            ->where('company_id', $this->company_id)
-            ->first();
+        $diaDaSemana = strtolower($date->isoFormat('dddd'));
+        $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
+        $horasPrevistasEmMinutos = is_numeric($horasPrevistas) ? $horasPrevistas * 60 : 0;
 
-        $jornada = $funcionario->jornada;
+        $horasTrabalhadas = 0;
+        $status = "Não compareceu";
 
-        $data = $allDays->map(function ($date) use ($frequencias, $jornada, &$totalSaldoMinutos) {
-            $day = $date->format('d/m/Y');
-            $month = $date->translatedFormat('F');
-            $year = $date->format('Y');
-            $week = $date->translatedFormat('l');
-            $dayData = $frequencias->get($date->format('Y-m-d'));
+        if ($dayData) {
+            $sortedBatidas = $dayData->sortBy('ponto')->values();
+            $numBatidas = count($sortedBatidas);
 
-            $diaDaSemana = strtolower($date->isoFormat('dddd'));
-            $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
-            $horasPrevistasEmMinutos = is_numeric($horasPrevistas) ? $horasPrevistas * 60 : 0;
+            $inicioJornada = isset($sortedBatidas[0]) ? Carbon::parse($sortedBatidas[0]->ponto) : null;
+            $inicioIntervalo = isset($sortedBatidas[1]) ? Carbon::parse($sortedBatidas[1]->ponto) : null;
+            $fimIntervalo = isset($sortedBatidas[2]) ? Carbon::parse($sortedBatidas[2]->ponto) : null;
+            $fimJornada = isset($sortedBatidas[3]) ? Carbon::parse($sortedBatidas[3]->ponto) : null;
 
-            $horasTrabalhadas = 0;
-            $status = "Não compareceu";
-
-            if ($dayData) {
-                $sortedBatidas = $dayData->sortBy('ponto')->values();
-                $numBatidas = count($sortedBatidas);
-
-                $inicioJornada = isset($sortedBatidas[0]) ? Carbon::parse($sortedBatidas[0]->ponto) : null;
-                $inicioIntervalo = isset($sortedBatidas[1]) ? Carbon::parse($sortedBatidas[1]->ponto) : null;
-                $fimIntervalo = isset($sortedBatidas[2]) ? Carbon::parse($sortedBatidas[2]->ponto) : null;
-                $fimJornada = isset($sortedBatidas[3]) ? Carbon::parse($sortedBatidas[3]->ponto) : null;
-
-                if ($numBatidas === 4 && $inicioJornada && $fimJornada && $inicioIntervalo && $fimIntervalo) {
-                    $horasTrabalhadas = $fimJornada->diffInMinutes($inicioJornada) - $fimIntervalo->diffInMinutes($inicioIntervalo);
-                    $status = "Compareceu";
-                } elseif ($numBatidas < 4 && $numBatidas > 0) {
-                    $status = "Incompleto";
-                    if ($inicioJornada && !$fimJornada) {
-                        $horasTrabalhadas = $inicioJornada->diffInMinutes(Carbon::now());
-                    } elseif ($inicioJornada && $fimJornada) {
-                        $horasTrabalhadas = $fimJornada->diffInMinutes($inicioJornada);
-                    }
+            if ($numBatidas === 4 && $inicioJornada && $fimJornada && $inicioIntervalo && $fimIntervalo) {
+                $horasTrabalhadas = $fimJornada->diffInMinutes($inicioJornada) - $fimIntervalo->diffInMinutes($inicioIntervalo);
+                $status = "Compareceu";
+            } elseif ($numBatidas < 4 && $numBatidas > 0) {
+                $status = "Incompleto";
+                if ($inicioJornada && !$fimJornada){
+                    $horasTrabalhadas = $inicioJornada->diffInMinutes(Carbon::now());
+                }elseif ($inicioJornada && $fimJornada){
+                    $horasTrabalhadas = $fimJornada->diffInMinutes($inicioJornada);
                 }
             }
+        }
 
-            if ($status === "Não compareceu" || $status === "Incompleto") {
-                $saldoMinutos = -$horasPrevistasEmMinutos + $horasTrabalhadas;
-                $totalSaldoMinutos += $saldoMinutos;
-                $saldoFormatado = sprintf('%02d:%02d', intdiv(abs($saldoMinutos), 60), abs($saldoMinutos) % 60);
-                $saldoFormatado = $saldoMinutos < 0 ? "-$saldoFormatado" : $saldoFormatado;
-                return [
-                    'Dia' => $day,
-                    'Mês' => $month,
-                    'Ano' => $year,
-                    'Semana' => $week,
-                    'Início da jornada' => '-',
-                    'Início do intervalo' => '-',
-                    'Fim do intervalo' => '-',
-                    'Fim da jornada' => '-',
-                    'Status' => $status,
-                    'Saldo' => $saldoFormatado,
-                    'Totalizador' => ''
-                ];
-            }
-
-            $saldoMinutos = $horasTrabalhadas - $horasPrevistasEmMinutos;
+        if ($status === "Não compareceu" || $status === "Incompleto") {
+            $saldoMinutos = -$horasPrevistasEmMinutos + $horasTrabalhadas;
             $totalSaldoMinutos += $saldoMinutos;
             $saldoFormatado = sprintf('%02d:%02d', intdiv(abs($saldoMinutos), 60), abs($saldoMinutos) % 60);
             $saldoFormatado = $saldoMinutos < 0 ? "-$saldoFormatado" : $saldoFormatado;
-
             return [
-                'Dia' => $day,
-                'Mês' => $month,
-                'Ano' => $year,
-                'Semana' => $week,
-                'Início da jornada' => $inicioJornada ? $inicioJornada->format('H:i') : '-',
-                'Início do intervalo' => $inicioIntervalo ? $inicioIntervalo->format('H:i') : '-',
-                'Fim do intervalo' => $fimIntervalo ? $fimIntervalo->format('H:i') : '-',
-                'Fim da jornada' => $fimJornada ? $fimJornada->format('H:i') : '-',
-                'Status' => $status,
-                'Saldo' => $saldoFormatado,
-                'Totalizador' => ''
+                'Dia' => $day, 'Mês' => $month, 'Ano' => $year, 'Semana' => $week,
+                'Início da jornada' => '-', 'Início do intervalo' => '-',
+                'Fim do intervalo' => '-', 'Fim da jornada' => '-',
+                'Status' => $status, 'Saldo' => $saldoFormatado, 'Totalizador' => ''
             ];
-        });
+        }
 
-        $horasTotalSaldo = intdiv($totalSaldoMinutos, 60);
-        $minutosTotalSaldo = abs($totalSaldoMinutos) % 60;
-        $totalSaldoFormatado = sprintf('%02d:%02d', $horasTotalSaldo, $minutosTotalSaldo);
-        $totalSaldoFormatado = $totalSaldoMinutos < 0 ? "-$totalSaldoFormatado" : $totalSaldoFormatado;
+        $saldoMinutos = $horasTrabalhadas - $horasPrevistasEmMinutos;
+        $totalSaldoMinutos += $saldoMinutos;
+        $saldoFormatado = sprintf('%02d:%02d', intdiv(abs($saldoMinutos), 60), abs($saldoMinutos) % 60);
+        $saldoFormatado = $saldoMinutos < 0 ? "-$saldoFormatado" : $saldoFormatado;
 
-        $data->push([
-            'Dia' => '',
-            'Mês' => '',
-            'Ano' => '',
-            'Semana' => '',
-            'Início da jornada' => '',
-            'Início do intervalo' => '',
-            'Fim do intervalo' => '',
-            'Fim da jornada' => '',
-            'Status' => 'Total',
-            'Saldo' => '',
-            'Totalizador' => $totalSaldoFormatado
-        ]);
+        return [
+            'Dia' => $day, 'Mês' => $month, 'Ano' => $year, 'Semana' => $week,
+            'Início da jornada' => $inicioJornada ? $inicioJornada->format('H:i') : '-',
+            'Início do intervalo' => $inicioIntervalo ? $inicioIntervalo->format('H:i') : '-',
+            'Fim do intervalo' => $fimIntervalo ? $fimIntervalo->format('H:i') : '-',
+            'Fim da jornada' => $fimJornada ? $fimJornada->format('H:i') : '-',
+            'Status' => $status, 'Saldo' => $saldoFormatado, 'Totalizador' => ''
+        ];
+    });
 
-        return $data;
-    }
+    $horasTotalSaldo = intdiv($totalSaldoMinutos, 60);
+    $minutosTotalSaldo = abs($totalSaldoMinutos) % 60;
+    $totalSaldoFormatado = sprintf('%02d:%02d', $horasTotalSaldo, $minutosTotalSaldo);
+    $totalSaldoFormatado = $totalSaldoMinutos < 0 ? "-$totalSaldoFormatado" : $totalSaldoFormatado;
+
+    $data->push([
+        'Dia' => '', 'Mês' => '', 'Ano' => '', 'Semana' => '',
+        'Início da jornada' => '', 'Início do intervalo' => '',
+        'Fim do intervalo' => '', 'Fim da jornada' => '',
+        'Status' => 'Total', 'Saldo' => '', 'Totalizador' => $totalSaldoFormatado
+    ]);
+
+    return $data;
+}
 
 
     public function headings(): array

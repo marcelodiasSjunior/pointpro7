@@ -24,10 +24,6 @@ class FrequenciasExport implements FromCollection, WithHeadings
         $this->mes = $mes;
     }
 
-    // Método `collection` da classe `FrequenciasExport`
-
-    // Método `collection` da classe `FrequenciasExport`
-
     public function collection()
     {
         $startDate = Carbon::parse("{$this->ano}-{$this->mes}-01");
@@ -112,6 +108,17 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Totalizador' => ''
                 ];
             } else {
+                $saldoMinutos = $date->isPast() ? -$horasPrevistasEmMinutos : 0;
+                $totalSaldoMinutos += $saldoMinutos;
+
+                $saldoFormatado = sprintf('%02d:%02d', intdiv(abs($saldoMinutos), 60), abs($saldoMinutos) % 60);
+                if ($saldoMinutos < 0) {
+                    $saldoFormatado = "-$saldoFormatado";
+                }
+
+                // Log de depuração
+                error_log("Data: $day, Saldo Minutos: $saldoMinutos, Total Saldo Minutos: $totalSaldoMinutos");
+
                 return [
                     'Dia' => $day,
                     'Mês' => $month,
@@ -122,7 +129,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     'Fim do intervalo' => '-',
                     'Fim da jornada' => '-',
                     'Status' => 'Não compareceu',
-                    'Saldo' => '00:00',
+                    'Saldo' => $saldoFormatado,
                     'Totalizador' => ''
                 ];
             }
@@ -134,6 +141,9 @@ class FrequenciasExport implements FromCollection, WithHeadings
         if ($totalSaldoMinutos < 0) {
             $totalSaldoFormatado = "-$totalSaldoFormatado";
         }
+
+        // Log de depuração
+        error_log("Total Saldo Minutos: $totalSaldoMinutos, Total Saldo Formatado: $totalSaldoFormatado");
 
         $data->push([
             'Dia' => '',
@@ -152,7 +162,6 @@ class FrequenciasExport implements FromCollection, WithHeadings
         return $data;
     }
 
-
     public function headings(): array
     {
         return [
@@ -166,7 +175,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Fim da jornada',
             'Status',
             'Saldo',
-            'Totalizador' // Adiciona o cabeçalho do totalizador aqui
+            'Totalizador'
         ];
     }
 }

@@ -1,7 +1,7 @@
 version: "3.1"
 services:
   nginx:
-    restart: unless-stopped
+    restart: always
     image: nginx:alpine
     container_name: pro7_nginx
     working_dir: /app
@@ -23,7 +23,7 @@ services:
       - app-network
 
   swoole:
-    restart: unless-stopped
+    restart: always
     build: ../docker/php
     container_name: pro7_php
     working_dir: /app
@@ -36,14 +36,14 @@ services:
       - app-network
 
   redis:
-    restart: unless-stopped
+    restart: always
     container_name: pro7_redis
     image: redis
     networks:
       - app-network
 
   python:
-    restart: unless-stopped
+    restart: always
     container_name: pro7_python
     build: ../docker/python
     working_dir: /app
@@ -53,12 +53,12 @@ services:
       - app-network
     volumes:
       - ../flask:/app
-      - /root/pointpro7/docker/nginx/cert.pem:/root/pointpro7/docker/nginx/cert.pem
-      - /root/pointpro7/docker/nginx/key.pem:/root/pointpro7/docker/nginx/key.pem
+      - /root/projetos/pointpro7/docker/nginx/cert.pem:/root/projetos/pointpro7/docker/nginx/cert.pem
+      - /root/projetos/pointpro7/docker/nginx/key.pem:/root/projetos/pointpro7/docker/nginx/key.pem
 
   database:
     image: mysql:5.7
-    restart: unless-stopped
+    restart: always
     container_name: pro7_mysql
     environment:
       MYSQL_DATABASE: pro7_prod

@@ -10,12 +10,12 @@
     </div>
     <div class="col-md-2 form-group mb-3"></div>
 </div>
-< <div class="row">
+<div class="row">
     <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-8 form-group mb-3">
-        <label for="plano-add">Plano</label>
+        <label for="plan-add">Plano</label>
         <div class="input-group mb-3">
-            <span class="input-group-text" id="plano-add">Plano</span>
+            <span class="input-group-text" id="plan-add">Plano</span>
             <select class="form-control" name="plan" required id="plan">
                 <option value="">SELECIONE</option>
                 <option value="1" {{ isset($company) && $company->plan === 1 ? 'selected' : '' }}>Parceiro</option>
@@ -23,9 +23,6 @@
             </select>
         </div>
     </div>
-    <div class="col-md-2 form-group mb-3"></div>
-
-    <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-8 form-group mb-3">
         <label for="plano-add">Ativa</label>
         <div class="input-group mb-3">
@@ -191,27 +188,27 @@
 $(function() {
 
   const cep = document.querySelector("input[name=cep]");
-  
+
   cep.addEventListener('blur', e=> {
   		const value = cep.value.replace(/[^0-9]+/, '');
       const url = `https://viacep.com.br/ws/${value}/json/`;
-      
+
       fetch(url)
       .then( response => response.json())
       .then( json => {
-      		
+
           if( json.logradouro ) {
           	document.querySelector('input[name=endereco]').value = json.logradouro;
             document.querySelector('input[name=bairro]').value = json.bairro;
             document.querySelector('input[name=estado]').value = json.uf;
           }
-      
+
       });
-      
-      
+
+
   });
 
-    
+
 });
 
 </script>

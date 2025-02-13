@@ -70,7 +70,7 @@
             <div class="header-part-right">
                 <!-- Full screen toggle -->
                 <i class="i-Full-Screen header-icon d-none d-sm-inline-block" data-fullscreen></i>
-
+                <i class="i-Bell header-icon"></i>
                 <!-- User avatar dropdown -->
                 <div class="dropdown">
                     <div class="user col align-self-end">

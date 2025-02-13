@@ -18,5 +18,7 @@ class Atestado extends Model
         'dateUpload',
         'startDate',
         'endDate',
+        'startTime',
+        'endTime'
     ];
 }

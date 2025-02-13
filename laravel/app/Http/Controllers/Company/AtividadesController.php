@@ -244,6 +244,7 @@ class AtividadesController extends Controller
 
             $atividade->observacoes = Observacao::where('funcionario_id', $funcionario_id)->where('atividade_funcionario_id', $atividade->id)->where('company_id', $company_id)->get()->count();
         }
+
         $historico = FuncionarioAtividade::with(['atividade' => function($query) {
             $query->withTrashed();
         }])
@@ -252,7 +253,7 @@ class AtividadesController extends Controller
         ->orderBy('dia', 'desc')
         ->orderBy('created_at', 'desc')
         ->get(); // ← Remova o map()
-        
+
         $data = [
             'atividades' => $atividades,
             'historico' => $historico,
@@ -389,7 +390,7 @@ class AtividadesController extends Controller
         $funcionarios = Funcionario::where('company_id', $req->user()->company->id)->wherehas('user')->get();
         $atividade = Atividade::where('company_id', $req->user()->company->id)->where('id', $atividade_id)->first();
         $dias_salvos = AtividadeDiasSemana::where('company_id', $req->user()->company->id)->where('atividade_id', $atividade_id)->get()->pluck('dia_da_semana')->toArray();
-        $funcionarios_salvos = AtividadeFuncionario::where('company_id', $req->user()->company->id)->where('atividade_id', $atividade_id)->pluck('funcionario_id')->toArray();
+        $funcionarios_salvos = AtividadeFuncionario::where('company_id', $req->user()->company->id)->where('atividade_id', $atividade_id)->where('status', 1)->pluck('funcionario_id')->toArray();
 
         $data = [
             'atividade' => $atividade,
@@ -410,16 +411,10 @@ class AtividadesController extends Controller
             ]
         )->where('status', 1)->get();
 
-        $id_atividade_funcionario = AtividadeFuncionario::select('id')
-            ->where('funcionario_id', $funcionario_id, )
-            ->where('company_id', $company_id)
-            ->where('atividade_id', $atividade_id)
-            ->value('id');
-
         if ($atividadesFuncionarioCompany->count() <= 1) {
             return Redirect::back()->withErrors(['msg' => 'O funcionário possui apenas uma atividade cadastrada. Crie uma nova e mova o funcionário antes de deletar!']);
         } else {
-            AtividadeFuncionario::where('funcionario_id', $funcionario_id)->where('id', $id_atividade_funcionario)->update(['status' => 0]);
+            AtividadeFuncionario::where('funcionario_id', $funcionario_id)->where('atividade_id', $atividade_id)->update(['status' => 0]);
         }
     }
     public function update(AtividadeUpdateRequest $req, $atividade_id)
@@ -529,8 +524,8 @@ class AtividadesController extends Controller
             $funcionarios = [];
             $funcionariosList = Funcionario::where('company_id', $req->user()->company->id)->where('funcao_id', $req->funcao)->wherehas('user')->get();
 
-            foreach ($funcionariosList as $f) {
-                array_push($funcionarios, $f->id);
+            foreach ($funcionariosList as $funcionario) {
+                array_push($funcionarios, $funcionario->id);
             }
         }
 
@@ -549,6 +544,8 @@ class AtividadesController extends Controller
                     'atividade_id' => $atividade->id,
                     'status' => 1
                 ]);
+            } else{
+                $existingRecord->update(['status' => 1]);
             }
         }
     }

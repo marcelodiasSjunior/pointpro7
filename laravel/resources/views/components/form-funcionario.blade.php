@@ -68,7 +68,7 @@
 <div class="row">
     <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-8 form-group mb-3">
-        <label for="telefone-funcionario-add">Telefone de contato*</label>
+        <label for="telefone-funcionario-add">Telefone de contato</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="telefone-funcionario-add">Contato</span>
             <input class="form-control input-phone" type="text" name="telefone" value="{{ old('telefone', isset($funcionario) ? $funcionario->telefone : '') }}" placeholder="(00) 00000-0000" aria-describedby="telefone-funcionario-add" />        </div>
@@ -184,78 +184,78 @@
 <div class="row">
     <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-8 form-group mb-3">
-        <label for="nis-pis-pasep-funcionario-add">NIS (NIT/PIS/PASEP)*</label>
+        <label for="nis-pis-pasep-funcionario-add">NIS (NIT/PIS/PASEP)</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="nis-pis-pasep-funcionario-add">NIS</span>
-            <input class="form-control" type="text" name="nis" value="{{ old('nis', isset($funcionario) ? $funcionario->nis : '') }}" required placeholder="" aria-describedby="nis-pis-pasep-funcionario-add" />        </div>
+            <input class="form-control" type="text" name="nis" value="{{ old('nis', isset($funcionario) ? $funcionario->nis : '') }}" placeholder="" aria-describedby="nis-pis-pasep-funcionario-add" />        </div>
     </div>
     <div class="col-md-2 form-group mb-3"></div>
 </div>
 <div class="row">
     <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-3 form-group mb-3">
-        <label for="rg-funcionario-add">RG*</label>
+        <label for="rg-funcionario-add">RG</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="rg-funcionario-add">RG</span>
-            <input class="form-control" type="text" name="rg" value="{{ old('rg', isset($funcionario) ? $funcionario->rg : '') }}" required placeholder="" aria-describedby="rg-funcionario-add" />        </div>
+            <input class="form-control" type="text" name="rg" value="{{ old('rg', isset($funcionario) ? $funcionario->rg : '') }}" placeholder="" aria-describedby="rg-funcionario-add" />        </div>
     </div>
     <div class="col-md-3 form-group mb-3">
-        <label for="orgao-emissor-funcionario-add">Órgão emissor*</label>
+        <label for="orgao-emissor-funcionario-add">Órgão emissor</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="orgao-emissor-funcionario-add">Emissor</span>
-            <input class="form-control" type="text" name="rg_emissor" value="{{ old('rg_emissor', isset($funcionario) ? $funcionario->rg_emissor : '') }}" required placeholder="" aria-describedby="orgao-emissor-funcionario-add" />        </div>
+            <input class="form-control" type="text" name="rg_emissor" value="{{ old('rg_emissor', isset($funcionario) ? $funcionario->rg_emissor : '') }}" placeholder="" aria-describedby="orgao-emissor-funcionario-add" />        </div>
     </div>
     <div class="col-md-2 form-group mb-3">
-        <label for="data-expedicao-funcionario-add">Data da expedição*</label>
+        <label for="data-expedicao-funcionario-add">Data da expedição</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="data-expedicao-funcionario-add">Data</span>
-            <input class="form-control input-date" type="text" name="rg_emissao" value="{{ old('rg_emissao', isset($funcionario) ? $funcionario->rg_emissao : '') }}" required placeholder="00/00/0000" aria-describedby="data-expedicao-funcionario-add" />        </div>
+            <input class="form-control input-date" type="text" name="rg_emissao" value="{{ old('rg_emissao', isset($funcionario) ? $funcionario->rg_emissao : '') }}" placeholder="00/00/0000" aria-describedby="data-expedicao-funcionario-add" />        </div>
     </div>
     <div class="col-md-2 form-group mb-3"></div>
 </div>
 <div class="row">
     <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-8 form-group mb-3">
-        <label for="nome-pai-funcionario-add">Nome do pai*</label>
+        <label for="nome-pai-funcionario-add">Nome do pai</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="nome-pai-funcionario-add">Nome do pai</span>
-            <input class="form-control" type="text" name="nome_pai" value="{{ old('nome_pai', isset($funcionario) ? $funcionario->nome_pai : '') }}" required placeholder="" aria-describedby="nome-pai-funcionario-add" />        </div>
+            <input class="form-control" type="text" name="nome_pai" value="{{ old('nome_pai', isset($funcionario) ? $funcionario->nome_pai : '') }}" placeholder="" aria-describedby="nome-pai-funcionario-add" />        </div>
     </div>
     <div class="col-md-2 form-group mb-3"></div>
 </div>
 <div class="row">
     <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-8 form-group mb-3">
-        <label for="nome-mae-funcionario-add">Nome da mãe*</label>
+        <label for="nome-mae-funcionario-add">Nome da mãe</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="nome-mae-funcionario-add">Nome da mãe</span>
-            <input class="form-control" type="text" name="nome_mae" value="{{ old('nome_mae', isset($funcionario) ? $funcionario->nome_mae : '') }}" required placeholder="" aria-describedby="nome-mae-funcionario-add" />        </div>
+            <input class="form-control" type="text" name="nome_mae" value="{{ old('nome_mae', isset($funcionario) ? $funcionario->nome_mae : '') }}" placeholder="" aria-describedby="nome-mae-funcionario-add" />        </div>
     </div>
     <div class="col-md-2 form-group mb-3"></div>
 </div>
 <div class="row">
     <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-8 form-group mb-3">
-        <label for="titulo-eleitoral-funcionario-add">Nº do título eleitoral*</label>
+        <label for="titulo-eleitoral-funcionario-add">Nº do título eleitoral</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="titulo-eleitoral-funcionario-add">Nº do título eleitoral</span>
-            <input class="form-control" type="text" name="titulo_eleitoral" value="{{ old('titulo_eleitoral', isset($funcionario) ? $funcionario->titulo_eleitoral : '') }}" required placeholder="" aria-describedby="titulo-eleitoral-funcionario-add" />        </div>
+            <input class="form-control" type="text" name="titulo_eleitoral" value="{{ old('titulo_eleitoral', isset($funcionario) ? $funcionario->titulo_eleitoral : '') }}" placeholder="" aria-describedby="titulo-eleitoral-funcionario-add" />        </div>
     </div>
     <div class="col-md-2 form-group mb-3"></div>
 </div>
 <div class="row">
     <div class="col-md-2 form-group mb-3"></div>
     <div class="col-md-4 form-group mb-3">
-        <label for="zona-titulo-eleitoral-funcionario-add">Zona eleitoral*</label>
+        <label for="zona-titulo-eleitoral-funcionario-add">Zona eleitoral</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="zona-titulo-eleitoral-funcionario-add">Zona eleitoral</span>
-            <input class="form-control" type="text" name="zona_eleitoral" value="{{ old('zona_eleitoral', isset($funcionario) ? $funcionario->zona_eleitoral : '') }}" required placeholder="" aria-describedby="zona-titulo-eleitoral-funcionario-add" />        </div>
+            <input class="form-control" type="text" name="zona_eleitoral" value="{{ old('zona_eleitoral', isset($funcionario) ? $funcionario->zona_eleitoral : '') }}" placeholder="" aria-describedby="zona-titulo-eleitoral-funcionario-add" />        </div>
     </div>
     <div class="col-md-4 form-group mb-3">
-        <label for="secao-titulo-eleitoral-funcionario-add">Seção eleitoral*</label>
+        <label for="secao-titulo-eleitoral-funcionario-add">Seção eleitoral</label>
         <div class="input-group mb-3">
             <span class="input-group-text" id="secao-titulo-eleitoral-funcionario-add">Seção eleitoral</span>
-            <input class="form-control" type="text" name="secao_eleitoral" value="{{ old('secao_eleitoral', isset($funcionario) ? $funcionario->secao_eleitoral : '') }}" required placeholder="" aria-describedby="secao-titulo-eleitoral-funcionario-add" />        </div>
+            <input class="form-control" type="text" name="secao_eleitoral" value="{{ old('secao_eleitoral', isset($funcionario) ? $funcionario->secao_eleitoral : '') }}" placeholder="" aria-describedby="secao-titulo-eleitoral-funcionario-add" />        </div>
     </div>
     <div class="col-md-2 form-group mb-3"></div>
 </div>

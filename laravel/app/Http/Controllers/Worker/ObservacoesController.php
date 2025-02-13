@@ -19,33 +19,34 @@ class ObservacoesController extends Controller
     public function listar(Request $req)
     {
         $user = $req->user();
-        $funcionario = $user->funcionario;        
+        $funcionario = $user->funcionario;
         $company_id = $funcionario->company_id;
         $funcao_id = $funcionario->funcao_id;
         $funcao_title = Funcao::where('id', $funcao_id)->value('title');
         $funcionario_id = $funcionario->id;
 
         $commonDates = CommomDataService::getCommonDates($req);
-
         $atividades = AtividadeFuncionario::where('company_id', $company_id)
             ->where('funcionario_id', $funcionario->id)
             ->where('status', 1)
-            ->whereHas('atividade', function ($qAtividade) use ($commonDates) {
-                $qAtividade->whereHas('atividade_dias_semana', function ($qAtividadeDiasSemana) use ($commonDates) {
+            ->whereHas('atividade.atividade_dias_semana', function ($qAtividadeDiasSemana) use ($commonDates) {
+                $qAtividadeDiasSemana->where('dia_da_semana', $commonDates['dayOfTheWeek']);
+            })
+            ->with([
+                'atividade.atividade_dias_semana' => function ($qAtividadeDiasSemana) use ($commonDates) {
                     $qAtividadeDiasSemana->where('dia_da_semana', $commonDates['dayOfTheWeek']);
-                })->with(['atividade_dias_semana' => function ($qAtividadeDiasSemana) use ($commonDates) {
-                    $qAtividadeDiasSemana->where('dia_da_semana', $commonDates['dayOfTheWeek']);
-                }]);
-            })->get();
+                }
+            ])
+            ->get();
 
-        foreach($atividades as $row_atividade) {
+        foreach ($atividades as $row_atividade) {
 
             $row_atividade->funcionario_atividade = FuncionarioAtividade::select('status')
-            ->where('company_id', $company_id)
-            ->where('atividade_funcionario_id', $row_atividade->id)
-            ->where('dia', $commonDates['dateForMySQL'])
-            ->where('funcionario_id',  $funcionario_id)
-            ->value('status');
+                ->where('company_id', $company_id)
+                ->where('atividade_funcionario_id', $row_atividade->id)
+                ->where('dia', $commonDates['dateForMySQL'])
+                ->where('funcionario_id', $funcionario_id)
+                ->value('status');
         }
 
         $data = [

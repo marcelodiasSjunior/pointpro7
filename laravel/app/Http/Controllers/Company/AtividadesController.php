@@ -186,8 +186,18 @@ class AtividadesController extends Controller
             $atividade->observacoes = Observacao::where('funcionario_id', $funcionario_id)->where('atividade_funcionario_id', $atividade->id)->where('company_id', $company_id)->get()->count();
         }
 
+        $historico = FuncionarioAtividade::with(['atividade' => function($query) {
+            $query->withTrashed();
+        }])
+        ->where('company_id', $company_id)
+        ->where('funcionario_id', $funcionario_id)
+        ->orderBy('dia', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->get(); // ← Remova o map()
+
         $data = [
             'atividades' => $atividades,
+            'historico' => $historico,
             'funcionario_id' => $funcionario_id,
             'funcionario_name' => $funcionario_name,
             'funcao_title' => $funcao_title,
@@ -234,9 +244,18 @@ class AtividadesController extends Controller
 
             $atividade->observacoes = Observacao::where('funcionario_id', $funcionario_id)->where('atividade_funcionario_id', $atividade->id)->where('company_id', $company_id)->get()->count();
         }
-
+        $historico = FuncionarioAtividade::with(['atividade' => function($query) {
+            $query->withTrashed();
+        }])
+        ->where('company_id', $company_id)
+        ->where('funcionario_id', $funcionario_id)
+        ->orderBy('dia', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->get(); // ← Remova o map()
+        
         $data = [
             'atividades' => $atividades,
+            'historico' => $historico,
             'funcionario_id' => $funcionario_id,
             'funcionario_name' => $funcionario_name,
             'funcao_title' => $funcao_title,

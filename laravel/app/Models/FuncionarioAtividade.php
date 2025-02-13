@@ -19,8 +19,19 @@ class FuncionarioAtividade extends Model
         'dia_da_semana'
     ];
 
+    protected $casts = [
+        'dia' => 'date:Y-m-d',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s'
+    ];
+    
     public function atividadeFuncionario()
     {
         return $this->belongsTo(AtividadeFuncionario::class);
+    }
+
+    public function atividade()
+    {
+        return $this->belongsTo(Atividade::class, 'atividade_id')->withTrashed();
     }
 }

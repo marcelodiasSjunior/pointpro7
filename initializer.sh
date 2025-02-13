@@ -5,7 +5,7 @@
  docker exec pro7_php composer update
 # docker exec pro7_php php artisan migrate:refresh --seed --force
  docker exec pro7_php php artisan config:cache
-docker exec pro7_php php artisan route:cache
+ docker exec pro7_php php artisan route:cache
  docker exec pro7_php php artisan view:cache
  docker restart pro7_php
 

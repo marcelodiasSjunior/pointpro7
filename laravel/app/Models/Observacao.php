@@ -12,7 +12,7 @@ class Observacao extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'atividade_funcionario_id',
+        'atividade_id',
         'funcionario_id',
         'company_id',
         'message',
@@ -34,14 +34,19 @@ class Observacao extends Model
     protected function hora(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->created_at->timezone('America/Sao_Paulo')->format('H:i'),
+            get: fn() => $this->created_at->timezone('America/Sao_Paulo')->format('H:i'),
         );
     }
 
     protected function data(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->created_at->timezone('America/Sao_Paulo')->format('d/n/Y'),
+            get: fn() => $this->created_at->timezone('America/Sao_Paulo')->format('d/n/Y'),
         );
+    }
+
+    protected function atividade()
+    {
+        return $this->belongsTo(Atividade::class);
     }
 }

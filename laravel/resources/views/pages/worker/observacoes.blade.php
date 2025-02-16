@@ -51,8 +51,8 @@
                                                 <tbody style="text-align: center;">
                                                     @foreach($atividades as $atividade)
                                                     <tr>
-                                                        <th scope="row">{{ $atividade->atividade_id }}</th>
-                                                        <td>{{ $atividade->atividade->description }}</td>
+                                                        <th scope="row">{{ $atividade->id }}</th>
+                                                        <td>{{ $atividade->description }}</td>
 
                                                         <td>
                                                             @if($atividade->observacoes->count() > 0)

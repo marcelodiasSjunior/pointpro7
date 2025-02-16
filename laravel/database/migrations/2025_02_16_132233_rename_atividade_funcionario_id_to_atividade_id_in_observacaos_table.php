@@ -3,26 +3,22 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB; // Adicione esta linha
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('observacaos', function (Blueprint $table) {
-            $table->renameColumn('atividade_funcionario_id', 'atividade_id');
+            // Substitua 'TIPO_DA_COLUNA' pelo tipo real (ex: INTEGER, BIGINT UNSIGNED, etc)
+            DB::statement('ALTER TABLE observacaos CHANGE atividade_funcionario_id atividade_id BIGINT UNSIGNED');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('observacaos', function (Blueprint $table) {
-            //
+            DB::statement('ALTER TABLE observacaos CHANGE atividade_id atividade_funcionario_id BIGINT UNSIGNED');
         });
     }
 };

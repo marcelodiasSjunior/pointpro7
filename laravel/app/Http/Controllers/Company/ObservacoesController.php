@@ -68,7 +68,7 @@ class ObservacoesController extends Controller
         $atividade_id = $atividade->first()->id;
         $atividade_description = $atividade->first()->description;
 
-        $observacoes = Observacao::where('atividade_funcionario_id', $atividade_id)
+        $observacoes = Observacao::where('atividade_id', $atividade_id)
             ->where('funcionario_id', $funcionario_id)
             ->where('company_id', $company_id);
 
@@ -89,7 +89,7 @@ class ObservacoesController extends Controller
         Observacao::create([
             'company_id' => $company_id,
             'funcionario_id' => $funcionario_id,
-            'atividade_funcionario_id' => $atividade_id,
+            'atividade_id' => $atividade_id,
             'message' => $req->message,
             'sender_id' => $req->user()->id,
             'sender_type' => 2 // 2 - Admin / 1 - Funcionario

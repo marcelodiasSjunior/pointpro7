@@ -145,7 +145,7 @@ class CompanyDashboardController extends Controller
             ->where('company_id', $company_id)
             ->value('id');
         $senderId = Observacao::select('sender_id')
-            ->where('atividade_funcionario_id', $atividade_funcionario)
+            ->where('atividade_id', $atividade_funcionario)
             ->where('company_id', $company_id)
             ->orderBy('id', 'desc')
             ->value('sender_id');
@@ -155,7 +155,7 @@ class CompanyDashboardController extends Controller
             ->where('company_id', $company_id)
             ->value('message');
         $row_atividade->observacao_count = Observacao::select('message')
-            ->where('atividade_funcionario_id', $row_atividade->id)
+            ->where('atividade_id', $row_atividade->id)
             ->where('company_id', $company_id)
             ->count();
 

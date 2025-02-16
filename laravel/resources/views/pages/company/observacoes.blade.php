@@ -86,13 +86,13 @@
                                                     @foreach($atividades as $atividade)
                                                     @if($atividade->funcionario)
                                                     <tr>
-                                                        <th scope="row">1</th>
+                                                        <th scope="row">{{ $atividade->atividade_id }}</th>
                                                         <td>{{ $atividade->atividade->funcao->title }}</td>
                                                         <td>{{ $atividade->funcionario->user->name }}</td>
                                                         <td>{{ $atividade->atividade->description }}</td>
                                                         <td>
-                                                            @if($atividade->observacoes->count() > 0)
-                                                            {{ $atividade->observacoes[0]->sender->name }}
+                                                            @if($atividade->atividade->observacoes->count() > 0)
+                                                            {{ $atividade->atividade->observacoes[0]->sender->name }}
                                                             @else
                                                             Nenhuma mensagem enviada ou recebida
                                                             @endif
@@ -113,7 +113,7 @@
                                                         </td>
                                                         <td style="padding-bottom: 3px;">
                                                             <a class="text-primary badge-top-container" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
-                                                                <span class="badge bg-danger">{{ $atividade->observacoes->count() }}</span>
+                                                                <span class="badge bg-danger">{{ $atividade->atividade->observacoes->count() }}</span>
                                                                 <i class="i-Speach-Bubbles fw-bold text-primary header-icon" style="font-size: 33px;"></i>
                                                             </a>
                                                             <div class="dropdown-menu menu-opcoes" x-placement="bottom-start">

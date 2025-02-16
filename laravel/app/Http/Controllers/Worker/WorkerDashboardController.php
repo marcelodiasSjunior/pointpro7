@@ -65,10 +65,10 @@ class WorkerDashboardController extends Controller
 
         foreach($atividades as $row_atividade) {
             $atividade_funcionario = AtividadeFuncionario::where('funcionario_id' , $funcionario_id)->where('atividade_id', $row_atividade->id)->value('id');
-            $senderId = Observacao::select('sender_id')->where('atividade_funcionario_id', $atividade_funcionario)->where('funcionario_id', $funcionario_id)->orderBy('id', 'desc')->value('sender_id');
+            $senderId = Observacao::select('sender_id')->where('atividade_id', $atividade_funcionario)->where('funcionario_id', $funcionario_id)->orderBy('id', 'desc')->value('sender_id');
             $row_atividade->atividade_funcionario = $atividade_funcionario;
             $row_atividade->observacao = Observacao::select('message')->where('id', $senderId)->value('message');
-            $row_atividade->observacao_count = Observacao::select('message')->where('atividade_funcionario_id', $row_atividade->id)->where('funcionario_id', $funcionario_id)->count();
+            $row_atividade->observacao_count = Observacao::select('message')->where('atividade_id', $row_atividade->id)->where('funcionario_id', $funcionario_id)->count();
 
             $row_atividade->funcionario_atividade = FuncionarioAtividade::select('status')
             ->where('company_id', $company->id)
@@ -93,13 +93,12 @@ class WorkerDashboardController extends Controller
 
         $atividades_id = $atividades->pluck('id')->toArray();
 
-        $observacoes = Observacao::whereIn('atividade_funcionario_id', $atividades_id)
+        $observacoes = Observacao::whereIn('atividade_id', $atividades_id)
             ->where('company_id', $user->funcionario->company_id)
             ->where('funcionario_id', $user->funcionario->id)
             ->limit(10)
             ->orderBy('id', 'desc')
             ->get();
-        
         $atividadesCompleta = FuncionarioAtividade::where('company_id', $company->id)
             ->where('dia', $commonDates['dateForMySQL'])
             ->where('funcionario_id',  $funcionario_id)
@@ -199,10 +198,10 @@ class WorkerDashboardController extends Controller
 
         foreach($atividades as $row_atividade) {
             $atividade_funcionario = AtividadeFuncionario::where('funcionario_id' , $funcionario_id)->where('atividade_id', $row_atividade->id)->value('id');
-            $senderId = Observacao::select('sender_id')->where('atividade_funcionario_id', $atividade_funcionario)->where('funcionario_id', $funcionario_id)->orderBy('id', 'desc')->value('sender_id');
+            $senderId = Observacao::select('sender_id')->where('atividade_id', $atividade_funcionario)->where('funcionario_id', $funcionario_id)->orderBy('id', 'desc')->value('sender_id');
             $row_atividade->atividade_funcionario = $atividade_funcionario;
             $row_atividade->observacao = User::select('name')->where('id', $senderId)->value('name');
-            $row_atividade->observacao_count = Observacao::select('message')->where('atividade_funcionario_id', $row_atividade->id)->where('funcionario_id', $funcionario_id)->count();
+            $row_atividade->observacao_count = Observacao::select('message')->where('atividade_id', $row_atividade->id)->where('funcionario_id', $funcionario_id)->count();
 
             $row_atividade->funcionario_atividade = FuncionarioAtividade::select('status')
             ->where('company_id', $company->id)
@@ -224,13 +223,13 @@ class WorkerDashboardController extends Controller
 
         $atividades_id = $atividades->pluck('id')->toArray();
 
-        $observacoes = Observacao::whereIn('atividade_funcionario_id', $atividades_id)
+        $observacoes = Observacao::whereIn('atividade_id', $atividades_id)
             ->where('company_id', $user->funcionario->company_id)
             ->where('funcionario_id', $user->funcionario->id)
             ->limit(10)
             ->orderBy('id', 'desc')
             ->get();
-            
+
         $atividadesCompleta = FuncionarioAtividade::where('company_id', $company->id)
             ->whereIn('atividade_id', $atividades_id)
             ->where('dia_da_semana', $commonDates['dayOfTheWeek'])

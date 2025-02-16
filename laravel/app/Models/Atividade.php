@@ -30,4 +30,9 @@ class Atividade extends Model
     {
         return $this->belongsTo(Funcao::class);
     }
+
+    public function observacoes()
+    {
+        return $this->hasMany(Observacao::class);
+    }
 }

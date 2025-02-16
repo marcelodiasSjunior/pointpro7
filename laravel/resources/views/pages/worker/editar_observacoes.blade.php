@@ -31,7 +31,7 @@
                     {{ $atividade_description }}
                     </p>
 
-                    <form method="post" action="/observacoes/{{ $atividade_funcionario_id }}">
+                    <form method="post" action="/observacoes/{{ $atividade_id }}">
                         @csrf
                         <div>
                             <div class="mx-auto col-md-10">

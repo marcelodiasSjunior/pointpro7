@@ -172,7 +172,7 @@
                                                                 <div class="dropdown-menu menu-opcoes"
                                                                     x-placement="bottom-start">
                                                                     <a class="dropdown-item ul-widget__link--font"
-                                                                        href="/observacoes/{{ $atividade->id }}/{{ $funcionario_id }}">Observações
+                                                                        href="/observacoes/view/{{ $atividade->id }}">Observações
                                                                         da Atividade</a>
                                                                 </div>
                                                             </td>

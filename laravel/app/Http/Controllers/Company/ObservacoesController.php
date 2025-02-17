@@ -20,30 +20,17 @@ class ObservacoesController extends Controller
         $company_id = $req->user()->company->id;
         $funcao_id = $req->funcao_id;
         $funcionario_id = $req->funcionario_id;
-        $atividades = AtividadeFuncionario::where('company_id', $company_id)
+        $atividades = Atividade::where('company_id', $company_id)
             ->where('status', 1)
-            ->with([
-                'atividade.observacoes' => function ($query) {
-                    $query->orderBy('created_at', 'DESC');
-                }
-            ])
-            ->with('funcionario')
-            ->with('funcionario_atividade');
+            ->with(['observacoes.sender', 'funcao']);
         
         $commonDates = CommomDataService::getCommonDates($req);
 
-        if ($funcionario_id) {
-            $atividades->where('funcionario_id', $funcionario_id);
-        }
-
         if ($funcao_id) {
-            $atividades->whereHas('atividade', function ($queryAtividade) use ($funcao_id) {
-                $queryAtividade->where('funcao_id', $funcao_id);
-            });
+            $atividades->where('funcao_id', $funcao_id);
         }
 
-        //dd to array
-        //dd($atividades->get()->toArray());
+        //dd to array observacoes
         $data = [
             'funcoes' => Funcao::where('company_id', $company_id)->where('status', 1)->get(),
             'funcionarios' => Funcionario::where('company_id', $company_id)->get(),
@@ -57,8 +44,8 @@ class ObservacoesController extends Controller
         return view('pages.company.observacoes', $data);
     }
 
-    public function edit(Request $req, $atividade_id, $funcionario_id)
-    {
+    public function edit(Request $req, $atividade_id)
+    {   
         $company_id = $req->user()->company->id;
 
         $atividade = Atividade::where('id', $atividade_id)
@@ -66,30 +53,25 @@ class ObservacoesController extends Controller
         ->where('status', 1)
         ->get();
         
-        $atividade_id = $atividade->first()->id;
         $atividade_description = $atividade->first()->description;
 
         $observacoes = Observacao::where('atividade_id', $atividade_id)
-            ->where('funcionario_id', $funcionario_id)
             ->where('company_id', $company_id);
-
 
         $data = [
             'atividade_id' => $atividade_id,
             'atividade_description' => $atividade_description,
-            'funcionario_id' => $funcionario_id,
             'observacoes' => $observacoes->get()
         ];
         return view('pages.company.editar_observacoes', $data);
     }
 
-    public function send_message(Request $req, $atividade_id, $funcionario_id)
+    public function send_message(Request $req, $atividade_id)
     {
         $company_id = $req->user()->company->id;
-
+        
         Observacao::create([
             'company_id' => $company_id,
-            'funcionario_id' => $funcionario_id,
             'atividade_id' => $atividade_id,
             'message' => $req->message,
             'sender_id' => $req->user()->id,

@@ -57,8 +57,8 @@
                                 @foreach($observacoes as $observacao)
                                 @if($observacao->sender_type === 1)
                                 <div class="texto-observacao">
-                                    <h4>• Nome: <span class="documento-obs-nome">{{ $observacao->funcionario->user->name }}</span></h4>
-                                    <h4>• Função: <span class="documento-obs-funcao">{{ $observacao->funcionario->funcao->title }}</span></h4>
+                                    <h4>• Nome: <span class="documento-obs-nome">{{ $observacao->sender->name }}</span></h4>
+                                    <h4>• Função: <span class="documento-obs-funcao">{{ $observacao->atividade->funcao->title }}</span></h4>
                                     <h4>• Data: <span class="documento-obs-data">{{ $observacao->data }}</span></h4>
                                     <h4>• Hora: <span class="documento-obs-data">{{ $observacao->hora }}</span></h4>
                                     <div>

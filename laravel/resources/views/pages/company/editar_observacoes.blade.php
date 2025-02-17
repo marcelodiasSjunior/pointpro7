@@ -32,7 +32,7 @@
                     {{ $atividade_description }}
                     </p>
 
-                    <form method="post" action="/observacoes/{{ $atividade_id }}/{{ $funcionario_id }}">
+                    <form method="post" action="/observacoes/{{ $atividade_id }}">
                         @csrf
                         <div>
                             <div class="mx-auto col-md-10">
@@ -59,7 +59,7 @@
                                 @if($observacao->sender_type === 1)
                                 <div class="texto-observacao">
                                     <h4>• Nome: <span class="documento-obs-nome">{{ $observacao->sender->name }}</span></h4>
-                                    <h4>• Função: <span class="documento-obs-funcao">{{ $observacao->funcionario->funcao->title }}</span></h4>
+                                    <h4>• Função: <span class="documento-obs-funcao">{{ $observacao->atividade->funcao->title }}</span></h4>
                                     <h4>• Data: <span class="documento-obs-data">{{ $observacao->data }}</span></h4>
                                     <h4>• Hora: <span class="documento-obs-data">{{ $observacao->hora }}</span></h4>
                                     <div>

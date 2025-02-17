@@ -57,7 +57,7 @@
                                             <table class="table table-hover table-striped ">
                                                 <thead style="text-align: center;">
                                                     <tr>
-                                                        <th scope="col">#</th>
+                                                        <th scope="col">ID Atividade</th>
                                                         <th scope="col">Função</th>
                                                         <th scope="col" style="min-width: 270px;">Atividade</th>
                                                         <th scope="col" style="min-width: 200px;">Última Interação</th>
@@ -196,8 +196,6 @@
                                                 <tbody style="text-align: center;">
                                                     <tr>
                                                         <th scope="row">-</th>
-                                                        <td>-</td>
-                                                        <td>-</td>
                                                         <td>-</td>
                                                         <td>-</td>
                                                         <td>-</td>

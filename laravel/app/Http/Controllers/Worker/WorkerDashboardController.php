@@ -75,6 +75,7 @@ class WorkerDashboardController extends Controller
         $observacoes = Observacao::where('company_id', $company->id)
             ->whereIn('atividade_id', $atividades->pluck('atividade_id'))
             ->get();
+
         $data = [
             'atividades' => $atividades,
             'observacoes' => $observacoes,
@@ -158,7 +159,6 @@ class WorkerDashboardController extends Controller
 
         $atividades = AtividadeFuncionario::where('company_id', $company->id)
             ->where('funcionario_id', $funcionario_id)
-            ->with('atividade')
             ->get();
 
         $observacoes = Observacao::where('company_id', $company->id)

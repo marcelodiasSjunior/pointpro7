@@ -65,7 +65,6 @@ class ObservacoesController extends Controller
     {
         $company_id = $req->user()->funcionario->company->id;
 
-
         $observacoes = Observacao::where('atividade_id', $atividade_id)
             ->where('company_id', $company_id)
             ->where(function ($query) use ($req) {
@@ -74,7 +73,6 @@ class ObservacoesController extends Controller
             })
             ->orderBy('created_at', 'DESC')
             ->get();
-
 
         $atividade_id = Atividade::where('id', $atividade_id)
             ->where('status', 1)

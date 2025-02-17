@@ -44,21 +44,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="mb-5">
-                            <div style="margin:25px 0px;max-width: 400px;">
-                                <label for="select-funcionario">Selecione o funcionário:</label>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="select-funcionario">Funcionário</span>
-                                    <select class="form-control" name="funcionario_id" onchange="this.form.submit()">
-                                        <option value="">TODOS</option>
-                                        @foreach($funcionarios as $funcionario)
-                                        <option value="{{ $funcionario->id }}" {{ $funcionario_id == $funcionario->id ? 'selected' : ''}}>{{ $funcionario->user->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                     </form>
 
                     @include('components.filtro')
@@ -72,52 +57,36 @@
                                             <table class="table table-hover table-striped ">
                                                 <thead style="text-align: center;">
                                                     <tr>
-                                                        <th scope="col">#</th>
+                                                        <th scope="col">ID Atividade</th>
                                                         <th scope="col">Função</th>
-                                                        <th scope="col">Funcionário</th>
                                                         <th scope="col" style="min-width: 270px;">Atividade</th>
                                                         <th scope="col" style="min-width: 200px;">Última Interação</th>
                                                         <th scope="col">Data</th>
-                                                        <th scope="col">Status</th>
                                                         <th scope="col">Observações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody style="text-align: center;">
                                                     @foreach($atividades as $atividade)
-                                                    @if($atividade->funcionario)
+                                                    @if($atividade->observacoes->count() > 0)
                                                     <tr>
-                                                        <th scope="row">{{ $atividade->atividade_id }}</th>
-                                                        <td>{{ $atividade->atividade->funcao->title }}</td>
-                                                        <td>{{ $atividade->funcionario->user->name }}</td>
-                                                        <td>{{ $atividade->atividade->description }}</td>
+                                                        <th scope="row">{{ $atividade->id }}</th>
+                                                        <td>{{ $atividade->funcao->title }}</td>
+                                                        <td>{{ $atividade->description }}</td>
                                                         <td>
-                                                            @if($atividade->atividade->observacoes->count() > 0)
-                                                            {{ $atividade->atividade->observacoes[0]->sender->name }}
+                                                            @if($atividade->observacoes->count() > 0)
+                                                            {{ $atividade->observacoes->first()->sender->name ?? 'N/A' }}
                                                             @else
                                                             Nenhuma mensagem enviada ou recebida
                                                             @endif
                                                         </td>
                                                         <td>{{ $dayOfWeekHuman }}</td>
-                                                        <td>
-                                                            @if(!$atividade->funcionario_atividade)
-                                                            <span class="badge bg-danger">Não realizado</span>
-                                                            @endif
-
-                                                            @if($atividade->funcionario_atividade && $atividade->funcionario_atividade->status === 0)
-                                                            <span class="badge bg-warning">Em andamento</span>
-                                                            @endif
-
-                                                            @if($atividade->funcionario_atividade && $atividade->funcionario_atividade->status === 1)
-                                                            <span class="badge bg-success">Concluído</span>
-                                                            @endif
-                                                        </td>
                                                         <td style="padding-bottom: 3px;">
                                                             <a class="text-primary badge-top-container" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
-                                                                <span class="badge bg-danger">{{ $atividade->atividade->observacoes->count() }}</span>
+                                                                <span class="badge bg-danger">{{ $atividade->observacoes->count() }}</span>
                                                                 <i class="i-Speach-Bubbles fw-bold text-primary header-icon" style="font-size: 33px;"></i>
                                                             </a>
                                                             <div class="dropdown-menu menu-opcoes" x-placement="bottom-start">
-                                                                <a class="dropdown-item ul-widget__link--font" href="/observacoes/{{ $atividade->atividade_id }}/{{ $atividade->funcionario->id }}">Observações da Atividade</a>
+                                                                <a class="dropdown-item ul-widget__link--font" href="/observacoes/view/{{ $atividade->id }}">Observações da Atividade</a>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -218,19 +187,15 @@
                                                     <tr>
                                                         <th scope="col">#</th>
                                                         <th scope="col">Função</th>
-                                                        <th scope="col">Funcionário</th>
                                                         <th scope="col" style="min-width: 270px;">Atividade</th>
                                                         <th scope="col" style="min-width: 200px;">Última Interação</th>
                                                         <th scope="col">Data</th>
-                                                        <th scope="col">Status</th>
                                                         <th scope="col">Observações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody style="text-align: center;">
                                                     <tr>
                                                         <th scope="row">-</th>
-                                                        <td>-</td>
-                                                        <td>-</td>
                                                         <td>-</td>
                                                         <td>-</td>
                                                         <td>-</td>

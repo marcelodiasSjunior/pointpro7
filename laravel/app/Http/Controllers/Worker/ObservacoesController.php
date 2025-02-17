@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Worker;
 use App\Http\Controllers\Controller;
 use App\Http\Services\CommomDataService;
 use App\Models\Atividade;
-use App\Models\AtividadeFuncionario;
 use App\Models\Funcao;
 use App\Models\Funcionario;
 use App\Models\FuncionarioAtividade;
@@ -65,12 +64,15 @@ class ObservacoesController extends Controller
     public function edit(Request $req, $atividade_id)
     {
         $company_id = $req->user()->funcionario->company->id;
-        $funcionario_id = $req->user()->funcionario->id;
 
         $observacoes = Observacao::where('atividade_id', $atividade_id)
-            ->where('funcionario_id', $funcionario_id)
             ->where('company_id', $company_id)
-            ->orderBy('created_at', 'DESC');
+            ->where(function ($query) use ($req) {
+                $query->where('sender_id', $req->user()->id)
+                    ->orWhere('sender_type', 2);
+            })
+            ->orderBy('created_at', 'DESC')
+            ->get();
 
         $atividade_id = Atividade::where('id', $atividade_id)
             ->where('status', 1)
@@ -84,8 +86,7 @@ class ObservacoesController extends Controller
         $data = [
             'atividade_id' => $atividade_id,
             'atividade_description' => $atividade_description,
-            'funcionario_id' => $funcionario_id,
-            'observacoes' => $observacoes->get()
+            'observacoes' => $observacoes
         ];
         return view('pages.worker.editar_observacoes', $data);
     }
@@ -93,11 +94,9 @@ class ObservacoesController extends Controller
     public function send_message(Request $req, $atividade_id)
     {
         $company_id = $req->user()->funcionario->company->id;
-        $funcionario_id = $req->user()->funcionario->id;
 
         Observacao::create([
             'company_id' => $company_id,
-            'funcionario_id' => $funcionario_id,
             'atividade_id' => $atividade_id,
             'message' => $req->message,
             'sender_id' => $req->user()->id,

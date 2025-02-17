@@ -88,9 +88,8 @@ class AtividadesController extends Controller
             }
         }
 
-        $atividade->observacoes = Observacao::where('atividade_funcionario_id', $atividade->atividade_funcionario->id ?? 0)
+        $atividade->observacoes = Observacao::where('atividade_id', $atividade->atividade_funcionario->id ?? 0)
             ->where('company_id', $company_id)
-            ->where('funcionario_id', $funcionario_id)
             ->count();
     }
 

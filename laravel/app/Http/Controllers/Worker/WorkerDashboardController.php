@@ -56,58 +56,6 @@ class WorkerDashboardController extends Controller
 
         $commonDates = CommomDataService::getCommonDates($req);
 
-        $atividades = Atividade::select('atividades.*')
-            ->join('atividade_funcionarios', 'atividade_funcionarios.atividade_id', 'atividades.id')
-            ->where('atividade_funcionarios.funcionario_id', $user->funcionario->id)
-            ->limit(10)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        foreach($atividades as $row_atividade) {
-            $atividade_funcionario = AtividadeFuncionario::where('funcionario_id' , $funcionario_id)->where('atividade_id', $row_atividade->id)->value('id');
-            $senderId = Observacao::select('sender_id')->where('atividade_id', $atividade_funcionario)->where('funcionario_id', $funcionario_id)->orderBy('id', 'desc')->value('sender_id');
-            $row_atividade->atividade_funcionario = $atividade_funcionario;
-            $row_atividade->observacao = Observacao::select('message')->where('id', $senderId)->value('message');
-            $row_atividade->observacao_count = Observacao::select('message')->where('atividade_id', $row_atividade->id)->where('funcionario_id', $funcionario_id)->count();
-
-            $row_atividade->funcionario_atividade = FuncionarioAtividade::select('status')
-            ->where('company_id', $company->id)
-            ->where('atividade_id', $row_atividade->id)
-            ->where('dia', $commonDates['dateForMySQL'])
-            ->where('funcionario_id',  $funcionario_id)
-            ->value('status');
-
-        }
-
-
-
-        $atividades_hoje = AtividadeFuncionario::where('company_id', $user->funcionario->company_id)
-            ->where('funcionario_id', $funcionario_id)
-            ->whereHas('atividade', function ($qAtividade) use ($commonDates) {
-                $qAtividade->whereHas('atividade_dias_semana', function ($qAtividadeDiasSemana) use ($commonDates) {
-                    $qAtividadeDiasSemana->where('dia_da_semana', $commonDates['dayOfTheWeek']);
-                })->with(['atividade_dias_semana' => function ($qAtividadeDiasSemana) use ($commonDates) {
-                    $qAtividadeDiasSemana->where('dia_da_semana', $commonDates['dayOfTheWeek']);
-                }]);
-            })->get();
-
-        $atividades_id = $atividades->pluck('id')->toArray();
-
-        $observacoes = Observacao::whereIn('atividade_id', $atividades_id)
-            ->where('company_id', $user->funcionario->company_id)
-            ->where('funcionario_id', $user->funcionario->id)
-            ->limit(10)
-            ->orderBy('id', 'desc')
-            ->get();
-        $atividadesCompleta = FuncionarioAtividade::where('company_id', $company->id)
-            ->where('dia', $commonDates['dateForMySQL'])
-            ->where('funcionario_id',  $funcionario_id)
-            ->where('status', 1)
-            ->get()
-            ->count();
-
-        $porcentagem_completas = round($this->getPercentage($atividadesCompleta, $atividades_hoje->count()));
-
         $ultimaBatidaPontoHoje = Frequencia::where('company_id', $company->id)
             ->where('funcionario_id', $funcionario_id)
             ->whereDate('ponto', $commonDates['dateForMySQL'])
@@ -120,15 +68,21 @@ class WorkerDashboardController extends Controller
             ->orderBy('ponto', 'ASC')
             ->get();
 
+        $atividades = AtividadeFuncionario::where('company_id', $company->id)
+            ->where('funcionario_id', $funcionario_id)
+            ->get();
+
+        $observacoes = Observacao::where('company_id', $company->id)
+            ->whereIn('atividade_id', $atividades->pluck('atividade_id'))
+            ->get();
+
         $data = [
             'atividades' => $atividades,
             'observacoes' => $observacoes,
             'company' => $company,
             'user' => $user,
             'funcionario' => $user->funcionario,
-            'atividades_hoje' => $atividades_hoje,
             'historico_action' => '/',
-            'porcentagem_completas' => $porcentagem_completas,
             'ultimaBatidaPontoHoje' => $ultimaBatidaPontoHoje,
             'totalBatidasPontoHoje' => $batidasPontoHoje->count(),
             'batidasPontoHoje' => $batidasPontoHoje,
@@ -174,12 +128,14 @@ class WorkerDashboardController extends Controller
         return view('pages.worker.perfil', $data);
     }
 
-    public function manualuso() {
+    public function manualuso()
+    {
 
         return view('pages.worker.manualuso');
     }
 
-    public function novaBiometria(Request $req) {
+    public function novaBiometria(Request $req)
+    {
 
         $user = Auth::user();
         $company = $user->funcionario->company;
@@ -188,57 +144,6 @@ class WorkerDashboardController extends Controller
         $funcionario_id = $user->funcionario->id;
 
         $commonDates = CommomDataService::getCommonDates($req);
-
-        $atividades = Atividade::select('atividades.*')
-            ->join('atividade_funcionarios', 'atividade_funcionarios.atividade_id', 'atividades.id')
-            ->where('atividade_funcionarios.funcionario_id', $user->funcionario->id)
-            ->limit(10)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        foreach($atividades as $row_atividade) {
-            $atividade_funcionario = AtividadeFuncionario::where('funcionario_id' , $funcionario_id)->where('atividade_id', $row_atividade->id)->value('id');
-            $senderId = Observacao::select('sender_id')->where('atividade_id', $atividade_funcionario)->where('funcionario_id', $funcionario_id)->orderBy('id', 'desc')->value('sender_id');
-            $row_atividade->atividade_funcionario = $atividade_funcionario;
-            $row_atividade->observacao = User::select('name')->where('id', $senderId)->value('name');
-            $row_atividade->observacao_count = Observacao::select('message')->where('atividade_id', $row_atividade->id)->where('funcionario_id', $funcionario_id)->count();
-
-            $row_atividade->funcionario_atividade = FuncionarioAtividade::select('status')
-            ->where('company_id', $company->id)
-            ->where('atividade_id', $row_atividade->id)
-            ->where('dia', $commonDates['dateForMySQL'])
-            ->where('funcionario_id',  $funcionario_id)
-            ->value('status');
-        }
-
-        $atividades_hoje = AtividadeFuncionario::where('company_id', $user->funcionario->company_id)
-            ->where('funcionario_id', $funcionario_id)
-            ->whereHas('atividade', function ($qAtividade) use ($commonDates) {
-                $qAtividade->whereHas('atividade_dias_semana', function ($qAtividadeDiasSemana) use ($commonDates) {
-                    $qAtividadeDiasSemana->where('dia_da_semana', $commonDates['dayOfTheWeek']);
-                })->with(['atividade_dias_semana' => function ($qAtividadeDiasSemana) use ($commonDates) {
-                    $qAtividadeDiasSemana->where('dia_da_semana', $commonDates['dayOfTheWeek']);
-                }]);
-            })->get();
-
-        $atividades_id = $atividades->pluck('id')->toArray();
-
-        $observacoes = Observacao::whereIn('atividade_id', $atividades_id)
-            ->where('company_id', $user->funcionario->company_id)
-            ->where('funcionario_id', $user->funcionario->id)
-            ->limit(10)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        $atividadesCompleta = FuncionarioAtividade::where('company_id', $company->id)
-            ->whereIn('atividade_id', $atividades_id)
-            ->where('dia_da_semana', $commonDates['dayOfTheWeek'])
-            ->where('dia', $commonDates['dateForMySQL'])
-            ->where('funcionario_id',  $funcionario_id)
-            ->where('status', 1)
-            ->get();
-
-        $porcentagem_completas = round($this->getPercentage($atividadesCompleta->count(), $atividades_hoje->count()));
 
         $ultimaBatidaPontoHoje = Frequencia::where('company_id', $company->id)
             ->where('funcionario_id', $funcionario_id)
@@ -252,15 +157,21 @@ class WorkerDashboardController extends Controller
             ->orderBy('ponto', 'ASC')
             ->get();
 
+        $atividades = AtividadeFuncionario::where('company_id', $company->id)
+            ->where('funcionario_id', $funcionario_id)
+            ->get();
+
+        $observacoes = Observacao::where('company_id', $company->id)
+            ->whereIn('atividade_id', $atividades->pluck('atividade_id'))
+            ->get();
+
         $data = [
             'atividades' => $atividades,
             'observacoes' => $observacoes,
             'company' => $company,
             'user' => $user,
             'funcionario' => $user->funcionario,
-            'atividades_hoje' => $atividades_hoje,
             'historico_action' => '/',
-            'porcentagem_completas' => $porcentagem_completas,
             'ultimaBatidaPontoHoje' => $ultimaBatidaPontoHoje,
             'totalBatidasPontoHoje' => $batidasPontoHoje->count(),
             'batidasPontoHoje' => $batidasPontoHoje,

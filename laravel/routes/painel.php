@@ -80,8 +80,8 @@ Route::get('/atividades/apagar/{id}/{id2}', [AtividadesController::class, 'delet
 
 // Observacoes Routes
 Route::get('/observacoes', [ObservacoesController::class, 'listar']);
-Route::get('/observacoes/{id}/{id2}', [ObservacoesController::class, 'edit']);
-Route::post('/observacoes/{id}/{id2}', [ObservacoesController::class, 'send_message']);
+Route::get('/observacoes/view/{id}', [ObservacoesController::class, 'edit']);
+Route::post('/observacoes/{id}', [ObservacoesController::class, 'send_message']);
 
 // Frequencia Routes
 Route::get('/frequencia', [FrequenciaController::class, 'listar']);

@@ -44,7 +44,6 @@
                                                         <th scope="col">ID Atividade</th>
                                                         <th scope="col" style="min-width: 270px;">Atividade</th>
                                                         <th scope="col" style="min-width: 200px;">Última Interação</th>
-                                                        <th scope="col">Status</th>
                                                         <th scope="col">Observações</th>
                                                     </tr>
                                                 </thead>
@@ -60,15 +59,6 @@
                                                             @else
                                                             Nenhuma mensagem enviada ou recebida
                                                             @endif
-                                                        </td>
-                                                        <td>
-                                                        @if($atividade->funcionario_atividade !== 0 && $atividade->funcionario_atividade !== 1)
-                                                          <span class="badge bg-danger">Não realizado</span>
-                                                        @elseif($atividade->funcionario_atividade == 0)
-                                                           <span class="badge bg-warning">Em andamento</span>
-                                                        @elseif($atividade->funcionario_atividade == 1)
-                                                           <span class="badge bg-success">Concluído</span>
-                                                        @endif
                                                         </td>
                                                         <td style="padding-bottom: 3px;">
                                                             <a class="text-primary badge-top-container" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">

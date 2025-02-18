@@ -7,6 +7,7 @@ use App\Http\Controllers\Worker\AtividadesController;
 use App\Http\Controllers\Worker\ObservacoesController;
 use App\Http\Controllers\Worker\OnboardingController;
 use App\Http\Controllers\Worker\WorkerDashboardController;
+use App\Http\Controllers\Worker\FeriasController;
 use Illuminate\Support\Facades\Route;
 
 \URL::forceScheme('https');
@@ -53,6 +54,8 @@ Route::get('/politicaprivacidade', function () {
 });
 
 Route::post('/worker/anexar-atestado', [AtestadosController::class, 'anexarAtestado'])->name('worker.anexarAtestado');
+
+Route::post('/worker/solicitar-ferias', [FeriasController::class, 'solicitarFerias'])->name('worker.solicitarFerias');
 
 Route::get('/termosdeuso', function () {
     return view('pages.worker.termosdeuso');

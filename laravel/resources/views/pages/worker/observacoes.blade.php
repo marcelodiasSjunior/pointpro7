@@ -55,7 +55,7 @@
 
                                                         <td>
                                                             @if($atividade->observacoes->count() > 0)
-                                                            {{ $atividade->observacoes[0]->sender->name }}
+                                                            {{ $atividade->observacoes->first()->sender->name ?? 'N/A' }}
                                                             @else
                                                             Nenhuma mensagem enviada ou recebida
                                                             @endif

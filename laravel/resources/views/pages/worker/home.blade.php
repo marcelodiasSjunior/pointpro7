@@ -281,7 +281,7 @@
                                                 <h6
                                                     class="card-title ul-collapse__icon--size ul-collapse__right-icon mb-0">
                                                     <a class="text-default collapsed" data-bs-toggle="collapse"
-                                                        href="#accordion-item-icon-right-2">COMUNICAR FALTA</a>
+                                                        data-bs-target="#accordion-item-icon-right-2">COMUNICAR FALTA</a>
                                                 </h6>
                                             </div>
                                             <div class="collapse" id="accordion-item-icon-right-2"
@@ -441,7 +441,155 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="card ul-card__v-space">
+                                            <div class="card-header header-elements-inline">
+                                                <h6
+                                                    class="card-title ul-collapse__icon--size ul-collapse__right-icon mb-0">
+                                                    <a class="text-default collapsed" data-bs-toggle="collapse"
+                                                        data-bs-target="#accordion-item-icon-right-3">SOLICITAR FÉRIAS</a>
+                                                </h6>
+                                            </div>
+                                            <div class="collapse" id="accordion-item-icon-right-3"
+                                                data-parent="#accordionRightIcon">
+                                                <div class="card-body">
+                                                    <p style="margin-bottom: 3px;" >Anexar documento:</p>
+                                                    <div style="margin:0px 0px 25px;">
+                                                        <div class="row">
+                                                            <div class="col-md-12 form-group mb-3">
+                                                                <div class="mb-3">
+                                                                    <form method="POST"
+                                                                        action="{{ route('worker.solicitarFerias') }}"
+                                                                        enctype="multipart/form-data">
+                                                                        @csrf
+                                                                        <div class="fallback">
+                                                                            <input name="file" type="file" required />
+                                                                        </div>
+                                                                        <div class="dz-message">Solte o arquivo aqui
+                                                                            para enviar</div>
+                                                                        <!-- Campos adicionais -->
+                                                                        <div class="card-body">
+                                                                            <div class="row">
+                                                                                <div class="col-md-6 mb-3">
+                                                                                    <p style="margin-bottom: 3px;">
+                                                                                        Inicio Previsto:</p>
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-3 mb-3">
+                                                                                            <label
+                                                                                                for="startDay">Selecionar
+                                                                                                o dia</label>
+                                                                                            <select class="form-control"
+                                                                                                id="startDay"
+                                                                                                name="startDay">
+                                                                                                @for ($i = 1; $i <= 31; $i++)
+                                                                                                    <option
+                                                                                                        value="{{ $i }}">
+                                                                                                        {{ str_pad($i, 2, '0', STR_PAD_LEFT) }}
+                                                                                                    </option>
+                                                                                                @endfor
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div class="col-sm-4 mb-3">
+                                                                                            <label
+                                                                                                for="startMonth">Selecionar
+                                                                                                mês</label>
+                                                                                            <select class="form-control"
+                                                                                                id="startMonth"
+                                                                                                name="startMonth">
+                                                                                                @foreach (['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'] as $index => $month)
+                                                                                                    <option
+                                                                                                        value="{{ $index + 1 }}">
+                                                                                                        {{ $month }}
+                                                                                                    </option>
+                                                                                                @endforeach
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div class="col-sm-3 mb-3">
+                                                                                            <label
+                                                                                                for="startYear">Selecionar
+                                                                                                ano</label>
+                                                                                            <select class="form-control"
+                                                                                                id="startYear"
+                                                                                                name="startYear">
+                                                                                                @for ($i = now()->year; $i >= 2021; $i--)
+                                                                                                    <option
+                                                                                                        value="{{ $i }}">
+                                                                                                        {{ $i }}</option>
+                                                                                                @endfor
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6 mb-3">
+                                                                                    <p style="margin-bottom: 3px;">Final Previsto:
+                                                                                    </p>
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-3 mb-3">
+                                                                                            <label
+                                                                                                for="endDay">Selecionar
+                                                                                                o dia</label>
+                                                                                            <select class="form-control"
+                                                                                                id="endDay"
+                                                                                                name="endDay">
+                                                                                                @for ($i = 1; $i <= 31; $i++)
+                                                                                                    <option
+                                                                                                        value="{{ $i }}">
+                                                                                                        {{ str_pad($i, 2, '0', STR_PAD_LEFT) }}
+                                                                                                    </option>
+                                                                                                @endfor
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div class="col-sm-4 mb-3">
+                                                                                            <label
+                                                                                                for="endMonth">Selecionar
+                                                                                                mês</label>
+                                                                                            <select class="form-control"
+                                                                                                id="endMonth"
+                                                                                                name="endMonth">
+                                                                                                @foreach (['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'] as $index => $month)
+                                                                                                    <option
+                                                                                                        value="{{ $index + 1 }}">
+                                                                                                        {{ $month }}
+                                                                                                    </option>
+                                                                                                @endforeach
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div class="col-sm-3 mb-3">
+                                                                                            <label
+                                                                                                for="endYear">Selecionar
+                                                                                                ano</label>
+                                                                                            <select class="form-control"
+                                                                                                id="endYear"
+                                                                                                name="endYear">
+                                                                                                @for ($i = now()->year; $i >= 2021; $i--)
+                                                                                                    <option
+                                                                                                        value="{{ $i }}">
+                                                                                                        {{ $i }}</option>
+                                                                                                @endfor
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12"
+                                                                                    style="text-align: center;">
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-outline-primary"
+                                                                                        style="margin-top: 15px;min-width: 290px;"><b>Solicitar Férias</b></button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </div>
                                 <div class="col-lg-1 col-md-12 col-sm-12 form-group mb-3"></div>
                             </div>

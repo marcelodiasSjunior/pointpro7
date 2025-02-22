@@ -12,6 +12,7 @@ class Ferias extends Model
 
     protected $fillable = [
         'funcionario_id',
+        'company_id',
         'path',
         'file',
         'media_type',
@@ -25,5 +26,20 @@ class Ferias extends Model
     public function funcionario()
     {
         return $this->belongsTo(Funcionario::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function getStatusAttribute($value)
+    {
+        return match ($value) {
+            'pendente' => 'Pendente',
+            'aprovado' => 'Aprovado',
+            'rejeitado' => 'Rejeitado',
+            default => $value,
+        };
     }
 }

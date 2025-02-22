@@ -6,34 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Atestado extends Model
+class Notificacao extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
-        'funcionario_id',
+        'title',
+        'description',
         'company_id',
-        'path',
-        'file',
-        'media_type',
-        'dateUpload',
-        'startDate',
-        'endDate',
-        'startTime',
-        'endTime'
+        'funcionario_id',
+        'read',
     ];
-
-    protected $dates = [
-        'startDate',
-        'endDate',
-        'dateUpload'
-    ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function funcionario()
     {
@@ -44,5 +27,4 @@ class Atestado extends Model
     {
         return $this->belongsTo(Company::class);
     }
-    
 }

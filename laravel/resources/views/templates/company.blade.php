@@ -17,7 +17,8 @@
             <div class="d-flex align-items-center">
                 <!-- Mega menu -->
                 <div class="dropdown mega-menu d-none d-md-block">
-                    <a href="#" class="btn text-muted dropdown-toggle me-3" id="dropdownMegaMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Opções</a>
+                    <a href="#" class="btn text-muted dropdown-toggle me-3" id="dropdownMegaMenuButton"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Opções</a>
                     <div class="dropdown-menu text-start" aria-labelledby="dropdownMenuButton">
                         <div class="row m-0">
                             <div class="col-md-4 p-4 bg-img">
@@ -27,9 +28,12 @@
                                 </h2>
                                 <p style="font-size:12px;">
                                     Sistema de acompanhamento de atividades desempenhadas pelos funcionários.
-                                    Aproveite o conjunto de recursos e funcionalidades para acompanhar funcionários no cotidiano profissional, gerenciando funções, jornadas, atividades e tarefas dos colaboradores.
+                                    Aproveite o conjunto de recursos e funcionalidades para acompanhar funcionários no
+                                    cotidiano profissional, gerenciando funções, jornadas, atividades e tarefas dos
+                                    colaboradores.
                                 </p>
-                                <a class="btn btn-lg btn-rounded btn-outline-warning" href="https://pointpro7.com" target="_blank">
+                                <a class="btn btn-lg btn-rounded btn-outline-warning" href="https://pointpro7.com"
+                                    target="_blank">
                                     Leia mais
                                 </a>
                             </div>
@@ -70,14 +74,47 @@
             <div class="header-part-right">
                 <!-- Full screen toggle -->
                 <i class="i-Full-Screen header-icon d-none d-sm-inline-block" data-fullscreen></i>
-                <i class="i-Bell header-icon"></i>
-                <!-- User avatar dropdown -->
+                <a class="text-primary position-relative d-inline-block mx-3" href="#" id="notificationDropdown"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    style="font-size: 1.5rem; line-height: 1;">
+                    <i class="i-Bell header-icon"></i>
+                    @if($notificacoes->count() > 0)
+                        <span class="badge bg-danger position-absolute translate-middle"
+                            style="top: 15%; right: -10px; padding: 4px 6px; font-size: 0.65rem;">
+                            {{ $notificacoes->count() }}
+                        </span>
+                    @endif
+                </a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown"
+                    style="width: 300px;">
+                    <div class="dropdown-header">Notificações</div>
+                    @forelse($notificacoes as $notificacao)
+                        <a class="dropdown-item" href="#">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="i-Bell text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">{{ $notificacao->title }}</h6>
+                                    <small class="text-muted">{{ $notificacao->created_at->diffForHumans() }}</small>
+                                </div>
+                            </div>
+                        </a>
+                    @empty
+                        <a class="dropdown-item text-center" href="#">Nenhuma notificação encontrada.</a>
+                    @endforelse
+                    <div class="dropdown-footer text-center">
+                        <a href="{{ route('todas.notificacoes') }}">Ver todas</a>
+                    </div>
+                </div>
                 <div class="dropdown">
                     <div class="user col align-self-end">
                         @if(Auth::user()->avatar)
-                        <img src="{{ Auth::user()->avatar }}" id="userDropdown" alt="" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                            <img src="{{ Auth::user()->avatar }}" id="userDropdown" alt="" data-bs-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false" />
                         @else
-                        <img src="{{ secure_asset('dist-assets/images/faces/user-no-foto.png') }}" id="userDropdown" alt="" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                            <img src="{{ secure_asset('dist-assets/images/faces/user-no-foto.png') }}" id="userDropdown"
+                                alt="" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
                         @endif
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                             <div class="dropdown-header">
@@ -98,38 +135,51 @@
             <div class="sidebar-left open rtl-ps-none" data-perfect-scrollbar="" data-suppress-scroll-x="true">
                 <ul class="navigation-left">
                     <li class="nav-item">
-                        <a class="nav-item-hold" href="/"><i class="nav-icon i-Bar-Chart"></i><span class="nav-text">Painel </span></a>
+                        <a class="nav-item-hold" href="/"><i class="nav-icon i-Bar-Chart"></i><span
+                                class="nav-text">Painel </span></a>
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item-hold" href="/atividades"><i class="nav-icon i-Check"></i><span class="nav-text">Atividades</span></a>
+                        <a class="nav-item-hold" href="/atividades"><i class="nav-icon i-Check"></i><span
+                                class="nav-text">Atividades</span></a>
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item-hold" href="/observacoes"><i class="nav-icon i-Speach-Bubbles"></i><span class="nav-text">Observações</span></a>
+                        <a class="nav-item-hold" href="/observacoes"><i class="nav-icon i-Speach-Bubbles"></i><span
+                                class="nav-text">Observações</span></a>
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item-hold" href="/frequencia"><i class="nav-icon i-Stopwatch"></i><span class="nav-text">Frequência</span></a>
+                        <a class="nav-item-hold" href="/frequencia"><i class="nav-icon i-Stopwatch"></i><span
+                                class="nav-text">Frequência</span></a>
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item-hold" href="/funcoes"><i class="nav-icon i-Library"></i><span class="nav-text">Funções</span></a>
+                        <a class="nav-item-hold" href="/funcoes"><i class="nav-icon i-Library"></i><span
+                                class="nav-text">Funções</span></a>
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item-hold" href="/jornadas"><i class="nav-icon i-Calendar"></i><span class="nav-text">Jornadas</span></a>
+                        <a class="nav-item-hold" href="/jornadas"><i class="nav-icon i-Calendar"></i><span
+                                class="nav-text">Jornadas</span></a>
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item-hold" href="/funcionarios"><i class="nav-icon i-Administrator"></i><span class="nav-text">Funcionários</span></a>
+                        <a class="nav-item-hold" href="/funcionarios"><i class="nav-icon i-Administrator"></i><span
+                                class="nav-text">Funcionários</span></a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-item-hold" href="/solicitacoes"><i class=" nav-icon fa-solid fa-list-ol"></i><span
+                                class="nav-text">Solicitações</span></a>
                         <div class="triangle"></div>
                     </li>
                     @if(Auth::user()->company->plan === 1)
-                    <li class="nav-item">
-                        <a class="nav-item-hold" href="/qrcode"><i class="nav-icon i-Code-Window"></i><span class="nav-text">QRCode</span></a>
-                        <div class="triangle"></div>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-item-hold" href="/qrcode"><i class="nav-icon i-Code-Window"></i><span
+                                    class="nav-text">QRCode</span></a>
+                            <div class="triangle"></div>
+                        </li>
                     @endif
                 </ul>
             </div>

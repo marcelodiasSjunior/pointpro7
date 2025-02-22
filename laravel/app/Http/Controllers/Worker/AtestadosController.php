@@ -15,7 +15,9 @@ class AtestadosController extends Controller
     function anexarAtestado(UploadAtestadoRequest $request)
     {
         $user = $request->user();
-
+        $funcionario = $user->funcionario;
+        $funcionario_id = $funcionario->id;
+        $company_id = $funcionario->company_id;
         $file = $request->file('file');
         $extension = $file->getClientOriginalExtension();
         $folder = 'atestados/' . $user->id;
@@ -38,8 +40,10 @@ class AtestadosController extends Controller
         $endDate = Carbon::create($request->input('endYear'), $request->input('endMonth'), $request->input('endDay'));
         $endtime = $request->input(key: 'endTime');
         $startTime = $request->input(key: 'startTime');
-        $atestado = Atestado::create([
+        Atestado::create([
             'user_id' => $user->id,
+            'funcionario_id' => $funcionario_id,
+            'company_id' => $company_id,
             'path' => rtrim(config('app.host_asset_s3'), '/'), // Remover a barra final, se houver
             'file' => $folder . '/' . $fileName, // Adicionar o caminho completo aqui
             'media_type' => $mediaType,

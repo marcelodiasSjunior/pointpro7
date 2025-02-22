@@ -10,8 +10,10 @@ use App\Http\Controllers\Company\FuncionariosController;
 use App\Http\Controllers\Company\FuncoesController;
 use App\Http\Controllers\Company\JornadasController;
 use App\Http\Controllers\Company\ObservacoesController;
+use App\Http\Controllers\Company\SolicitacoesController;
 use App\Http\Controllers\CompanyDashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificacaoController;
 
 \URL::forceScheme('https');
 
@@ -117,3 +119,10 @@ Route::get('/avaliacoes/funcionario/{id}', [AvaliacaoController::class, 'funcion
 Route::post('/avaliacoes/funcionario/{id}', [AvaliacaoController::class, 'send_avaliacao']);
 Route::get('/auditoria/{id}/export-xls/{ano}/{mes}', [AuditoriasController::class, 'exportXLS']);
 Route::get('/auditoria/historico/{funcionario_id}/{ano}/{mes}', [AuditoriasController::class, 'historico'])->name('auditoria.historico');
+Route::get('/notificacoes', [NotificacaoController::class, 'index'])->name('todas.notificacoes');
+Route::get('/notificacoes/ultimas', [NotificacaoController::class, 'getUltimasNotificacoes'])->name('notificacoes.ultimas');
+Route::post('/notificacoes/marcar-lida/{id}', [NotificacaoController::class, 'marcarComoLida'])->name('notificacoes.marcar-lida');
+
+Route::get('/solicitacoes', [SolicitacoesController::class, 'index'])->name('solicitacoes.index');
+Route::get('/solicitacoes/aprovar/{id}', [SolicitacoesController::class, 'aprovar'])->name('solicitacoes.aprovar');
+Route::get('/solicitacoes/rejeitar/{id}', [SolicitacoesController::class, 'rejeitar'])->name('solicitacoes.rejeitar');

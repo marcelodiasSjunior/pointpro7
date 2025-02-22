@@ -90,8 +90,8 @@ services:
       - app-network
     volumes:
     - ../flask:/app
-    - ../docker/nginx/cert.pem:/root/ssl/cert.pem
-    - ../docker/nginx/key.pem:/root/ssl/key.pem
+    - ../docker/nginx/cert.pem:/root/pointpro7/docker/nginx/cert.pem  # Caminho corrigido
+    - ../docker/nginx/key.pem:/root/pointpro7/docker/nginx/key.pem    # Caminho corrigido
     links:
       - database
 

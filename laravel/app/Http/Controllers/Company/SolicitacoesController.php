@@ -36,23 +36,35 @@ class SolicitacoesController extends Controller
         ]);
     }
 
-    public function aprovar(Request $req, $id)
+    public function aprovar(Request $req, $tipo, $id)
     {
         $companyId = $req->user()->company->id;
-        $solicitacao = Ferias::where('company_id', $companyId)->findOrFail($id);
-        $solicitacao->status = 'aprovado';
-        $solicitacao->save();
 
+        if ($tipo === 'ferias') {
+            $solicitacao = Ferias::where('company_id', $companyId)->findOrFail($id);
+            $solicitacao->status = 'aprovado';
+            $solicitacao->save();
+        } else {
+            $solicitacao = Atestado::where('company_id', $companyId)->findOrFail($id);
+            $solicitacao->status = 1;
+            $solicitacao->save();
+        }
         return redirect()->back();
     }
 
-    public function rejeitar(Request $req, $id)
+    public function rejeitar(Request $req, $tipo, $id)
     {
         $companyId = $req->user()->company->id;
-        $solicitacao = Ferias::where('company_id', $companyId)->findOrFail($id);
-        $solicitacao->status = 'rejeitado';
-        $solicitacao->save();
 
+        if ($tipo === 'ferias') {
+            $solicitacao = Ferias::where('company_id', $companyId)->findOrFail($id);
+            $solicitacao->status = 'rejeitado';
+        } else {
+            $solicitacao = Atestado::where('company_id', $companyId)->findOrFail($id);
+            $solicitacao->status = 2; // Defina um status para rejeitado (ajuste conforme seu modelo)
+        }
+
+        $solicitacao->save();
         return redirect()->back();
     }
 }

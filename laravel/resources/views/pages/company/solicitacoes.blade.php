@@ -73,8 +73,8 @@
                                                 <td>{{ $ferias->funcionario->user->name }}</td>
                                                 <td>{{ date('d/m/Y', strtotime($ferias->startDate)) }} - {{ date('d/m/Y', strtotime($ferias->endDate)) }}</td>
                                                 <td>
-                                                    <a href="{{ route('solicitacoes.aprovar', $ferias->id) }}" class="btn btn-sm btn-primary">Aprovar</a>
-                                                    <a href="{{ route('solicitacoes.rejeitar', $ferias->id) }}" class="btn btn-sm btn-danger">Recusar</a>
+                                                    <a href="{{ route('solicitacoes.aprovar', parameters: ['tipo' => 'ferias', 'id' => $ferias->id]) }}" class="btn btn-sm btn-primary">Aprovar</a>
+                                                    <a href="{{ route('solicitacoes.rejeitar', ['tipo' => 'ferias', 'id' => $ferias->id]) }}" class="btn btn-sm btn-danger">Recusar</a>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -114,8 +114,8 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a href="#" class="btn btn-sm btn-primary">Aprovar</a>
-                                                    <a href="#" class="btn btn-sm btn-danger">Recusar</a>
+                                                    <a href="{{ route('solicitacoes.aprovar', ['tipo' => 'abonos', 'id' => $abono->id]) }}" class="btn btn-sm btn-primary">Aprovar</a>
+                                                    <a href="{{ route('solicitacoes.rejeitar', ['tipo' => 'abonos', 'id' => $abono->id]) }}" class="btn btn-sm btn-danger">Recusar</a>
                                                 </td>
                                             </tr>
                                             @endforeach

@@ -124,5 +124,5 @@ Route::get('/notificacoes/ultimas', [NotificacaoController::class, 'getUltimasNo
 Route::post('/notificacoes/marcar-lida/{id}', [NotificacaoController::class, 'marcarComoLida'])->name('notificacoes.marcar-lida');
 
 Route::get('/solicitacoes', [SolicitacoesController::class, 'index'])->name('solicitacoes.index');
-Route::get('/solicitacoes/aprovar/{id}', [SolicitacoesController::class, 'aprovar'])->name('solicitacoes.aprovar');
-Route::get('/solicitacoes/rejeitar/{id}', [SolicitacoesController::class, 'rejeitar'])->name('solicitacoes.rejeitar');
+Route::get('/solicitacoes/aprovar/{tipo}/{id}', [SolicitacoesController::class, 'aprovar'])->name('solicitacoes.aprovar');
+Route::get('/solicitacoes/rejeitar/{tipo}/{id}', [SolicitacoesController::class, 'rejeitar'])->name('solicitacoes.rejeitar');

@@ -14,4 +14,4 @@ RUN python --version
 RUN pip install dlib
 RUN pip install -r requirements.txt
 
-CMD ["gunicorn", "-w", "12", "-b", "0.0.0.0:5000", "--certfile=/root/projetos/pointpro7/docker/nginx/cert.pem", "--keyfile=/root/projetos/pointpro7/docker/nginx/key.pem", "api:app"]
+CMD ["gunicorn", "-w", "12", "-b", "0.0.0.0:5000", "--certfile=/root/pointpro7/docker/nginx/cert.pem", "--keyfile=/root/pointpro7/docker/nginx/key.pem", "api:app"]

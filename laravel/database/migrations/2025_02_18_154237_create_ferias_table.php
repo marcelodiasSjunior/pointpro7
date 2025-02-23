@@ -11,11 +11,12 @@ return new class extends Migration
     {
         Schema::create('ferias', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('funcionario_id')->constrained()->onDelete('cascade');
-            $table->string('path');
-            $table->string('file');
-            $table->string('media_type');
-            $table->dateTime('dateUpload');
+            $table->foreignId('funcionario_id')->references('id')->on('funcionarios')->onDelete('cascade');
+            $table->foreignId('company_id')->references('id')->on('companies')->onDelete('cascade');
+            $table->string('path')->nullable();
+            $table->string('file')->nullable();
+            $table->string('media_type')->nullable();
+            $table->dateTime('dateUpload')->nullable();
             $table->date('startDate');
             $table->date('endDate');
             $table->enum('status', ['pendente', 'aprovado', 'rejeitado']); // Exemplo de status, pode ajustar conforme necessidade

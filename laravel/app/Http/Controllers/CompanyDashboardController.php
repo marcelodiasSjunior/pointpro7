@@ -11,6 +11,7 @@ use App\Models\Funcao;
 use App\Models\Funcionario;
 use App\Models\FuncionarioAtividade;
 use App\Models\Jornada;
+use App\Models\Notificacao;
 use App\Models\Observacao;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -59,6 +60,12 @@ class CompanyDashboardController extends Controller
     $commonDates = CommomDataService::getCommonDates($req);
     $company = Auth::user()->company;
     $company_id = $company->id;
+
+    $notificacoes = Notificacao::where('company_id', $company_id)
+        ->where('read', 0)
+        ->limit(10)
+        ->orderBy('id', 'DESC')
+        ->get();
 
     $funcoes = Funcao::where('company_id', $company_id)
         ->where('status', 1)
@@ -234,6 +241,7 @@ class CompanyDashboardController extends Controller
         'funcoes_list' => $funcoes_list,
         'funcionarios_list' => $funcionarios_list,
         'jornadas' => $jornadas,
+        'notificacoes' => $notificacoes,
         ...$commonDates
     ];
     return view('pages.company.home', $data);

@@ -36,7 +36,6 @@
                     <!-- Filtro por Funcionário -->
                     <form method="GET" class="mt-3">
                     <input type="hidden" name="tipo" value="{{ $tipo }}">
-                        <input type="hidden" name="tipo" value="{{ $tipo }}">
                         <div class="row align-items-center">
                             <div class="col-md-4">
                                 <label>Filtrar por Funcionário:</label>
@@ -64,6 +63,7 @@
                                             <tr>
                                                 <th>Funcionário</th>
                                                 <th>Período</th>
+                                                <th>Anexo</th>
                                                 <th>Ações</th>
                                             </tr>
                                         </thead>
@@ -72,6 +72,12 @@
                                             <tr>
                                                 <td>{{ $ferias->funcionario->user->name }}</td>
                                                 <td>{{ date('d/m/Y', strtotime($ferias->startDate)) }} - {{ date('d/m/Y', strtotime($ferias->endDate)) }}</td>
+                                                <td>
+                                                    @if($ferias->file)
+                                                    <a href="{{ $ferias->path . '/' . $ferias->file }}" target="_blank">Ver</a>
+                                                    @else
+                                                        -
+                                                    @endif
                                                 <td>
                                                     <a href="{{ route('solicitacoes.aprovar', parameters: ['tipo' => 'ferias', 'id' => $ferias->id]) }}" class="btn btn-sm btn-primary">Aprovar</a>
                                                     <a href="{{ route('solicitacoes.rejeitar', ['tipo' => 'ferias', 'id' => $ferias->id]) }}" class="btn btn-sm btn-danger">Recusar</a>
@@ -105,10 +111,22 @@
                                             @foreach($solicitacoesAbonos as $abono)
                                             <tr>
                                                 <td>{{ $abono->funcionario->user->name }}</td>
-                                                <td>{{ date('d/m/Y', strtotime($abono->data)) }}</td>
                                                 <td>
-                                                    @if($abono->anexo)
-                                                        <a href="{{ asset('storage/'.$abono->anexo) }}" target="_blank">Ver</a>
+    @if($abono->startDate == $abono->endDate)
+        {{ date('d/m/Y', strtotime($abono->startDate)) }}<br>
+        <span class="text-muted small">
+            {{ date('H:i', strtotime($abono->startTime)) }} - {{ date('H:i', strtotime($abono->endTime)) }}
+        </span>
+    @else
+        {{ date('d/m/Y', strtotime($abono->startDate)) }} - {{ date('d/m/Y', strtotime($abono->endDate)) }}<br>
+        <span class="text-muted small">
+            {{ date('H:i', strtotime($abono->startTime)) }} - {{ date('H:i', strtotime($abono->endTime)) }}
+        </span>
+    @endif
+</td>
+                                                <td>
+                                                    @if($abono->file)
+                                                    <a href="{{ $abono->path }}/{{ $abono->file }}" target="_blank">Ver</a>
                                                     @else
                                                         -
                                                     @endif

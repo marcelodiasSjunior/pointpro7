@@ -140,7 +140,7 @@
                                                     class="card-title ul-collapse__icon--size ul-collapse__right-icon mb-0">
                                                     <a class="text-default " data-bs-toggle="collapse"
                                                         href="#accordion-item-icon-right-1"
-                                                        aria-expanded="true">COMUNICAR PRESENÇA</a>
+                                                        aria-expanded="true">Registrar Presença</a>
                                                 </h6>
                                             </div>
                                             <div class="collapse show" id="accordion-item-icon-right-1"
@@ -281,7 +281,7 @@
                                                 <h6
                                                     class="card-title ul-collapse__icon--size ul-collapse__right-icon mb-0">
                                                     <a class="text-default collapsed" data-bs-toggle="collapse"
-                                                        data-bs-target="#accordion-item-icon-right-2">COMUNICAR FALTA</a>
+                                                        data-bs-target="#accordion-item-icon-right-2">Solicitar Abono</a>
                                                 </h6>
                                             </div>
                                             <div class="collapse" id="accordion-item-icon-right-2"
@@ -428,8 +428,7 @@
                                                                                     style="text-align: center;">
                                                                                     <button type="submit"
                                                                                         class="btn btn-outline-primary"
-                                                                                        style="margin-top: 15px;min-width: 290px;"><b>COMUNICAR
-                                                                                            FALTA</b></button>
+                                                                                        style="margin-top: 15px;min-width: 290px;"><b>Solicitar Abono</b></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -447,7 +446,7 @@
                                                 <h6
                                                     class="card-title ul-collapse__icon--size ul-collapse__right-icon mb-0">
                                                     <a class="text-default collapsed" data-bs-toggle="collapse"
-                                                        data-bs-target="#accordion-item-icon-right-3">SOLICITAR FÉRIAS</a>
+                                                        data-bs-target="#accordion-item-icon-right-3">Solicitar Férias</a>
                                                 </h6>
                                             </div>
                                             <div class="collapse" id="accordion-item-icon-right-3"

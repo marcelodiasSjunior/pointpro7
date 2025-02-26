@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Atestado;
 use App\Models\Ferias;
 use App\Models\Funcionario;
+use App\Models\SolicitacaoHistorico;
 use Illuminate\Http\Request;
 
 class SolicitacoesController extends Controller
@@ -27,9 +28,19 @@ class SolicitacoesController extends Controller
             ->where('status', 0)
             ->get();
 
+        $historico = collect();
+        if ($tipo === 'historico') {
+            $historico = SolicitacaoHistorico::whereHas('funcionario', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            })
+                ->when($funcionarioId, fn($q) => $q->where('funcionario_id', $funcionarioId))
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
         return view('pages.company.solicitacoes', [
             'solicitacoesFerias' => $solicitacoesFerias,
             'solicitacoesAbonos' => $solicitacoesAbonos,
+            'historico' => $historico,
             'funcionarios' => Funcionario::where('company_id', $companyId)->get(),
             'funcionarioId' => $funcionarioId,
             'tipo' => $tipo,
@@ -44,10 +55,32 @@ class SolicitacoesController extends Controller
             $solicitacao = Ferias::where('company_id', $companyId)->findOrFail($id);
             $solicitacao->status = 'aprovado';
             $solicitacao->save();
+
+            SolicitacaoHistorico::create([
+                'tipo' => 'ferias',
+                'funcionario_id' => $solicitacao->funcionario_id,
+                'acao' => 'aprovado',
+                'anexo' => $solicitacao->file ? $solicitacao->path . '/' . $solicitacao->file : null,
+                'start_date' => $solicitacao->startDate,
+                'end_date' => $solicitacao->endDate,
+            ]);
+
         } else {
             $solicitacao = Atestado::where('company_id', $companyId)->findOrFail($id);
             $solicitacao->status = 1;
             $solicitacao->save();
+
+            // Registrar histórico
+            SolicitacaoHistorico::create([
+                'tipo' => 'abono',
+                'funcionario_id' => $solicitacao->funcionario_id,
+                'acao' => 'aprovado',
+                'anexo' => $solicitacao->file ? $solicitacao->path . '/' . $solicitacao->file : null,
+                'start_date' => $solicitacao->startDate,
+                'end_date' => $solicitacao->endDate,
+                'start_time' => $solicitacao->startTime,
+                'end_time' => $solicitacao->endTime,
+            ]);
         }
         return redirect()->back();
     }
@@ -59,12 +92,33 @@ class SolicitacoesController extends Controller
         if ($tipo === 'ferias') {
             $solicitacao = Ferias::where('company_id', $companyId)->findOrFail($id);
             $solicitacao->status = 'rejeitado';
+            $solicitacao->save();
+
+            SolicitacaoHistorico::create([
+                'tipo' => 'ferias',
+                'funcionario_id' => $solicitacao->funcionario_id,
+                'acao' => 'rejeitado',
+                'anexo' => $solicitacao->file ? $solicitacao->path . '/' . $solicitacao->file : null,
+                'start_date' => $solicitacao->startDate,
+                'end_date' => $solicitacao->endDate,
+            ]);
         } else {
             $solicitacao = Atestado::where('company_id', $companyId)->findOrFail($id);
-            $solicitacao->status = 2; // Defina um status para rejeitado (ajuste conforme seu modelo)
+            $solicitacao->status = 2;
+            $solicitacao->save();
+
+            SolicitacaoHistorico::create([
+                'tipo' => 'abono',
+                'funcionario_id' => $solicitacao->funcionario_id,
+                'acao' => 'rejeitado',
+                'anexo' => $solicitacao->file ? $solicitacao->path . '/' . $solicitacao->file : null,
+                'start_date' => $solicitacao->startDate,
+                'end_date' => $solicitacao->endDate,
+                'start_time' => $solicitacao->startTime,
+                'end_time' => $solicitacao->endTime,
+            ]);
         }
 
-        $solicitacao->save();
         return redirect()->back();
     }
 }

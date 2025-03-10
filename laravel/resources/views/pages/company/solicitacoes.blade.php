@@ -31,6 +31,11 @@
             Abonos ({{ $solicitacoesAbonos->count() }})
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $tipo === 'historico' ? 'active' : '' }}" href="?tipo=historico">
+            Histórico
+        </a>
+    </li>
 </ul>
 
                     <!-- Filtro por Funcionário -->
@@ -78,6 +83,7 @@
                                                     @else
                                                         -
                                                     @endif
+                                                </td>
                                                 <td>
                                                     <a href="{{ route('solicitacoes.aprovar', parameters: ['tipo' => 'ferias', 'id' => $ferias->id]) }}" class="btn btn-sm btn-primary">Aprovar</a>
                                                     <a href="{{ route('solicitacoes.rejeitar', ['tipo' => 'ferias', 'id' => $ferias->id]) }}" class="btn btn-sm btn-danger">Recusar</a>
@@ -112,11 +118,11 @@
                                             <tr>
                                                 <td>{{ $abono->funcionario->user->name }}</td>
                                                 <td>
-    @if($abono->startDate == $abono->endDate)
-        {{ date('d/m/Y', strtotime($abono->startDate)) }}<br>
-        <span class="text-muted small">
-            {{ date('H:i', strtotime($abono->startTime)) }} - {{ date('H:i', strtotime($abono->endTime)) }}
-        </span>
+                                                    @if($abono->startDate == $abono->endDate)
+                                                        {{ date('d/m/Y', strtotime($abono->startDate)) }}<br>
+                                                        <span class="text-muted small">
+                                                        {{ date('H:i', strtotime($abono->startTime)) }} - {{ date('H:i', strtotime($abono->endTime)) }}
+                                                        </span>
     @else
         {{ date('d/m/Y', strtotime($abono->startDate)) }} - {{ date('d/m/Y', strtotime($abono->endDate)) }}<br>
         <span class="text-muted small">
@@ -146,6 +152,64 @@
                                 </div>
                             @endif
                         </div>
+
+                        <!-- Tab Histórico -->
+                        <div class="tab-pane {{ $tipo === 'historico' ? 'show active' : '' }}">
+    @if($historico->count() > 0)
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Funcionário</th>
+                        <th>Ação</th>
+                        <th>Período</th>
+                        <th>Anexo</th>
+                        <th>Data da Alteração</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($historico as $item)
+                    <tr>
+                        <td>{{ ucfirst($item->tipo) }}</td>
+                        <td>{{ $item->funcionario->user->name }}</td>
+                        <td>{{ ucfirst($item->acao) }}</td>
+                        <td>
+                            @if($item->tipo === 'ferias')
+                                {{ date('d/m/Y', strtotime($item->start_date)) }} - {{ date('d/m/Y', strtotime($item->end_date)) }}
+                            @else
+                                @if($item->start_date == $item->end_date)
+                                    {{ date('d/m/Y', strtotime($item->start_date)) }}<br>
+                                    <span class="text-muted small">
+                                        {{ date('H:i', strtotime($item->start_time)) }} - {{ date('H:i', strtotime($item->end_time)) }}
+                                    </span>
+                                @else
+                                    {{ date('d/m/Y', strtotime($item->start_date)) }} - {{ date('d/m/Y', strtotime($item->end_date)) }}<br>
+                                    <span class="text-muted small">
+                                        {{ date('H:i', strtotime($item->start_time)) }} - {{ date('H:i', strtotime($item->end_time)) }}
+                                    </span>
+                                @endif
+                            @endif
+                        </td>
+                        <td>
+                            @if($item->anexo)
+                                <a href="{{ $item->anexo }}" target="_blank">Ver</a>
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>{{ $item->created_at->format('d/m/Y H:i') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @else
+        <div class="alert alert-info mt-3">
+            Nenhum registro no histórico.
+        </div>
+    @endif
+</div>
                     </div>
                 </div>
             </div>

@@ -68,7 +68,6 @@
                                             <tr>
                                                 <th>Funcionário</th>
                                                 <th>Período</th>
-                                                <th>Anexo</th>
                                                 <th>Ações</th>
                                             </tr>
                                         </thead>
@@ -77,13 +76,6 @@
                                             <tr>
                                                 <td>{{ $ferias->funcionario->user->name }}</td>
                                                 <td>{{ date('d/m/Y', strtotime($ferias->startDate)) }} - {{ date('d/m/Y', strtotime($ferias->endDate)) }}</td>
-                                                <td>
-                                                    @if($ferias->file)
-                                                    <a href="{{ $ferias->path . '/' . $ferias->file }}" target="_blank">Ver</a>
-                                                    @else
-                                                        -
-                                                    @endif
-                                                </td>
                                                 <td>
                                                     <a href="{{ route('solicitacoes.aprovar', parameters: ['tipo' => 'ferias', 'id' => $ferias->id]) }}" class="btn btn-sm btn-primary">Aprovar</a>
                                                     <a href="{{ route('solicitacoes.rejeitar', ['tipo' => 'ferias', 'id' => $ferias->id]) }}" class="btn btn-sm btn-danger">Recusar</a>

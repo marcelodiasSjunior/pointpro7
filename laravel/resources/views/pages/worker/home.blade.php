@@ -452,7 +452,6 @@
                                             <div class="collapse" id="accordion-item-icon-right-3"
                                                 data-parent="#accordionRightIcon">
                                                 <div class="card-body">
-                                                    <p style="margin-bottom: 3px;" >Anexar documento:</p>
                                                     <div style="margin:0px 0px 25px;">
                                                         <div class="row">
                                                             <div class="col-md-12 form-group mb-3">
@@ -461,11 +460,6 @@
                                                                         action="{{ route('worker.solicitarFerias') }}"
                                                                         enctype="multipart/form-data">
                                                                         @csrf
-                                                                        <div class="fallback">
-                                                                            <input name="file" type="file" required />
-                                                                        </div>
-                                                                        <div class="dz-message">Solte o arquivo aqui
-                                                                            para enviar</div>
                                                                         <!-- Campos adicionais -->
                                                                         <div class="card-body">
                                                                             <div class="row">

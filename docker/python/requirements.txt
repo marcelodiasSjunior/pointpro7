@@ -9,4 +9,5 @@ Pillow
 flask-cors
 pytz
 gunicorn
+boto3
 

@@ -14,6 +14,9 @@ from flask import Flask
 from redis import Redis
 from dotenv import dotenv_values
 from datetime import datetime
+import time  # Adicione com os outros imports
+import boto3
+from botocore.exceptions import ClientError
 config = dotenv_values(".env")
 
 app = Flask(__name__)
@@ -25,6 +28,35 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 app = Flask(__name__, static_folder='pictures')
 cors = CORS(app)
 
+# Configurações do Digital Ocean Spaces
+S3_ENDPOINT = os.environ.get('AWS_ENDPOINT')
+S3_KEY = os.environ.get('AWS_ACCESS_KEY_ID')
+S3_SECRET = os.environ.get('AWS_SECRET_ACCESS_KEY')
+S3_BUCKET = os.environ.get('AWS_BUCKET')
+S3_REGION = os.environ.get('AWS_DEFAULT_REGION')
+APP_ASSET_S3 = os.environ.get('APP_ASSET_S3')
+
+s3 = boto3.client('s3',
+                  endpoint_url=S3_ENDPOINT,
+                  aws_access_key_id=S3_KEY,
+                  aws_secret_access_key=S3_SECRET,
+                  region_name=S3_REGION)
+
+def upload_to_s3(file_path, s3_path):
+    try:
+        s3.upload_file(
+            file_path, 
+            S3_BUCKET, 
+            s3_path,
+            ExtraArgs={
+                'ACL': 'public-read',
+                'ContentType': 'image/jpeg'
+            }
+        )
+        return True
+    except ClientError as e:
+        print(f"Erro no upload: {e}")
+        return False
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -168,23 +200,37 @@ def register_face(file_stream, api_token_for_web, upload_id):
 
         encoding_str = encoding_FaceStr(image_face_encoding)
 
-        now = datetime.now(pytz.timezone('America/Sao_Paulo'))
-        created_at = now.strftime('%Y-%m-%d %H:%M:%S')
-        updated_at = now.strftime('%Y-%m-%d %H:%M:%S')
+        # Gerar caminho S3
+        s3_folder = f"fitos/{company_id}/{funcionario['id']}"
+        s3_filename = f"{int(time.time())}_{id_generator(6)}.jpg"
+        s3_path = f"{s3_folder}/{s3_filename}"
+        
+        # Fazer upload para o S3
+        if upload_to_s3(file_stream, s3_path):
+            # Remover arquivo local após upload
+            os.remove(file_stream)
+            
+            # Construir URL pública
+            file_url = f"{config['APP_ASSET_S3']}{s3_path}"
+            # Atualizar payload com o caminho do arquivo
+            now = datetime.now(pytz.timezone('America/Sao_Paulo'))
+            created_at = now.strftime('%Y-%m-%d %H:%M:%S')
+            updated_at = now.strftime('%Y-%m-%d %H:%M:%S')
 
-        payload = {
-            'created_at': created_at,
-            'updated_at': updated_at,
-            'user_id': user_id,
-            'encodings': encoding_str,
-            'upload_id': upload_id,
-            'company_id': company_id
-        }
-
-        facesql.saveFaceData(payload)
-
-        return jsonify(payload)
-
+            payload = {
+                'created_at': created_at,
+                'updated_at': updated_at,
+                'user_id': user_id,
+                'encodings': encoding_str,
+                'upload_id': upload_id,
+                'company_id': company_id,
+                'file': s3_path,  # Salvar caminho completo
+                'file_url': file_url  # Opcional: URL direta
+            }
+            facesql.saveFaceData(payload)
+            return jsonify(payload)
+        else:
+            return jsonify({"error": "upload_failed"}), 500
     else:
         return jsonify({
             "error": True,
@@ -296,7 +342,7 @@ def detect_faces_in_image(file_stream):
                     "face_distance": face_distance,
                     "name": users_exists["name"],
                     "email": users_exists["email"],
-                    "picture_url": "https://educacao-caucaia.sfo3.digitaloceanspaces.com/" + upload_exists["file"]
+                    "picture_url": f"{config['APP_ASSET_S3']}{upload_exists['file']}"
                 }
 
                 if 'direction' in request.form:
@@ -379,5 +425,3 @@ def register_ponto():
             facesql.savePresencaData(payloadPresenca)
 
         return jsonify(payloadPresenca)
-
-app.run(host='0.0.0.0', port=5000)

@@ -114,6 +114,9 @@
                         console.error('Error:', error);
                     });
             });
+            // Na função recognizeUser(), após obter a localização:
+            form.append('latitude', lat);
+            form.append('longitude', lng);
         }, 'image/jpeg');
     }
 

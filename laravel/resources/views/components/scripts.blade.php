@@ -114,8 +114,6 @@
                         console.error('Error:', error);
                     });
             });
-            form.append('latitude', lat);
-            form.append('longitude', lng);
         }, 'image/jpeg');
     }
 

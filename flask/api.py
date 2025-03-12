@@ -17,6 +17,9 @@ from datetime import datetime
 import time  # Adicione com os outros imports
 import boto3
 from botocore.exceptions import ClientError
+from dotenv import load_dotenv
+load_dotenv('.env')
+
 config = dotenv_values(".env")
 
 app = Flask(__name__)
@@ -29,11 +32,11 @@ app = Flask(__name__, static_folder='pictures')
 cors = CORS(app)
 
 # Configurações do Digital Ocean Spaces
-S3_ENDPOINT = "https://nyc3.digitaloceanspaces.com/"
-S3_KEY = "DO00NQZBZRM97738PRRK"
-S3_SECRET = "MHvrodg1KgvqhaZE9o1FpvQ9hnP1miAz4EBVobuJwb4"
-S3_BUCKET = "pro7"
-S3_REGION = "nyc3"
+S3_ENDPOINT = config.get('DO_SPACES_ENDPOINT')
+S3_KEY = config.get('DO_SPACES_KEY')
+S3_SECRET = config.get('DO_SPACES_SECRET')
+S3_BUCKET = config.get('DO_SPACES_BUCKET')
+S3_REGION = config.get('DO_SPACES_REGION')
 APP_ASSET_S3 = "https://pro7.nyc3.cdn.digitaloceanspaces.com/"
 
 s3 = boto3.client('s3',

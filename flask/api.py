@@ -199,7 +199,7 @@ def register_face(file_stream, api_token_for_web, upload_id):
         encoding_str = encoding_FaceStr(image_face_encoding)
 
         # Gera o caminho no S3
-        s3_folder = f"fitos/{company_id}/{funcionario['id']}"
+        s3_folder = f"fitos/{funcionario['company_id']}/{funcionario['id']}"
         s3_filename = f"{int(time.time())}_{id_generator(6)}.jpg"
         s3_path = f"{s3_folder}/{s3_filename}"
 

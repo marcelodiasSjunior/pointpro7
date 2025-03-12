@@ -29,12 +29,12 @@ app = Flask(__name__, static_folder='pictures')
 cors = CORS(app)
 
 # Configurações do Digital Ocean Spaces
-S3_ENDPOINT = os.environ.get('AWS_ENDPOINT')
-S3_KEY = os.environ.get('AWS_ACCESS_KEY_ID')
-S3_SECRET = os.environ.get('AWS_SECRET_ACCESS_KEY')
-S3_BUCKET = os.environ.get('AWS_BUCKET')
-S3_REGION = os.environ.get('AWS_DEFAULT_REGION')
-APP_ASSET_S3 = os.environ.get('APP_ASSET_S3')
+S3_ENDPOINT = "https://nyc3.digitaloceanspaces.com/"
+S3_KEY = "DO00NQZBZRM97738PRRK"
+S3_SECRET = "MHvrodg1KgvqhaZE9o1FpvQ9hnP1miAz4EBVobuJwb4"
+S3_BUCKET = "pro7"
+S3_REGION = "nyc3"
+APP_ASSET_S3 = "https://pro7.nyc3.cdn.digitaloceanspaces.com/"
 
 s3 = boto3.client('s3',
                   endpoint_url=S3_ENDPOINT,
@@ -208,7 +208,7 @@ def register_face(file_stream, api_token_for_web, upload_id):
             os.remove(newFile)  # Remove o arquivo local após upload bem-sucedido
 
             # Constrói a URL pública
-            file_url = f"{config['APP_ASSET_S3']}{s3_path}"
+            file_url = f"{APP_ASSET_S3}{s3_path}"
 
             # Cria o payload para salvar no banco de dados
             now = datetime.now(pytz.timezone('America/Sao_Paulo'))

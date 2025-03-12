@@ -14,12 +14,6 @@ from flask import Flask
 from redis import Redis
 from dotenv import dotenv_values
 from datetime import datetime
-import time  # Adicione com os outros imports
-import boto3
-from botocore.exceptions import ClientError
-from dotenv import load_dotenv
-load_dotenv('.env')
-
 config = dotenv_values(".env")
 
 app = Flask(__name__)
@@ -31,35 +25,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 app = Flask(__name__, static_folder='pictures')
 cors = CORS(app)
 
-# Configurações do Digital Ocean Spaces
-S3_ENDPOINT = config.get('DO_SPACES_ENDPOINT')
-S3_KEY = config.get('DO_SPACES_KEY')
-S3_SECRET = config.get('DO_SPACES_SECRET')
-S3_BUCKET = config.get('DO_SPACES_BUCKET')
-S3_REGION = config.get('DO_SPACES_REGION')
-APP_ASSET_S3 = "https://pro7.nyc3.cdn.digitaloceanspaces.com/"
-
-s3 = boto3.client('s3',
-                  endpoint_url=S3_ENDPOINT,
-                  aws_access_key_id=S3_KEY,
-                  aws_secret_access_key=S3_SECRET,
-                  region_name=S3_REGION)
-
-def upload_to_s3(file_path, s3_path):
-    try:
-        s3.upload_file(
-            file_path, 
-            S3_BUCKET, 
-            s3_path,
-            ExtraArgs={
-                'ACL': 'public-read',
-                'ContentType': 'image/jpeg'
-            }
-        )
-        return True
-    except ClientError as e:
-        print(f"Erro no upload: {e}")
-        return False
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -170,6 +135,7 @@ def encoding_FaceStr(image_face_encoding):
 
 
 def register_face(file_stream, api_token_for_web, upload_id):
+
     try:
         facesql = FaceSQL()
     except pymysql.Error as e:
@@ -178,65 +144,47 @@ def register_face(file_stream, api_token_for_web, upload_id):
 
     personal_access_token = facesql.getUserByToken(api_token_for_web)
 
-    if not personal_access_token:
+    if (personal_access_token == False):
         return jsonify({"msg": "authentication_failed"}), 422
 
     funcionario = facesql.getFuncionarioByUserId(
         personal_access_token['tokenable_id'])
 
-    if not funcionario:
+    if (funcionario == False):
         return jsonify({"msg": "funcionario_not_found"}), 422
 
     company_id = funcionario['company_id']
     user_id = funcionario['user_id']
 
-    # Salva a imagem localmente
-    newFile = os.path.join("pictures", f"{upload_id}_{int(time.time())}.jpg")
-    print(f"Salvando imagem localmente em: {newFile}")
-    image = Image.open(file_stream)
-    image.save(newFile)
+    image = face_recognition.load_image_file(file_stream)
 
-    image_face_encoding = face_recognition.face_encodings(face_recognition.load_image_file(newFile))
+    image_face_encoding = face_recognition.face_encodings(image)
+
+    os.remove(file_stream)
 
     if len(image_face_encoding) > 0:
+
         image_face_encoding = image_face_encoding[0]
+
         encoding_str = encoding_FaceStr(image_face_encoding)
 
-        # Gera o caminho no S3
-        s3_folder = f"fitos/{company_id}/{funcionario['id']}"
-        s3_filename = f"{int(time.time())}_{id_generator(6)}.jpg"
-        s3_path = f"{s3_folder}/{s3_filename}"
-        print(f"Fazendo upload para: {s3_path}")
+        now = datetime.now(pytz.timezone('America/Sao_Paulo'))
+        created_at = now.strftime('%Y-%m-%d %H:%M:%S')
+        updated_at = now.strftime('%Y-%m-%d %H:%M:%S')
 
-        # Faz o upload para o S3
-        if upload_to_s3(newFile, s3_path):
-            print("Upload bem-sucedido")
-            os.remove(newFile)  # Remove o arquivo local após upload bem-sucedido
+        payload = {
+            'created_at': created_at,
+            'updated_at': updated_at,
+            'user_id': user_id,
+            'encodings': encoding_str,
+            'upload_id': upload_id,
+            'company_id': company_id
+        }
 
-            # Constrói a URL pública
-            file_url = f"{config['APP_ASSET_S3']}{s3_path}"
+        facesql.saveFaceData(payload)
 
-            # Cria o payload para salvar no banco de dados
-            now = datetime.now(pytz.timezone('America/Sao_Paulo'))
-            created_at = now.strftime('%Y-%m-%d %H:%M:%S')
-            updated_at = now.strftime('%Y-%m-%d %H:%M:%S')
+        return jsonify(payload)
 
-            payload = {
-                'created_at': created_at,
-                'updated_at': updated_at,
-                'user_id': user_id,
-                'encodings': encoding_str,
-                'upload_id': upload_id,
-                'company_id': company_id,
-                'file': s3_path,  # Salva o caminho completo
-                'file_url': file_url  # URL direta
-            }
-
-            facesql.saveFaceData(payload)
-            return jsonify(payload)
-        else:
-            print("Falha no upload")
-            return jsonify({"error": "upload_failed"}), 500
     else:
         return jsonify({
             "error": True,
@@ -348,7 +296,7 @@ def detect_faces_in_image(file_stream):
                     "face_distance": face_distance,
                     "name": users_exists["name"],
                     "email": users_exists["email"],
-                    "picture_url": f"{config['APP_ASSET_S3']}{upload_exists['file']}"
+                    "picture_url": "https://educacao-caucaia.sfo3.digitaloceanspaces.com/" + upload_exists["file"]
                 }
 
                 if 'direction' in request.form:

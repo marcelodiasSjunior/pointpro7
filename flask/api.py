@@ -188,7 +188,8 @@ def register_face(file_stream, api_token_for_web, upload_id):
     user_id = funcionario['user_id']
 
     # Salva a imagem localmente
-    newFile = "./pictures/" + str(upload_id) + "_" + str(int(time.time())) + ".jpg"
+    newFile = os.path.join("pictures", f"{upload_id}_{int(time.time())}.jpg")
+    print(f"Salvando imagem localmente em: {newFile}")
     image = Image.open(file_stream)
     image.save(newFile)
 
@@ -199,16 +200,18 @@ def register_face(file_stream, api_token_for_web, upload_id):
         encoding_str = encoding_FaceStr(image_face_encoding)
 
         # Gera o caminho no S3
-        s3_folder = f"fitos/{funcionario['company_id']}/{funcionario['id']}"
+        s3_folder = f"fitos/{company_id}/{funcionario['id']}"
         s3_filename = f"{int(time.time())}_{id_generator(6)}.jpg"
         s3_path = f"{s3_folder}/{s3_filename}"
+        print(f"Fazendo upload para: {s3_path}")
 
         # Faz o upload para o S3
         if upload_to_s3(newFile, s3_path):
+            print("Upload bem-sucedido")
             os.remove(newFile)  # Remove o arquivo local após upload bem-sucedido
 
             # Constrói a URL pública
-            file_url = f"{APP_ASSET_S3}{s3_path}"
+            file_url = f"{config['APP_ASSET_S3']}{s3_path}"
 
             # Cria o payload para salvar no banco de dados
             now = datetime.now(pytz.timezone('America/Sao_Paulo'))
@@ -229,6 +232,7 @@ def register_face(file_stream, api_token_for_web, upload_id):
             facesql.saveFaceData(payload)
             return jsonify(payload)
         else:
+            print("Falha no upload")
             return jsonify({"error": "upload_failed"}), 500
     else:
         return jsonify({

@@ -167,7 +167,6 @@ def encoding_FaceStr(image_face_encoding):
 
 
 def register_face(file_stream, api_token_for_web, upload_id):
-
     try:
         facesql = FaceSQL()
     except pymysql.Error as e:
@@ -176,43 +175,42 @@ def register_face(file_stream, api_token_for_web, upload_id):
 
     personal_access_token = facesql.getUserByToken(api_token_for_web)
 
-    if (personal_access_token == False):
+    if not personal_access_token:
         return jsonify({"msg": "authentication_failed"}), 422
 
     funcionario = facesql.getFuncionarioByUserId(
         personal_access_token['tokenable_id'])
 
-    if (funcionario == False):
+    if not funcionario:
         return jsonify({"msg": "funcionario_not_found"}), 422
 
     company_id = funcionario['company_id']
     user_id = funcionario['user_id']
 
-    image = face_recognition.load_image_file(file_stream)
+    # Salva a imagem localmente
+    newFile = "./pictures/" + str(upload_id) + "_" + str(int(time.time())) + ".jpg"
+    image = Image.open(file_stream)
+    image.save(newFile)
 
-    image_face_encoding = face_recognition.face_encodings(image)
-
-    os.remove(file_stream)
+    image_face_encoding = face_recognition.face_encodings(face_recognition.load_image_file(newFile))
 
     if len(image_face_encoding) > 0:
-
         image_face_encoding = image_face_encoding[0]
-
         encoding_str = encoding_FaceStr(image_face_encoding)
 
-        # Gerar caminho S3
+        # Gera o caminho no S3
         s3_folder = f"fitos/{company_id}/{funcionario['id']}"
         s3_filename = f"{int(time.time())}_{id_generator(6)}.jpg"
         s3_path = f"{s3_folder}/{s3_filename}"
-        
-        # Fazer upload para o S3
-        if upload_to_s3(file_stream, s3_path):
-            # Remover arquivo local após upload
-            os.remove(file_stream)
-            
-            # Construir URL pública
+
+        # Faz o upload para o S3
+        if upload_to_s3(newFile, s3_path):
+            os.remove(newFile)  # Remove o arquivo local após upload bem-sucedido
+
+            # Constrói a URL pública
             file_url = f"{config['APP_ASSET_S3']}{s3_path}"
-            # Atualizar payload com o caminho do arquivo
+
+            # Cria o payload para salvar no banco de dados
             now = datetime.now(pytz.timezone('America/Sao_Paulo'))
             created_at = now.strftime('%Y-%m-%d %H:%M:%S')
             updated_at = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -224,9 +222,10 @@ def register_face(file_stream, api_token_for_web, upload_id):
                 'encodings': encoding_str,
                 'upload_id': upload_id,
                 'company_id': company_id,
-                'file': s3_path,  # Salvar caminho completo
-                'file_url': file_url  # Opcional: URL direta
+                'file': s3_path,  # Salva o caminho completo
+                'file_url': file_url  # URL direta
             }
+
             facesql.saveFaceData(payload)
             return jsonify(payload)
         else:

@@ -10,3 +10,4 @@ flask-cors
 pytz
 gunicorn
 boto3
+botocore

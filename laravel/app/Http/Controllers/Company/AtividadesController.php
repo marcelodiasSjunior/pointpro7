@@ -91,15 +91,16 @@ class AtividadesController extends Controller
         return view('pages.company.atividades', $data);
     }
 
-    public function listar_por_funcao(Request $req, $funcionario_id)
+    public function listar_por_funcao(Request $req, $funcao_id)
     {
         $commonDates = CommomDataService::getCommonDates($req);
         $company_id = $req->user()->company->id;
-        $funcionarios = Funcionario::where('company_id', $company_id)->get();
-        $funcao_id = Funcionario::where('id', $funcionario_id)->value('funcao_id');
+        $funcionarios = Funcionario::where('company_id', $company_id)
+            ->where('funcao_id', $funcao_id)->get();
         $funcao_title = Funcao::where('id', $funcao_id)->value('title');
 
         foreach ($funcionarios as $funcionario) {
+            $funcionario_id = $funcionario->id;
 
             $atividadesCadastradas = AtividadeFuncionario::where('company_id', $company_id)
                 ->where('funcionario_id', $funcionario->id)
@@ -124,7 +125,6 @@ class AtividadesController extends Controller
 
             $funcionario->porcentagem_completas = round($this->getPercentage($atividadesCompletas, $atividadesCadastradas));
         }
-
         $data = [
             'funcionarios' => $funcionarios,
             'funcao_title' => $funcao_title,
@@ -471,6 +471,7 @@ class AtividadesController extends Controller
             $af->update([
                 'status' => $af->status, // ou outros campos que precisam ser atualizados
                 // outros campos a serem atualizados conforme necessário
+
             ]);
         }
 

@@ -116,7 +116,6 @@ class FrequenciaController extends Controller
         $monthList = $commonDates['monthList'];
         $monthKey = sprintf('%02d', $monthNumber);
         $monthName = isset($monthList[$monthKey]) ? $monthList[$monthKey] : 'Mês desconhecido';
-
         $company_id = $req->user()->company->id;
         $company_name = Company::where('id', $company_id)->value('title');
 
@@ -125,15 +124,12 @@ class FrequenciaController extends Controller
 
         $funcao_id = Funcionario::where('id', $funcionario_id)->value('funcao_id');
         $funcao_title = Funcao::where('id', $funcao_id)->value('title');
-
-        $inicio  = date("Y-".$mes."-01");
-        $fim  = date("Y-".$mes."-t");
-
-        $inicio = new DateTime($inicio);
-        $fim = new DateTime($fim);
+        //deve ser ano da variavel ano e 
+        $inicio = new DateTime("$ano-$mes-01"); 
+        $fim = (clone $inicio)->modify('last day of this month');
 
         $interval = new DateInterval('P1D');
-        $periodo = new DatePeriod($inicio, $interval ,$fim);
+        $periodo = new DatePeriod($inicio, $interval, (clone $fim)->modify('+1 day'));
 
         $html = "";
 
@@ -156,7 +152,7 @@ class FrequenciaController extends Controller
         $html .= "</tr>";
         $html .= "</thead>";
         $html .= "<tbody style='text-align: center;font-size: 12px;'>";
-
+    
        foreach($periodo as $data){
 
         $frequencias = Frequencia::where('funcionario_id', $funcionario_id)

@@ -10,11 +10,23 @@
 
                 <div class="card-body">
                     @forelse($notificacoes as $notificacao)
-                    <div class="alert alert-{{ $notificacao->lida ? 'secondary' : 'primary' }}">
-                        <h5>{{ $notificacao->title }}</h5>
-                        <p>{{ $notificacao->description }}</p>
-                        <small>{{ $notificacao->created_at->diffForHumans() }}</small>
-                    </div>
+                    <form action="{{ route('notificacoes.marcarComoLida', $notificacao->id) }}" method="POST">
+                        @csrf
+                        @method('POST')
+                        <div class="alert alert-{{ $notificacao->lida ? 'secondary' : 'primary' }} w-100 d-flex align-items-start gap-3">
+                            <input
+                                type="checkbox"
+                                class="mt-1"
+                                onchange="this.form.submit()"
+                                {{ $notificacao->lida ? 'checked' : '' }}
+                            >
+                            <div>
+                                <h5>{{ $notificacao->title }}</h5>
+                                <p>{{ $notificacao->description }}</p>
+                                <small>{{ $notificacao->created_at->diffForHumans() }}</small>
+                            </div>
+                        </div>
+                    </form>
                     @empty
                     <p>Nenhuma notificação encontrada.</p>
                     @endforelse

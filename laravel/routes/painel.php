@@ -122,7 +122,7 @@ Route::get('/auditoria/historico/{funcionario_id}/{ano}/{mes}', [AuditoriasContr
 Route::get('/notificacoes', [NotificacaoController::class, 'index'])->name('todas.notificacoes');
 Route::get('/notificacoes/ultimas', [NotificacaoController::class, 'getUltimasNotificacoes'])->name('notificacoes.ultimas');
 Route::post('/notificacoes/marcar-lida/{id}', [NotificacaoController::class, 'marcarComoLida'])->name('notificacoes.marcar-lida');
-
+Route::post('/notificacoes/{id}/marcar-como-lida', [NotificacaoController::class, 'marcarComoLida'])->name('notificacoes.marcarComoLida');
 Route::get('/solicitacoes', [SolicitacoesController::class, 'index'])->name('solicitacoes.index');
 Route::get('/solicitacoes/aprovar/{tipo}/{id}', [SolicitacoesController::class, 'aprovar'])->name('solicitacoes.aprovar');
 Route::get('/solicitacoes/rejeitar/{tipo}/{id}', [SolicitacoesController::class, 'rejeitar'])->name('solicitacoes.rejeitar');

@@ -12,7 +12,7 @@ class NotificacaoController extends Controller
         // Validação do company_id
         $company_id = Auth::user()->company->id;
         $notificacoes = Notificacao::where('company_id', $company_id)
-        ->where('read', 0) // ou outro campo de relacionamento
+        ->where('read', 0)
         ->orderBy('created_at', 'desc')
         ->paginate(10);
 
@@ -40,14 +40,10 @@ class NotificacaoController extends Controller
     public function marcarComoLida($id)
     {
         $notificacao = Notificacao::findOrFail($id);
-        $notificacao->update(['read' => 1]);
-        
-        return response()->json([
-            'success' => true,
-            'remaining' => Notificacao::where('company_id', Auth::user()->company->id)
-                                ->where('read', 0)
-                                ->count()
-        ]);
+        $notificacao->read = 1;
+        $notificacao->save();
+
+        return redirect()->back()->with('success', 'Notificação marcada como lida.');
     }
 
     public function home()

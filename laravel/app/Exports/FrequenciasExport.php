@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Ferias;
 use App\Models\Frequencia;
 use App\Models\Funcionario;
 use App\Models\Jornada;
@@ -18,6 +19,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
     protected $ano;
     protected $mes;
     protected $atestados;
+    protected $ferias;
     protected $funcionario;
 
     public function __construct($company_id, $funcionario_id, $ano, $mes)
@@ -28,6 +30,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
         $this->mes = $mes;
         $this->funcionario = $this->getFuncionario();
         $this->atestados = $this->getAtestados() ?? collect();
+        $this->ferias = $this->getFerias() ?? collect();
     }
 
     protected function getFuncionario()
@@ -51,6 +54,25 @@ class FrequenciasExport implements FromCollection, WithHeadings
                     ->where('endDate', '>=', $start);
             })
             ->get();
+    }
+
+    protected function getFerias()
+    {
+
+        if (!$this->funcionario) {
+            return collect();
+        }
+
+        return Ferias::where('funcionario_id', $this->funcionario->id)
+            ->where(function ($query) {
+                $start = Carbon::create($this->ano, $this->mes, 1)->startOfMonth();
+                $end = $start->copy()->endOfMonth();
+                $query->where('startDate', '<=', $end)
+                    ->where('endDate', '>=', $start)
+                    ->where('status', 'aprovado');
+            })
+            ->get();
+            
     }
 
     public function collection()
@@ -91,6 +113,10 @@ class FrequenciasExport implements FromCollection, WithHeadings
                 return $this->createAtestadoDayRow($date, $jornada, $day, $month, $year, $week, $totalSaldoMinutos);
             }
 
+            if ($this->hasFeriasForDate($date)) {
+                return $this->createFeriasDayRow($date, $jornada, $day, $month, $year, $week, $totalSaldoMinutos);
+            }
+
             return $this->processNormalDay($date, $frequencias, $jornada, $day, $month, $year, $week, $totalSaldoMinutos);
         });
 
@@ -104,6 +130,15 @@ class FrequenciasExport implements FromCollection, WithHeadings
         return $this->atestados->isNotEmpty() && $this->atestados->contains(function ($atestado) use ($date) {
             $start = Carbon::parse($atestado->startDate)->startOfDay();
             $end = Carbon::parse($atestado->endDate)->endOfDay();
+            return $date->between($start, $end);
+        });
+    }
+
+    protected function hasFeriasForDate(Carbon $date)
+    {
+        return $this->ferias->isNotEmpty() && $this->ferias->contains(function ($ferias) use ($date) {
+            $start = Carbon::parse($ferias->startDate)->startOfDay();
+            $end = Carbon::parse($ferias->endDate)->endOfDay();
             return $date->between($start, $end);
         });
     }
@@ -144,6 +179,30 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Fim do intervalo' => 'Abonado',
             'Fim da jornada' => 'Abonado',
             'Status' => 'Abonado',
+            'Saldo' => '00:00',
+            'Totalizador' => ''
+        ];
+    }
+
+    protected function createFeriasDayRow(Carbon $date, Jornada $jornada, $day, $month, $year, $week, &$totalSaldoMinutos)
+    {
+        $diaDaSemana = strtolower($date->isoFormat('dddd'));
+        $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
+        $horasPrevistasEmMinutos = is_numeric($horasPrevistas) ? $horasPrevistas * 60 : 0;
+
+        $saldoMinutos = 0;
+        $totalSaldoMinutos += $saldoMinutos;
+
+        return [
+            'Dia' => $day,
+            'Mês' => $month,
+            'Ano' => $year,
+            'Semana' => $week,
+            'Início da jornada' => 'Férias',
+            'Início do intervalo' => 'Férias',
+            'Fim do intervalo' => 'Férias',
+            'Fim da jornada' => 'Férias',
+            'Status' => 'Férias',
             'Saldo' => '00:00',
             'Totalizador' => ''
         ];

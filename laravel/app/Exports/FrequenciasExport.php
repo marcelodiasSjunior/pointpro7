@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Feriado;
 use App\Models\Ferias;
 use App\Models\Frequencia;
 use App\Models\Funcionario;
@@ -20,6 +21,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
     protected $mes;
     protected $atestados;
     protected $ferias;
+    protected $feriados;
     protected $funcionario;
 
     public function __construct($company_id, $funcionario_id, $ano, $mes)
@@ -31,6 +33,7 @@ class FrequenciasExport implements FromCollection, WithHeadings
         $this->funcionario = $this->getFuncionario();
         $this->atestados = $this->getAtestados() ?? collect();
         $this->ferias = $this->getFerias() ?? collect();
+        $this->feriados = $this->getFeriados() ?? collect();
     }
 
     protected function getFuncionario()
@@ -70,6 +73,18 @@ class FrequenciasExport implements FromCollection, WithHeadings
                 $query->where('startDate', '<=', $end)
                     ->where('endDate', '>=', $start)
                     ->where('status', 'aprovado');
+            })
+            ->get();
+            
+    }
+
+    protected function getFeriados()
+    {
+        return Feriado::where(function ($query) {
+                $start = Carbon::create($this->ano, $this->mes, 1)->startOfMonth();
+                $end = $start->copy()->endOfMonth();
+                $query->where('startDate', '<=', $end)
+                    ->where('endDate', '>=', $start);
             })
             ->get();
             
@@ -117,6 +132,10 @@ class FrequenciasExport implements FromCollection, WithHeadings
                 return $this->createFeriasDayRow($date, $jornada, $day, $month, $year, $week, $totalSaldoMinutos);
             }
 
+            if($this->hasFeriadosForDate($date)){
+                return $this->createFeriadoDayRow($date, $jornada, $day, $month, $year, $week, $totalSaldoMinutos);
+            }
+
             return $this->processNormalDay($date, $frequencias, $jornada, $day, $month, $year, $week, $totalSaldoMinutos);
         });
 
@@ -139,6 +158,15 @@ class FrequenciasExport implements FromCollection, WithHeadings
         return $this->ferias->isNotEmpty() && $this->ferias->contains(function ($ferias) use ($date) {
             $start = Carbon::parse($ferias->startDate)->startOfDay();
             $end = Carbon::parse($ferias->endDate)->endOfDay();
+            return $date->between($start, $end);
+        });
+    }
+
+    protected function hasFeriadosForDate(Carbon $date)
+    {
+        return $this->feriados->isNotEmpty() && $this->feriados->contains(function ($feriado) use ($date) {
+            $start = Carbon::parse($feriado->startDate)->startOfDay();
+            $end = Carbon::parse($feriado->endDate)->endOfDay();
             return $date->between($start, $end);
         });
     }
@@ -203,6 +231,30 @@ class FrequenciasExport implements FromCollection, WithHeadings
             'Fim do intervalo' => 'Férias',
             'Fim da jornada' => 'Férias',
             'Status' => 'Férias',
+            'Saldo' => '00:00',
+            'Totalizador' => ''
+        ];
+    }
+
+    protected function createFeriadoDayRow(Carbon $date, Jornada $jornada, $day, $month, $year, $week, &$totalSaldoMinutos)
+    {
+        $diaDaSemana = strtolower($date->isoFormat('dddd'));
+        $horasPrevistas = $jornada->getHorasDia($diaDaSemana);
+        $horasPrevistasEmMinutos = is_numeric($horasPrevistas) ? $horasPrevistas * 60 : 0;
+
+        $saldoMinutos = 0;
+        $totalSaldoMinutos += $saldoMinutos;
+
+        return [
+            'Dia' => $day,
+            'Mês' => $month,
+            'Ano' => $year,
+            'Semana' => $week,
+            'Início da jornada' => 'Feriado',
+            'Início do intervalo' => 'Feriado',
+            'Fim do intervalo' => 'Feriado',
+            'Fim da jornada' => 'Feriado',
+            'Status' => 'Feriado',
             'Saldo' => '00:00',
             'Totalizador' => ''
         ];
